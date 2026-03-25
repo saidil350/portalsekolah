@@ -1,0 +1,6 @@
+<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Background">
+<rect width="34" height="34" rx="8" fill="var(--fill-0, #FFF7ED)"/>
+<path id="Icon" d="M8 26V24H10V8H20V9H24V24H26V26H22V11H20V26H8V26M12 10V10V24V24V10V10M16 18C16.2833 18 16.5208 17.9042 16.7125 17.7125C16.9042 17.5208 17 17.2833 17 17C17 16.7167 16.9042 16.4792 16.7125 16.2875C16.5208 16.0958 16.2833 16 16 16C15.7167 16 15.4792 16.0958 15.2875 16.2875C15.0958 16.4792 15 16.7167 15 17C15 17.2833 15.0958 17.5208 15.2875 17.7125C15.4792 17.9042 15.7167 18 16 18V18M12 24H18V10H12V24V24" fill="var(--fill-0, #EA580C)"/>
+</g>
+</svg>
