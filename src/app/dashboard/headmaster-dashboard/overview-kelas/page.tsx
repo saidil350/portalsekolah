@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Users, GraduationCap, BookOpen, Calendar, TrendingUp, Loader2, AlertCircle, Filter } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { Class } from '@/types/class-roster'
@@ -46,12 +46,7 @@ export default function HeadmasterClassOverviewPage() {
   const [classLevels, setClassLevels] = useState<ClassLevel[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
 
-  useEffect(() => {
-    fetchClassesData()
-    fetchDropdownData()
-  }, [levelFilter, departmentFilter, search])
-
-  const fetchClassesData = async () => {
+  const fetchClassesData = useCallback(async () => {
     setLoading(true)
     setError('')
 
@@ -79,7 +74,9 @@ export default function HeadmasterClassOverviewPage() {
         query = query.eq('department_id', departmentFilter)
       }
 
-      const { data, error } = await query.eq('is_active', true)
+      const { data, error } = await query
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
 
       if (error) throw error
 
@@ -116,9 +113,9 @@ export default function HeadmasterClassOverviewPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [search, levelFilter, departmentFilter])
 
-  const fetchDropdownData = async () => {
+  const fetchDropdownData = useCallback(async () => {
     try {
       const { createClient } = await import('@/utils/supabase/client')
       const supabase = createClient()
@@ -143,7 +140,12 @@ export default function HeadmasterClassOverviewPage() {
     } catch (err) {
       console.error('Error fetching dropdown data:', err)
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    fetchClassesData()
+    fetchDropdownData()
+  }, [fetchClassesData, fetchDropdownData])
 
   const handleClassClick = (classId: string) => {
     router.push(`/dashboard/admin-it/kelas-dan-roster/${classId}`)
