@@ -76,8 +76,8 @@ export default function HeadmasterClassOverviewPage() {
           : 0
 
         // Get total teachers count
-        const { createClient } = await import('@/utils/supabase/server')
-        const supabase = await createClient()
+        const { createClient } = await import('@/utils/supabase/client')
+        const supabase = createClient()
         const { count } = await supabase
           .from('profiles')
           .select('*', { count: 'exact', head: true })
@@ -103,8 +103,8 @@ export default function HeadmasterClassOverviewPage() {
 
   const fetchDropdownData = async () => {
     try {
-      const { createClient } = await import('@/utils/supabase/server')
-      const supabase = await createClient()
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
 
       // Fetch class levels
       const { data: levelsData } = await supabase

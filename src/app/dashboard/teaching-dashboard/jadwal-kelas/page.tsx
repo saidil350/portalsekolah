@@ -36,8 +36,8 @@ export default function TeacherClassSchedulePage() {
     setError('')
 
     try {
-      const { createClient } = await import('@/utils/supabase/server')
-      const supabase = await createClient()
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
 
       // Get current user
       const { data: { user } } = await supabase.auth.getUser()
