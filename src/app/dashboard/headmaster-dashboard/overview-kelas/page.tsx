@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { Users, GraduationCap, BookOpen, Calendar, TrendingUp, Loader2, AlertCircle, Filter } from 'lucide-react'
+import { Users, GraduationCap, BookOpen, Calendar, TrendingUp, Loader2, AlertCircle, Filter, ChevronDown } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { Class } from '@/types/class-roster'
 
@@ -227,25 +227,25 @@ export default function HeadmasterClassOverviewPage() {
 
       {/* Filters */}
       <div className="bg-white border-b border-slate-200 px-8 py-4 shrink-0">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3">
           {/* Search */}
-          <div className="flex-1 relative">
+          <div className="flex-1 min-w-[200px] relative">
             <input
               type="text"
               placeholder="Cari kelas berdasarkan nama atau kode..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-4 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm"
+              className="w-full pl-4 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm hover:border-slate-300 transition-colors"
             />
           </div>
 
           {/* Level Filter */}
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="relative min-w-[160px]">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              className="pl-9 pr-8 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none"
+              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Tingkat</option>
               {classLevels.map(level => (
@@ -254,15 +254,16 @@ export default function HeadmasterClassOverviewPage() {
                 </option>
               ))}
             </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           </div>
 
           {/* Department Filter */}
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <div className="relative min-w-[160px]">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="pl-9 pr-8 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none"
+              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Jurusan</option>
               {departments.map(dept => (
@@ -271,6 +272,7 @@ export default function HeadmasterClassOverviewPage() {
                 </option>
               ))}
             </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           </div>
 
           {/* Clear Filters */}
@@ -281,7 +283,7 @@ export default function HeadmasterClassOverviewPage() {
                 setLevelFilter('')
                 setDepartmentFilter('')
               }}
-              className="px-4 py-2.5 text-slate-600 hover:text-slate-900 text-sm font-medium hover:bg-slate-100 rounded-lg transition-colors"
+              className="px-4 py-2.5 text-slate-600 hover:text-slate-900 text-sm font-medium hover:bg-slate-100 rounded-lg transition-colors shrink-0"
             >
               Reset Filter
             </button>
@@ -297,34 +299,50 @@ export default function HeadmasterClassOverviewPage() {
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-8">
         {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="w-8 h-8 animate-spin text-emerald-600" />
-            <span className="ml-3 text-slate-600">Memuat data...</span>
+          <div className="flex flex-col items-center justify-center h-full">
+            <div className="relative">
+              <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
+              <div className="absolute inset-0 w-12 h-12 rounded-full border-4 border-emerald-200" />
+            </div>
+            <span className="mt-4 text-slate-600 font-medium">Memuat data...</span>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-3">
-              <AlertCircle className="w-6 h-6 text-red-600" />
+            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-4">
+              <AlertCircle className="w-8 h-8 text-red-600" />
             </div>
-            <p className="text-red-600 font-medium mb-4">{error}</p>
+            <p className="text-red-600 font-semibold mb-2 text-lg">Gagal Memuat Data</p>
+            <p className="text-slate-600 mb-4 text-center max-w-md">{error}</p>
             <button
               onClick={fetchClassesData}
-              className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+              className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium shadow-sm hover:shadow"
             >
               Coba Lagi
             </button>
           </div>
         ) : classes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-              <Calendar className="w-8 h-8 text-slate-400" />
+            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-6">
+              <Calendar className="w-10 h-10 text-slate-400" />
             </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
+            <h3 className="text-xl font-semibold text-slate-900 mb-2">
               Tidak ada kelas ditemukan
             </h3>
-            <p className="text-slate-500 text-sm">
+            <p className="text-slate-500 text-sm mb-6">
               Coba ubah filter atau kata kunci pencarian
             </p>
+            {(search || levelFilter || departmentFilter) && (
+              <button
+                onClick={() => {
+                  setSearch('')
+                  setLevelFilter('')
+                  setDepartmentFilter('')
+                }}
+                className="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+              >
+                Reset Filter
+              </button>
+            )}
           </div>
         ) : (
           /* Class Grid */
@@ -336,18 +354,18 @@ export default function HeadmasterClassOverviewPage() {
                 <div
                   key={cls.id}
                   onClick={() => handleClassClick(cls.id)}
-                  className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-emerald-300 transition-all cursor-pointer group"
+                  className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-emerald-300 hover:scale-[1.02] transition-all duration-200 cursor-pointer group"
                 >
                   {/* Header */}
                   <div className="p-5 border-b border-slate-100">
                     <div className="flex items-start justify-between mb-2">
-                      <div className="flex-1">
-                        <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate">
                           {cls.name}
                         </h3>
-                        <p className="text-xs text-slate-500">{cls.code}</p>
+                        <p className="text-xs text-slate-500 truncate">{cls.code}</p>
                       </div>
-                      <div className={`px-2 py-1 rounded-full text-xs font-bold ${getOccupancyBg(occupancyRate)} ${getOccupancyColor(occupancyRate)}`}>
+                      <div className={`px-2 py-1 rounded-full text-xs font-bold shrink-0 ml-2 ${getOccupancyBg(occupancyRate)} ${getOccupancyColor(occupancyRate)}`}>
                         {occupancyRate}%
                       </div>
                     </div>
@@ -355,11 +373,11 @@ export default function HeadmasterClassOverviewPage() {
                     <div className="flex items-center gap-2 text-xs text-slate-600">
                       {cls.class_level && (
                         <>
-                          <span>{cls.class_level.name}</span>
-                          {cls.department && <span>•</span>}
+                          <span className="truncate">{cls.class_level.name}</span>
+                          {cls.department && <span className="shrink-0">•</span>}
                         </>
                       )}
-                      {cls.department && <span>{cls.department.name}</span>}
+                      {cls.department && <span className="truncate">{cls.department.name}</span>}
                     </div>
                   </div>
 
