@@ -107,9 +107,13 @@ export default function DepartmentModal({
           </h3>
           <button
             type="button"
-            onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            onClick={(e) => {
+              e.stopPropagation()
+              onClose()
+            }}
+            className="p-2 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
+            aria-label="Close modal"
           >
             <X className="w-5 h-5 text-slate-500" />
           </button>
@@ -196,7 +200,10 @@ export default function DepartmentModal({
           <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation()
+                onClose()
+              }}
               className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >

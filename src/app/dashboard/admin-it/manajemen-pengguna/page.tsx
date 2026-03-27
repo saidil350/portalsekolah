@@ -8,7 +8,6 @@ import {
   UserPlus,
   Trash2,
   Edit,
-  Eye,
   Info,
   Loader2,
   Filter,
@@ -42,7 +41,7 @@ export default function UserManagementPage() {
   })
   const [pagination, setPagination] = useState<PaginationOptions>({
     page: 1,
-    limit: 10,
+    limit: 5,
     total: 0
   })
   const [showAddModal, setShowAddModal] = useState(false)
@@ -339,15 +338,15 @@ export default function UserManagementPage() {
           {/* Table */}
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse min-w-[800px]">
+              <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 border-b border-slate-100">
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider w-[250px]">{t('admin.userManagement.table.user')}</th>
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.email')}</th>
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider w-[120px]">{t('admin.userManagement.table.role')}</th>
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider w-[130px]">{t('admin.userManagement.table.status')}</th>
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider w-[140px]">{t('admin.userManagement.table.lastLogin')}</th>
-                    <th className="py-5 px-6 font-bold text-xs text-slate-500 uppercase tracking-wider text-right w-[150px]">{t('admin.userManagement.table.action')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.user')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.email')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.role')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.status')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider">{t('admin.userManagement.table.lastLogin')}</th>
+                    <th className="py-4 px-4 font-bold text-xs text-slate-500 uppercase tracking-wider text-right">{t('admin.userManagement.table.action')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -377,42 +376,32 @@ export default function UserManagementPage() {
 
                       return (
                         <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
-                          <td className="py-4 px-6">
+                          <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className={`w-10 h-10 rounded-full ${avatarColorClass} flex items-center justify-center shrink-0`}>
                                 <span className="font-bold text-sm">{avatarInitials}</span>
                               </div>
-                              <div className="flex flex-col">
-                                <span className="text-slate-900 font-semibold text-sm">{user.full_name}</span>
-                                <span className="text-slate-500 text-xs mt-0.5">{getDisplayId(user)}</span>
+                              <div className="flex flex-col min-w-0">
+                                <span className="text-slate-900 font-semibold text-sm truncate">{user.full_name}</span>
+                                <span className="text-slate-500 text-xs mt-0.5 whitespace-nowrap">{getDisplayId(user)}</span>
                               </div>
                             </div>
                           </td>
-                          <td className="py-4 px-6 text-sm text-slate-900">{user.email}</td>
-                          <td className="py-4 px-6">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${roleConfig?.bgColor || ''} ${roleConfig?.color || ''}`}>
+                          <td className="py-3 px-4 text-sm text-slate-900 truncate">{user.email}</td>
+                          <td className="py-3 px-4">
+                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${roleConfig?.bgColor || ''} ${roleConfig?.color || ''}`}>
                               {roleConfig?.label || user.role}
                             </span>
                           </td>
-                          <td className="py-4 px-6">
-                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${statusConfig?.bgColor || ''} ${statusConfig?.color || ''}`}>
+                          <td className="py-3 px-4">
+                            <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${statusConfig?.bgColor || ''} ${statusConfig?.color || ''}`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${statusConfig?.dotColor || ''}`}></span>
                               {statusConfig?.label || user.status}
                             </span>
                           </td>
-                          <td className="py-4 px-6 text-sm text-slate-500">{formatLastLogin(user.last_login ?? null)}</td>
-                          <td className="py-4 px-6 text-right">
+                          <td className="py-3 px-4 text-sm text-slate-500 whitespace-nowrap">{formatLastLogin(user.last_login ?? null)}</td>
+                          <td className="py-3 px-4 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              <button
-                                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
-                                title={t('admin.userManagement.action.view')}
-                                onClick={() => {
-                                  setSelectedUser(user)
-                                  // TODO: Implement view detail
-                                }}
-                              >
-                                <Eye className="w-4 h-4" />
-                              </button>
                               <button
                                 className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
                                 title={t('admin.userManagement.action.edit')}

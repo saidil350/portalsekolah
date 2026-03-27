@@ -12,12 +12,19 @@ export default function LoginPage() {
 
   const handleSubmit = (formData: FormData) => {
     setErrorMsg(null);
+    setShowPassword(false); // Reset password visibility on submit
     startTransition(async () => {
       const result = await login(formData);
       if (result?.error) {
         setErrorMsg(result.error);
       }
     });
+  };
+
+  const togglePassword = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowPassword(prev => !prev);
   };
 
   return (
@@ -93,14 +100,16 @@ export default function LoginPage() {
                 name="password"
                 required
                 disabled={isPending}
-                className="block w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-10 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all hover:bg-slate-100 focus:hover:bg-white disabled:opacity-50"
+                className="block w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-10 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all disabled:opacity-50"
                 placeholder="••••••••"
               />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(!showPassword)}
+              <button
+                type="button"
+                onClick={togglePassword}
+                onMouseDown={(e) => e.preventDefault()}
                 title={showPassword ? "Sembunyikan password" : "Tampilkan password"}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none z-10"
+                aria-label={showPassword ? "Sembunyikan password" : "Tampilkan password"}
               >
                 {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
               </button>
@@ -142,14 +151,14 @@ export default function LoginPage() {
         </form>
 
         {/* Footer Info */}
-        <div className="mt-8 flex flex-col items-center justify-center rounded-xl bg-orange-50/50 p-4 text-center">
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-orange-600">
+        <div className="mt-8 flex flex-col items-center justify-center rounded-xl bg-blue-50/50 p-4 text-center">
+          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-blue-600">
             <Info className="h-4 w-4" />
-            Pendaftaran Terpusat
+            Pendaftaran Sekolah
           </div>
           <p className="mt-2 text-sm text-slate-600">
-            Belum memiliki akun? <br className="sm:hidden" />
-            Silakan hubungi <Link href="#" className="font-semibold text-blue-600 hover:underline">Admin Sekolah</Link>
+            Belum memiliki akun sekolah? <br className="sm:hidden" />
+            <Link href="/register" className="font-semibold text-blue-600 hover:underline">Daftar sebagai Admin IT</Link>
           </p>
         </div>
       </div>

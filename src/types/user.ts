@@ -10,6 +10,8 @@ export interface User {
   email: string;
   full_name: string;
   role: UserRole;
+  organization_id?: string; // ID unik untuk setiap sekolah/ekosistem
+  organization_name?: string; // Nama sekolah/organisasi
   nip?: string | null;
   nisn?: string | null;
   status: UserStatus;
@@ -24,6 +26,8 @@ export interface UserFormData {
   full_name: string;
   password?: string;
   role: UserRole;
+  organization_id?: string;
+  organization_name?: string;
   nip?: string;
   nisn?: string;
   status: UserStatus;
@@ -64,6 +68,13 @@ export interface PaginationOptions {
 export interface UsersResponse {
   users: User[];
   total: number;
+}
+
+export interface UsersResponseWithStatus {
+  success: boolean;
+  users?: User[];
+  total?: number;
+  error?: string;
 }
 
 export interface CreateUserResponse {

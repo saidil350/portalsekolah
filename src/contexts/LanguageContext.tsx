@@ -32,8 +32,6 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return getTranslation(language, key);
   };
 
-  // Render children normally but don't apply translations if not mounted
-  // To avoid hydration mismatch if needed, but since we are mostly doing text, it's safer to just return children
   return (
     <LanguageContext.Provider value={{ language, setLanguage: changeLanguage, t }}>
       {children}

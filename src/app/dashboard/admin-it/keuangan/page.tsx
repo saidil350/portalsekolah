@@ -36,6 +36,27 @@ export default function KeuanganPage() {
   const [rates, setRates] = useState({ grade10: '450.000', grade11: '475.000', grade12: '500.000' });
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
 
+  // Incomplete profiles pagination
+  const [incompletePage, setIncompletePage] = useState(1);
+  const incompleteLimit = 5;
+  const incompleteTotal = 12; // Sample total
+
+  // Sample incomplete students data
+  const incompleteStudents = [
+    { name: 'Samuel Kevin', nisn: '0045678901', grade: t('admin.finance.sample.gradeXA'), status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Linda Wijaya', nisn: '0056789012', grade: t('admin.finance.sample.gradeXIIB'), status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'Aug 2026' },
+    { name: 'Ahmad Rizky', nisn: '0067890123', grade: 'Kelas XI-A', status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Siti Aminah', nisn: '0078901234', grade: 'Kelas X-B', status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'Jul 2026' },
+    { name: 'Budi Santoso', nisn: '0089012345', grade: 'Kelas XII-A', status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Dewi Lestari', nisn: '0090123456', grade: 'Kelas X-C', status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'Jun 2026' },
+    { name: 'Eko Prasetyo', nisn: '0101234567', grade: 'Kelas XI-C', status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Fitri Handayani', nisn: '0112345678', grade: 'Kelas XII-B', status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'May 2026' },
+    { name: 'Gunawan Widodo', nisn: '0123456789', grade: 'Kelas XI-B', status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Hartono Yudi', nisn: '0134567890', grade: 'Kelas X-A', status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'Apr 2026' },
+    { name: 'Indah Sari', nisn: '0145678901', grade: 'Kelas XII-C', status: t('admin.finance.incomplete.status.noRate'), lastPayment: t('admin.finance.incomplete.status.none') },
+    { name: 'Joko Susilo', nisn: '0156789012', grade: 'Kelas XI-A', status: t('admin.finance.incomplete.status.noRate'), lastPayment: 'Mar 2026' },
+  ];
+
   const handleSaveRates = () => {
     setSaveState('saving');
     setTimeout(() => {
@@ -316,7 +337,7 @@ export default function KeuanganPage() {
               </div>
 
               <div className="w-full overflow-x-auto">
-                <div className="w-full min-w-[800px]">
+                <div className="w-full">
                   <div className="bg-slate-50/50 grid grid-cols-[1.5fr_1fr_1fr_1.5fr_1fr] border-b border-slate-100">
                     {[
                       t('admin.finance.incomplete.table.student'),
@@ -325,42 +346,54 @@ export default function KeuanganPage() {
                       t('admin.finance.incomplete.table.lastPayment'),
                       t('admin.finance.incomplete.table.action')
                     ].map((h, i) => (
-                      <div key={h} className={`px-6 py-4 ${i === 4 ? 'text-right' : ''}`}>
-                        <span className="text-slate-500 text-xs font-bold uppercase tracking-wider">{h}</span>
+                      <div key={h} className={`px-4 py-3 ${i === 4 ? 'text-right' : ''}`}>
+                        <span className="text-slate-500 text-xs font-bold uppercase tracking-wider whitespace-nowrap">{h}</span>
                       </div>
                     ))}
                   </div>
 
-                  <div className="grid grid-cols-[1.5fr_1fr_1fr_1.5fr_1fr] border-b border-slate-50 items-center hover:bg-slate-50/50 transition-colors">
-                    <div className="px-6 py-4 flex flex-col">
-                       <span className="text-slate-900 text-sm font-medium">Samuel Kevin</span>
-                       <span className="text-slate-500 text-xs">ID: 202300421</span>
+                  {incompleteStudents
+                    .slice((incompletePage - 1) * incompleteLimit, incompletePage * incompleteLimit)
+                    .map((student, index) => (
+                    <div key={index} className="grid grid-cols-[1.5fr_1fr_1fr_1.5fr_1fr] border-b border-slate-50 items-center hover:bg-slate-50/50 transition-colors">
+                      <div className="px-4 py-3 flex flex-col">
+                         <span className="text-slate-900 text-sm font-medium">{student.name}</span>
+                         <span className="text-slate-500 text-xs whitespace-nowrap">NISN: {student.nisn}</span>
+                      </div>
+                      <div className="px-4 py-3"><span className="text-slate-500 text-sm whitespace-nowrap">{student.grade}</span></div>
+                      <div className="px-4 py-3">
+                        <span className="inline-flex bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap">{student.status}</span>
+                      </div>
+                      <div className="px-4 py-3"><span className="text-slate-500 text-sm whitespace-nowrap">{student.lastPayment}</span></div>
+                      <div className="px-4 py-3 flex justify-end">
+                        <button type="button" className="text-primary text-sm font-medium hover:text-primary-dark active:scale-[0.95] transition-all whitespace-nowrap">{t('admin.finance.incomplete.action.assign')}</button>
+                      </div>
                     </div>
-                    <div className="px-6 py-4"><span className="text-slate-500 text-sm">{t('admin.finance.sample.gradeXA')}</span></div>
-                    <div className="px-6 py-4">
-                      <span className="inline-flex bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-medium">{t('admin.finance.incomplete.status.noRate')}</span>
-                    </div>
-                    <div className="px-6 py-4"><span className="text-slate-500 text-sm">{t('admin.finance.incomplete.status.none')}</span></div>
-                    <div className="px-6 py-4 flex justify-end">
-                      <button type="button" className="text-primary text-sm font-medium hover:text-primary-dark active:scale-[0.95] transition-all">{t('admin.finance.incomplete.action.assign')}</button>
-                    </div>
-                  </div>
+                  ))}
 
-                  <div className="grid grid-cols-[1.5fr_1fr_1fr_1.5fr_1fr] items-center hover:bg-slate-50/50 transition-colors">
-                    <div className="px-6 py-4 flex flex-col">
-                       <span className="text-slate-900 text-sm font-medium">Linda Wijaya</span>
-                       <span className="text-slate-500 text-xs">ID: 202300445</span>
-                    </div>
-                    <div className="px-6 py-4"><span className="text-slate-500 text-sm">{t('admin.finance.sample.gradeXIIB')}</span></div>
-                    <div className="px-6 py-4">
-                       <span className="inline-flex bg-amber-100 text-amber-800 px-2.5 py-0.5 rounded-full text-xs font-medium">{t('admin.finance.incomplete.status.noRate')}</span>
-                    </div>
-                    <div className="px-6 py-4"><span className="text-slate-500 text-sm">Aug 2023</span></div>
-                    <div className="px-6 py-4 flex justify-end">
-                      <button type="button" className="text-primary text-sm font-medium hover:text-primary-dark active:scale-[0.95] transition-all">{t('admin.finance.incomplete.action.assign')}</button>
-                    </div>
-                  </div>
-                  
+                </div>
+              </div>
+
+              {/* Pagination Footer */}
+              <div className="bg-slate-50/50 border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+                <p className="text-xs text-slate-500">
+                  {t('admin.finance.incomplete.pagination.showing')} <span className="font-semibold text-slate-900">{Math.min((incompletePage - 1) * incompleteLimit + 1, incompleteTotal)}</span> {t('admin.finance.incomplete.pagination.to')} <span className="font-semibold text-slate-900">{Math.min(incompletePage * incompleteLimit, incompleteTotal)}</span> {t('admin.finance.incomplete.pagination.of')} <span className="font-semibold text-slate-900">{incompleteTotal}</span> {t('admin.finance.incomplete.pagination.students')}
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setIncompletePage(prev => Math.max(1, prev - 1))}
+                    disabled={incompletePage <= 1}
+                    className="px-3 py-1.5 border border-slate-200 bg-white text-slate-600 text-xs font-medium rounded hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {t('admin.finance.incomplete.pagination.prev')}
+                  </button>
+                  <button
+                    onClick={() => setIncompletePage(prev => Math.min(Math.ceil(incompleteTotal / incompleteLimit), prev + 1))}
+                    disabled={incompletePage >= Math.ceil(incompleteTotal / incompleteLimit)}
+                    className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-medium rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {t('admin.finance.incomplete.pagination.next')}
+                  </button>
                 </div>
               </div>
 

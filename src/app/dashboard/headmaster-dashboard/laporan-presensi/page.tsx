@@ -5,6 +5,7 @@ import {
   ChevronDown,
   AlertTriangle,
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 // Data kehadiran per kelas
 const kelasData = [
@@ -38,6 +39,8 @@ function getKehadiranColor(persen: number) {
 }
 
 export default function LaporanPresensiPage() {
+  const { t } = useLanguage();
+
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
       <div className="flex-1 overflow-y-auto p-12">
@@ -46,33 +49,33 @@ export default function LaporanPresensiPage() {
           {/* Header */}
           <div className="flex items-end justify-between">
             <div className="flex flex-col gap-2">
-              <h2 className="text-slate-900 text-4xl font-bold tracking-tight">Laporan Presensi Siswa</h2>
+              <h2 className="text-slate-900 text-4xl font-bold tracking-tight">{t('headmaster.attendanceReport.title')}</h2>
               <p className="text-slate-500 text-base leading-6">
-                Monitoring kehadiran siswa secara berkala untuk deteksi dini ketidakhadiran<br />kronis.
+                {t('headmaster.attendanceReport.subtitle')}
               </p>
             </div>
             <div className="flex flex-col gap-3 items-start">
               {/* Filters */}
               <div className="flex items-center gap-4">
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Rentang Waktu</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t('headmaster.attendanceReport.filter.range')}</label>
                   <div className="relative">
-                    <select title="Pilih Rentang Waktu" className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[140px]">
-                      <option>Semester Ini</option>
-                      <option>Bulan Ini</option>
-                      <option>Minggu Ini</option>
+                    <select title={t('headmaster.attendanceReport.filter.range')} className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[140px]">
+                      <option>{t('headmaster.attendanceReport.filter.range.semester')}</option>
+                      <option>{t('headmaster.attendanceReport.filter.range.month')}</option>
+                      <option>{t('headmaster.attendanceReport.filter.range.week')}</option>
                     </select>
                     <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                   </div>
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tingkat Kelas</label>
+                  <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{t('headmaster.attendanceReport.filter.level')}</label>
                   <div className="relative">
-                    <select title="Pilih Tingkat Kelas" className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[120px]">
-                      <option>Semua</option>
-                      <option>Kelas 10</option>
-                      <option>Kelas 11</option>
-                      <option>Kelas 12</option>
+                    <select title={t('headmaster.attendanceReport.filter.level')} className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-8 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer min-w-[120px]">
+                      <option>{t('headmaster.attendanceReport.filter.level.all')}</option>
+                      <option>{t('headmaster.academicReport.level').replace('{value}', '10')}</option>
+                      <option>{t('headmaster.academicReport.level').replace('{value}', '11')}</option>
+                      <option>{t('headmaster.academicReport.level').replace('{value}', '12')}</option>
                     </select>
                     <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
                   </div>
@@ -86,18 +89,18 @@ export default function LaporanPresensiPage() {
             {/* Chart Header */}
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Rata-rata Kehadiran Per Kelas</h3>
-                <p className="text-sm text-slate-500 mt-0.5">Perbandingan persentase kehadiran antar kelas pada semester ini.</p>
+                <h3 className="text-lg font-bold text-slate-900">{t('headmaster.attendanceReport.chart.title')}</h3>
+                <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.attendanceReport.chart.subtitle')}</p>
               </div>
               {/* Legend */}
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-primary" />
-                  <span className="text-xs font-medium text-slate-500">Hadir</span>
+                  <span className="text-xs font-medium text-slate-500">{t('headmaster.attendanceReport.chart.legend.present')}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-slate-200" />
-                  <span className="text-xs font-medium text-slate-500">Ketidakhadiran</span>
+                  <span className="text-xs font-medium text-slate-500">{t('headmaster.attendanceReport.chart.legend.absent')}</span>
                 </div>
               </div>
             </div>
@@ -153,79 +156,81 @@ export default function LaporanPresensiPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <AlertTriangle className="w-[22px] h-[19px] text-red-500" />
-                  <h3 className="text-lg font-bold text-slate-900">Deteksi Ketidakhadiran Kronis</h3>
+                  <h3 className="text-lg font-bold text-slate-900">{t('headmaster.attendanceReport.table.title')}</h3>
                 </div>
-                <p className="text-sm text-slate-500 mt-0.5">Siswa dengan persentase kehadiran di bawah ambang batas (80%).</p>
+                <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.attendanceReport.table.subtitle')}</p>
               </div>
               <div className="bg-red-50 px-3 py-1.5 rounded-lg">
-                <span className="text-xs font-semibold text-red-600">Ditemukan 4 Siswa</span>
+                <span className="text-xs font-semibold text-red-600">{t('headmaster.attendanceReport.table.found').replace('{value}', '4')}</span>
               </div>
             </div>
 
             {/* Table */}
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-50">
-                  <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Nama Siswa</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Kelas</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Sakit</th>
-                  <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Total Izin</th>
-                  <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Alpha</th>
-                  <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">Tingkat Kehadiran</th>
-                </tr>
-              </thead>
-              <tbody>
-                {siswaKronis.map((siswa, i) => {
-                  const style = getKehadiranColor(siswa.kehadiran);
-                  return (
-                    <tr key={i} className="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
-                            <span className="text-xs font-bold text-slate-600">{siswa.inisial}</span>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50">
+                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.name')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.class')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.sick')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.permit')}</th>
+                    <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.alpha')}</th>
+                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.attendanceReport.table.rate')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {siswaKronis.map((siswa, i) => {
+                    const style = getKehadiranColor(siswa.kehadiran);
+                    return (
+                      <tr key={i} className="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+                        <td className="px-6 py-5">
+                          <div className="flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                              <span className="text-xs font-bold text-slate-600">{siswa.inisial}</span>
+                            </div>
+                            <span className="text-sm font-semibold text-slate-900">{siswa.nama}</span>
                           </div>
-                          <span className="text-sm font-semibold text-slate-900">{siswa.nama}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="text-sm font-medium text-slate-600">{siswa.kelas}</span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="text-sm text-slate-600">{siswa.sakit}</span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <span className="text-sm text-slate-600">{siswa.izin}</span>
-                      </td>
-                      <td className="px-6 py-5 text-center">
-                        <span className="text-sm font-bold text-red-500">{siswa.alpha}</span>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex flex-col items-end gap-1">
-                          <span className={`text-sm font-bold ${
-                            siswa.color === 'red' ? 'text-red-600' : 'text-orange-600'
-                          }`}>
-                            {siswa.kehadiran}%
-                          </span>
-                          <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                            <div
-                              className={`h-full rounded-full transition-all duration-500 ${
-                                siswa.color === 'red' ? 'bg-red-500' : 'bg-orange-500'
-                              }`}
-                              style={{ width: `${siswa.kehadiran}%` } as React.CSSProperties}
-                            />
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className="text-sm font-medium text-slate-600">{siswa.kelas}</span>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className="text-sm text-slate-600">{siswa.sakit}</span>
+                        </td>
+                        <td className="px-6 py-5">
+                          <span className="text-sm text-slate-600">{siswa.izin}</span>
+                        </td>
+                        <td className="px-6 py-5 text-center">
+                          <span className="text-sm font-bold text-red-500">{siswa.alpha}</span>
+                        </td>
+                        <td className="px-6 py-5">
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={`text-sm font-bold ${
+                              siswa.color === 'red' ? 'text-red-600' : 'text-orange-600'
+                            }`}>
+                              {siswa.kehadiran}%
+                            </span>
+                            <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${
+                                  siswa.color === 'red' ? 'bg-red-500' : 'bg-orange-500'
+                                }`}
+                                style={{ width: `${siswa.kehadiran}%` } as React.CSSProperties}
+                              />
+                            </div>
                           </div>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
 
             {/* Footer */}
             <div className="bg-slate-50 border-t border-slate-100 px-4 py-4">
               <p className="text-xs text-slate-500 text-center">
-                Data ini diperbarui secara otomatis dari sistem presensi harian guru. Silakan hubungi Wali Kelas untuk tindak lanjut.
+                {t('headmaster.attendanceReport.footer.desc')}
               </p>
             </div>
           </div>

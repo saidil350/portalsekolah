@@ -109,7 +109,7 @@ export interface DeleteResponse {
 // CONFIGURATION TYPES
 // =====================================================
 
-export interface StatusConfig {
+export interface AcademicStatusConfig {
   value: boolean;
   label: string;
   color: string;
@@ -117,7 +117,7 @@ export interface StatusConfig {
   dotColor: string;
 }
 
-export const STATUS_CONFIGS: StatusConfig[] = [
+export const ACADEMIC_STATUS_CONFIGS: AcademicStatusConfig[] = [
   {
     value: true,
     label: 'Aktif',
@@ -135,8 +135,8 @@ export const STATUS_CONFIGS: StatusConfig[] = [
 ];
 
 // Helper function to get status config
-export function getStatusConfig(isActive: boolean): StatusConfig {
-  return STATUS_CONFIGS.find(config => config.value === isActive) || STATUS_CONFIGS[1];
+export function getAcademicStatusConfig(isActive: boolean): AcademicStatusConfig {
+  return ACADEMIC_STATUS_CONFIGS.find(config => config.value === isActive) || ACADEMIC_STATUS_CONFIGS[1];
 }
 
 // Helper function to format date for display

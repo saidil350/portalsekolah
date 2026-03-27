@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Image from 'next/image';
+import { MoreVertical } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function AdminDashboardPage() {
@@ -77,14 +78,14 @@ export default function AdminDashboardPage() {
               {/* Card 4 */}
               <div className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 flex flex-col gap-4">
                 <div className="flex justify-between items-start">
-                  <div className="w-[34px] h-[35px] relative shrink-0"><Image src="/1ddcb6763d4cfdba17f459c3e1534494cf6406d9.svg" alt="" fill className="object-contain" /></div>
-                  <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
-                    <div className="w-[15.6px] h-[11.6px] relative shrink-0"><Image src="/96968f064388b36a6ea6c0326725c2d8be2d0927.svg" alt="" fill className="object-contain" /></div> +0.1%
+                  <div className="w-[34px] h-[35px] relative shrink-0"><Image src="/dbb984409e768d210175b26d825d1ae8d9ae80b2.svg" alt="" fill className="object-contain" /></div>
+                  <span className="flex items-center text-xs font-semibold text-blue-600 bg-blue-50 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
+                    <div className="w-[15.6px] h-[7px] relative shrink-0"><Image src="/f93d432540a1ad7a9f84b150eca379bf108dbcf4.svg" alt="" fill className="object-contain" /></div> +8
                   </span>
                 </div>
                 <div>
-                  <p className="text-text-sub text-sm font-medium">{t('admin.db.systemUptime')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">99.9%</h3>
+                  <p className="text-text-sub text-sm font-medium">{t('admin.db.unpaidBills')}</p>
+                  <h3 className="text-text-main text-3xl font-bold mt-1">156</h3>
                 </div>
               </div>
             </div>
@@ -203,12 +204,12 @@ export default function AdminDashboardPage() {
                           </div>
                           <div>
                             <p className="font-medium text-text-main text-sm">{t('admin.name.ahmad')}</p>
-                            <p className="text-text-sub text-xs">ID: 2023001</p>
+                            <p className="text-text-sub text-xs">NISN: 0045678901</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xa')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.oct2023')}</td>
+                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.feb2026')}</td>
                       <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 450.000</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
@@ -216,8 +217,8 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button title={t('admin.action.more')} className="text-slate-400 hover:text-primary transition-colors cursor-pointer w-4 h-4 flex items-center justify-center relative">
-                          <Image src="/dbd69db3b66ca3b767a44b5e1817cf567d34021e.svg" alt="More" fill className="object-contain pointer-events-none" />
+                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
+                          <MoreVertical className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
@@ -229,12 +230,12 @@ export default function AdminDashboardPage() {
                           </div>
                           <div>
                             <p className="font-medium text-text-main text-sm">{t('admin.name.siti')}</p>
-                            <p className="text-text-sub text-xs">ID: 2023045</p>
+                            <p className="text-text-sub text-xs">NISN: 0056789012</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xib')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.oct2023')}</td>
+                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.mar2026')}</td>
                       <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 450.000</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -242,8 +243,8 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button title={t('admin.action.more')} className="text-slate-400 hover:text-primary transition-colors cursor-pointer w-4 h-4 flex items-center justify-center relative">
-                          <Image src="/dbd69db3b66ca3b767a44b5e1817cf567d34021e.svg" alt="More" fill className="object-contain pointer-events-none" />
+                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
+                          <MoreVertical className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>
@@ -255,12 +256,12 @@ export default function AdminDashboardPage() {
                           </div>
                           <div>
                             <p className="font-medium text-text-main text-sm">{t('admin.name.budi')}</p>
-                            <p className="text-text-sub text-xs">ID: 2023089</p>
+                            <p className="text-text-sub text-xs">NISN: 0067890123</p>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xiic')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.sep2023')}</td>
+                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.jan2026')}</td>
                       <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 500.000</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
@@ -268,8 +269,8 @@ export default function AdminDashboardPage() {
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">
-                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer">
-                          <span className="material-symbols-outlined text-[20px]">more_vert</span>
+                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
+                          <MoreVertical className="h-4 w-4" />
                         </button>
                       </td>
                     </tr>

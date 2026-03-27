@@ -27,13 +27,20 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Ambil user auth saat ini agar cookie dapat diperbarui
-  const { data: { user } } = await supabase.auth.getUser()
-
-  // Cek autentikasi untuk route yang dilindungi
-  const isAuthenticated = !!user
+  // Tentukan rute terlebih dahulu sebelum memanggil API eksternal
   const isLoginPage = request.nextUrl.pathname === '/login'
   const isDashboardRoute = request.nextUrl.pathname.startsWith('/dashboard')
+  const isAuthCallback = request.nextUrl.pathname.startsWith('/auth')
+
+  // Hanya ambil user jika kita berada di rute yang memerlukan pengecekan session/role
+  // ATAU jika kita ingin memperbarui cookie secara umum (opsional, tapi skip untuk landing page demi kecepatan)
+  let user = null
+  if (isDashboardRoute || isLoginPage || isAuthCallback) {
+    const { data: { user: authUser } } = await supabase.auth.getUser()
+    user = authUser
+  }
+
+  const isAuthenticated = !!user
 
   // Redirect user yang belum login dari dashboard ke halaman login
   if (isDashboardRoute && !isAuthenticated) {

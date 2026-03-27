@@ -22,7 +22,7 @@ import {
   deleteDepartment
 } from './actions'
 import type { AcademicYear, ClassLevel, Department } from '@/types/academic'
-import { getStatusConfig, formatDateRange } from '@/types/academic'
+import { getAcademicStatusConfig as getStatusConfig, formatDateRange } from '@/types/academic'
 
 type TabType = 'years' | 'subjects' | 'levels' | 'departments'
 
