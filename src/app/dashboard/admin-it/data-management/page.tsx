@@ -151,22 +151,42 @@ export default function DataManagementPage() {
     setClassesLoading(true);
     setClassesError('');
     try {
-      // Import dynamically to avoid circular dependency
-      const { fetchClasses } = await import('./actions');
-      const result = await fetchClasses({
-        search: classesSearch,
-        class_level_id: classesLevelFilter,
-        department_id: classesDeptFilter,
-        page: classesPage,
-        limit: 12
-      });
+      const { createClient } = await import('@/utils/supabase/client');
+      const supabase = createClient();
 
-      if (result.success && result.data) {
-        setClasses(result.data);
-        setClassesTotal(result.total || 0);
-      } else {
-        setClassesError(result.error || 'Gagal memuat data kelas');
+      let query = supabase
+        .from('classes')
+        .select(`
+          *,
+          class_level:class_levels(*),
+          department:departments(*),
+          wali_kelas:profiles!classes_wali_kelas_id_fkey(id, full_name)
+        `, { count: 'exact' });
+
+      // Apply filters
+      if (classesSearch) {
+        query = query.or(`name.ilike.%${classesSearch}%,code.ilike.%${classesSearch}%`);
       }
+      if (classesLevelFilter) {
+        query = query.eq('class_level_id', classesLevelFilter);
+      }
+      if (classesDeptFilter) {
+        query = query.eq('department_id', classesDeptFilter);
+      }
+
+      // Pagination
+      const from = (classesPage - 1) * 12;
+      const to = from + 12 - 1;
+
+      const { data, error, count } = await query
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .range(from, to);
+
+      if (error) throw error;
+
+      setClasses(data || []);
+      setClassesTotal(count || 0);
     } catch (err: any) {
       setClassesError(err.message || 'Gagal memuat data kelas');
     } finally {
@@ -353,14 +373,18 @@ export default function DataManagementPage() {
   // CRUD operations for Classes
   const handleDeleteClass = async (id: string) => {
     try {
-      const { deleteClass } = await import('./actions');
-      const result = await deleteClass(id);
-      if (result.success) {
-        showToast('Kelas berhasil dihapus', 'success');
-        fetchClassesData();
-      } else {
-        throw new Error(result.error);
-      }
+      const { createClient } = await import('@/utils/supabase/client');
+      const supabase = createClient();
+
+      const { error } = await supabase
+        .from('classes')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      showToast('Kelas berhasil dihapus', 'success');
+      fetchClassesData();
     } catch (err: any) {
       showToast(err.message || 'Gagal menghapus kelas', 'error');
     }

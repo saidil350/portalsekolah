@@ -22,14 +22,77 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
     setError('')
 
     try {
-      const { fetchClassRosterView } = await import('@/app/dashboard/admin-it/kelas-dan-roster/actions')
-      const result = await fetchClassRosterView(classId)
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
 
-      if (result.success && result.data) {
-        setRosterData(result.data)
-      } else {
-        setError(result.error || 'Gagal memuat data kelas')
+      // Fetch class info
+      const { data: classData, error: classError } = await supabase
+        .from('classes')
+        .select(`
+          *,
+          class_level:class_levels(*),
+          department:departments(*),
+          home_room:rooms(*),
+          wali_kelas:profiles!classes_wali_kelas_id_fkey(*)
+        `)
+        .eq('id', classId)
+        .single()
+
+      if (classError) throw classError
+
+      // Fetch enrolled students
+      const { data: enrollmentsData, error: enrollmentsError } = await supabase
+        .from('enrollments')
+        .select('student:profiles!enrollments_student_id_fkey(*)')
+        .eq('class_id', classId)
+        .eq('status', 'ACTIVE')
+
+      if (enrollmentsError) throw enrollmentsError
+
+      const students = enrollmentsData?.map((e: any) => e.student) || []
+
+      // Fetch schedules
+      const { data: schedulesData, error: schedulesError } = await supabase
+        .from('class_schedules')
+        .select(`
+          *,
+          subject:subjects(*),
+          teacher:profiles!class_schedules_teacher_id_fkey(*),
+          room:rooms(*)
+        `)
+        .eq('class_id', classId)
+        .eq('is_active', true)
+        .order('day_of_week')
+        .order('start_time')
+
+      if (schedulesError) throw schedulesError
+
+      // Get unique teachers and subjects
+      const uniqueTeachers = Array.from(
+        new Map(schedulesData?.map((s: any) => [s.teacher?.id, s.teacher]).filter(Boolean) || [])
+      ).map(([_, teacher]) => teacher)
+
+      const uniqueSubjects = Array.from(
+        new Map(schedulesData?.map((s: any) => [s.subject?.id, s.subject]).filter(Boolean) || [])
+      ).map(([_, subject]) => subject)
+
+      // Calculate statistics
+      const statistics = {
+        total_students: students.length,
+        total_teachers: uniqueTeachers.length,
+        total_subjects: uniqueSubjects.length,
+        total_hours_per_week: 0, // Can be calculated if needed
+        occupancy_rate: classData ? (classData.current_enrollment / classData.capacity) * 100 : 0,
       }
+
+      setRosterData({
+        class_info: classData,
+        students: students,
+        schedules: schedulesData || [],
+        teachers: uniqueTeachers,
+        subjects: uniqueSubjects,
+        statistics: statistics as any,
+      })
     } catch (err: any) {
       console.error('Error fetching roster:', err)
       setError(err.message || 'Gagal memuat data kelas')

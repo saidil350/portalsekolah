@@ -56,43 +56,60 @@ export default function HeadmasterClassOverviewPage() {
     setError('')
 
     try {
-      const { fetchClasses } = await import('@/app/dashboard/admin-it/kelas-dan-roster/actions')
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
 
-      const filters = {
-        search,
-        class_level_id: levelFilter,
-        department_id: departmentFilter
+      let query = supabase
+        .from('classes')
+        .select(`
+          *,
+          class_level:class_levels(*),
+          department:departments(*),
+          wali_kelas:profiles!classes_wali_kelas_id_fkey(id, full_name)
+        `)
+
+      // Apply filters
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`)
+      }
+      if (levelFilter) {
+        query = query.eq('class_level_id', levelFilter)
+      }
+      if (departmentFilter) {
+        query = query.eq('department_id', departmentFilter)
       }
 
-      const result = await fetchClasses(filters)
+      const { data, error } = await query.eq('is_active', true)
 
-      if (result.success && result.data) {
-        setClasses(result.data)
+      if (error) throw error
 
-        // Calculate statistics
-        const totalStudents = result.data.reduce((sum, cls) => sum + cls.current_enrollment, 0)
-        const avgOccupancy = result.data.length > 0
-          ? Math.round(result.data.reduce((sum, cls) => sum + (cls.occupancy_rate || 0), 0) / result.data.length)
-          : 0
+      // Calculate occupancy rate
+      const classesWithOccupancy = (data || []).map((cls) => ({
+        ...cls,
+        occupancy_rate: cls.capacity > 0 ? Math.round((cls.current_enrollment / cls.capacity) * 100) : 0,
+      }))
 
-        // Get total teachers count
-        const { createClient } = await import('@/utils/supabase/client')
-        const supabase = createClient()
-        const { count } = await supabase
-          .from('profiles')
-          .select('*', { count: 'exact', head: true })
-          .eq('role', 'GURU')
-          .eq('is_active', true)
+      setClasses(classesWithOccupancy as Class[])
 
-        setStats({
-          total_classes: result.data.length,
-          total_students: totalStudents,
-          total_teachers: count || 0,
-          average_occupancy: avgOccupancy
-        })
-      } else {
-        setError(result.error || 'Gagal memuat data')
-      }
+      // Calculate statistics
+      const totalStudents = classesWithOccupancy.reduce((sum, cls) => sum + cls.current_enrollment, 0)
+      const avgOccupancy = classesWithOccupancy.length > 0
+        ? Math.round(classesWithOccupancy.reduce((sum, cls) => sum + (cls.occupancy_rate || 0), 0) / classesWithOccupancy.length)
+        : 0
+
+      // Get total teachers count
+      const { count } = await supabase
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'GURU')
+        .eq('is_active', true)
+
+      setStats({
+        total_classes: classesWithOccupancy.length,
+        total_students: totalStudents,
+        total_teachers: count || 0,
+        average_occupancy: avgOccupancy
+      })
     } catch (err: any) {
       console.error('Error fetching data:', err)
       setError(err.message || 'Gagal memuat data')

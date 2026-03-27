@@ -7,7 +7,17 @@
       "Bash(tasklist:*)",
       "Bash(findstr:*)",
       "Bash(taskkill:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "Bash(npm run build:*)",
+      "Bash(test:*)",
+      "Bash(git commit:*)",
+      "Bash(find src/app/dashboard -name \"page.tsx\" -type f -exec grep -l \"^''''use client''''\" {})",
+      "Bash(while read:*)",
+      "Bash(do if:*)",
+      "Bash(then echo:*)",
+      "Read(//d/github/portalsekolah/**)",
+      "Bash(fi)",
+      "Bash(git add:*)"
     ],
     "deny": [],
     "ask": []
