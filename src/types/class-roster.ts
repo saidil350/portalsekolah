@@ -3,28 +3,13 @@
 // Based on new database hierarchy: TA → Semester → Jurusan → Kelas
 // =====================================================
 
-// =====================================================
-// ACADEMIC YEAR TYPES
-// =====================================================
-
-export interface AcademicYear {
-  id: string;
-  name: string; // "2024/2025"
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  description?: string | null;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface AcademicYearFormData {
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  description?: string;
-}
+// Re-export shared types to maintain compatibility
+export type {
+  AcademicYear,
+  ClassLevel,
+  Department,
+  Profile as User
+} from './shared';
 
 // =====================================================
 // SEMESTER TYPES
@@ -51,46 +36,30 @@ export interface SemesterFormData {
 }
 
 // =====================================================
-// DEPARTMENT (JURUSAN) TYPES
+// FORM DATA TYPES
 // =====================================================
 
-export interface Department {
-  id: string;
-  name: string; // "Rekayasa Perangkat Lunak"
-  code: string; // "RPL"
-  description?: string | null;
+export interface AcademicYearFormData {
+  name: string;
+  start_date: string;
+  end_date: string;
   is_active: boolean;
-  created_at: string;
-  updated_at: string;
+  description?: string;
+}
+
+export interface ClassLevelFormData {
+  name: string;
+  code: string;
+  level_order: number;
+  description?: string;
+  is_active: boolean;
 }
 
 export interface DepartmentFormData {
   name: string;
   code: string;
   description?: string;
-  is_active: boolean;
-}
-
-// =====================================================
-// CLASS LEVEL (TINGKAT KELAS) TYPES
-// =====================================================
-
-export interface ClassLevel {
-  id: string;
-  name: string; // "Kelas X", "Kelas XI", "Kelas XII"
-  code: string; // "X", "XI", "XII"
-  level: number; // 10, 11, 12
-  description?: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface ClassLevelFormData {
-  name: string;
-  code: string;
-  level: number;
-  description?: string;
+  head_id?: string;
   is_active: boolean;
 }
 

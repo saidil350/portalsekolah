@@ -446,11 +446,6 @@ interface Department {
   name: string
 }
 
-interface AcademicYear {
-  id: string
-  name: string
-}
-
 interface DropdownDataResponse {
   success: boolean
   departments?: Department[]
@@ -499,18 +494,6 @@ export async function fetchSubjectDropdownData(): Promise<DropdownDataResponse> 
 // =====================================================
 // MASTER DATA ACTIONS - Academic Years, Semesters, Class Levels, Departments
 // =====================================================
-
-// Types for master data
-export interface AcademicYear {
-  id: string
-  name: string
-  start_date: string
-  end_date: string
-  is_active: boolean
-  description?: string | null
-  created_at: string
-  updated_at: string
-}
 
 export interface AcademicYearFormData {
   name: string

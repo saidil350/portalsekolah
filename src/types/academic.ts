@@ -2,21 +2,20 @@
 // ACADEMIC DATA TYPES
 // =====================================================
 
+// Re-export shared types to maintain backward compatibility
+export type {
+  ClassLevel,
+  Department,
+  Room,
+  Subject,
+  AcademicYear,
+  Semester,
+  Profile
+} from './shared';
+
 // =====================================================
 // ACADEMIC YEARS TYPES
 // =====================================================
-
-export interface AcademicYear {
-  id: string;
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  description?: string | null;
-  created_at: string;
-  updated_at: string;
-  created_by?: string | null;
-}
 
 export interface AcademicYearFormData {
   name: string;
@@ -30,17 +29,6 @@ export interface AcademicYearFormData {
 // CLASS LEVELS TYPES
 // =====================================================
 
-export interface ClassLevel {
-  id: string;
-  name: string;
-  code: string;
-  level_order: number;
-  description?: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface ClassLevelFormData {
   name: string;
   code: string;
@@ -52,17 +40,6 @@ export interface ClassLevelFormData {
 // =====================================================
 // DEPARTMENTS TYPES
 // =====================================================
-
-export interface Department {
-  id: string;
-  name: string;
-  code: string;
-  description?: string | null;
-  head_id?: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
 
 export interface DepartmentFormData {
   name: string;
