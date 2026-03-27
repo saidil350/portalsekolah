@@ -1,13 +1,11 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { ArrowLeft, Users, Calendar, BookOpen, ChalkboardTeacher, MapPin, Clock, Loader2, Plus, Edit2, Trash2 } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, Users, Calendar, BookOpen, GraduationCap, MapPin, Clock, Loader2, Plus, Trash2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useLanguage } from '@/contexts/LanguageContext'
-import { fetchClassRosterView, fetchEnrollments, enrollStudent, withdrawStudent } from '../actions'
-import type { Class, ClassSchedule, User } from '@/types/class-roster'
-import { getDayName, formatTimeRange, getOccupancyBadge } from '@/types/class-roster'
-import { getSubjectTypeConfig } from '@/types/data-management'
+import { fetchClassRosterView, enrollStudent, withdrawStudent } from '../actions'
+import type { ClassSchedule } from '@/types/class-roster'
+import { getOccupancyBadge } from '@/types/class-roster'
 import dynamic from 'next/dynamic'
 
 // Dynamically import modals to avoid SSR issues
@@ -16,10 +14,32 @@ const AddStudentModal = dynamic(() => import('@/components/dashboard/add-student
   loading: () => <div className="p-4 text-center">Loading...</div>
 })
 
-export default function ClassDetailPage({ params }: { params: { classId: string } }) {
+export default function ClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
   const router = useRouter()
-  const { t } = useLanguage()
-  const { classId } = params
+  const [classId, setClassId] = useState<string>('')
+  const [resolved, setResolved] = useState(false)
+
+  useEffect(() => {
+    params.then((p) => {
+      setClassId(p.classId)
+      setResolved(true)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (resolved && classId) {
+      fetchRoster()
+    }
+  }, [classId, resolved])
+
+  if (!resolved) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <span className="ml-3 text-slate-600">Memuat...</span>
+      </div>
+    )
+  }
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -95,6 +115,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
         </div>
         <p className="text-red-600 font-medium mb-4">{error}</p>
         <button
+          type="button"
           onClick={() => router.back()}
           className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
         >
@@ -108,7 +129,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
     return null
   }
 
-  const { class_info, students, schedules, teachers, subjects, statistics } = rosterData
+  const { class_info, students, schedules, teachers, statistics } = rosterData
   const badge = getOccupancyBadge(class_info.current_enrollment, class_info.capacity)
 
   // Prepare schedule grid (5 days x 7 time slots)
@@ -126,7 +147,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
   days.forEach(day => {
     scheduleGrid[day.value] = {}
     timeSlots.forEach(time => {
-      const schedule = schedules.find(s => s.day_of_week === day.value && s.start_time === time)
+      const schedule = schedules.find((s: any) => s.day_of_week === day.value && s.start_time === time)
       scheduleGrid[day.value][time] = schedule || null
     })
   })
@@ -138,6 +159,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-4">
           <button
+            type="button"
             onClick={() => router.back()}
             className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 transition-colors"
           >
@@ -166,6 +188,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
 
           <div className="flex items-center gap-3">
             <button
+              type="button"
               onClick={() => setShowAddStudentModal(true)}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all shadow-sm shadow-primary/30"
             >
@@ -217,7 +240,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
                   <p className="text-xs text-blue-600">Siswa</p>
                 </div>
                 <div className="text-center p-3 bg-purple-50 rounded-lg">
-                  <ChalkboardTeacher className="w-5 h-5 text-purple-600 mx-auto mb-1" />
+                  <GraduationCap className="w-5 h-5 text-purple-600 mx-auto mb-1" />
                   <p className="text-2xl font-bold text-purple-600">{statistics.total_teachers}</p>
                   <p className="text-xs text-purple-600">Guru</p>
                 </div>
@@ -246,14 +269,14 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
                     Belum ada siswa di kelas ini
                   </div>
                 ) : (
-                  students.map((student) => (
+                  students.map((student: any) => (
                     <div
                       key={student.id}
                       className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          {student.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                          {student.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
                           <p className="text-sm font-medium text-slate-900">{student.full_name}</p>
@@ -261,6 +284,7 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
                         </div>
                       </div>
                       <button
+                        type="button"
                         onClick={() => handleWithdrawStudent(student.enrollment_id)}
                         className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-md transition-all"
                         title="Keluarkan siswa"
@@ -332,17 +356,17 @@ export default function ClassDetailPage({ params }: { params: { classId: string 
             {/* Teachers List */}
             <div className="mt-6 p-6 border-t border-slate-100">
               <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <ChalkboardTeacher className="w-4 h-4" />
+                <GraduationCap className="w-4 h-4" />
                 Guru Pengajar ({statistics.total_teachers})
               </h3>
               <div className="flex flex-wrap gap-2">
-                {teachers.map((teacher) => (
+                {teachers.map((teacher: any) => (
                   <div
                     key={teacher.id}
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
                   >
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
-                      {teacher.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
+                      {teacher.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
                     <span className="text-xs font-medium text-slate-900">{teacher.full_name}</span>
                   </div>

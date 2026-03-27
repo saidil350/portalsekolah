@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { ArrowLeft, Plus, Users, Calendar, BookOpen, Loader2, Search, Filter } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { fetchClasses } from './actions'
+import { fetchClasses, fetchFilterDropdownData } from './actions'
 import type { Class, ClassFilters } from '@/types/class-roster'
 import { getOccupancyBadge } from '@/types/class-roster'
 
@@ -67,26 +67,12 @@ export default function KelasDanRosterPage() {
 
   const fetchDropdownData = async () => {
     try {
-      const { createClient } = await import('@/utils/supabase/server')
-      const supabase = await createClient()
+      const result = await fetchFilterDropdownData()
 
-      // Fetch class levels
-      const { data: levelsData } = await supabase
-        .from('class_levels')
-        .select('id, name, code')
-        .eq('is_active', true)
-        .order('level_order')
-
-      if (levelsData) setClassLevels(levelsData as ClassLevel[])
-
-      // Fetch departments
-      const { data: deptData } = await supabase
-        .from('departments')
-        .select('id, name, code')
-        .eq('is_active', true)
-        .order('name')
-
-      if (deptData) setDepartments(deptData as Department[])
+      if (result.success) {
+        setClassLevels(result.classLevels as ClassLevel[])
+        setDepartments(result.departments as Department[])
+      }
     } catch (err) {
       console.error('Error fetching dropdown data:', err)
     }

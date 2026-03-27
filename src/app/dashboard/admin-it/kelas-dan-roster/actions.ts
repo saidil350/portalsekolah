@@ -973,3 +973,49 @@ function getDayName(dayOfWeek: number): string {
 function formatTimeRange(startTime: string, endTime: string): string {
   return `${startTime} - ${endTime}`
 }
+
+// =====================================================
+// DROPDOWN FILTER DATA
+// =====================================================
+
+/**
+ * Fetch dropdown data for filters (class levels and departments)
+ * This is a server action that can be called from client components
+ */
+export async function fetchFilterDropdownData() {
+  try {
+    const supabase = await createClient()
+
+    // Fetch class levels
+    const { data: levelsData, error: levelsError } = await supabase
+      .from('class_levels')
+      .select('id, name, code')
+      .eq('is_active', true)
+      .order('level_order')
+
+    if (levelsError) throw levelsError
+
+    // Fetch departments
+    const { data: deptData, error: deptError } = await supabase
+      .from('departments')
+      .select('id, name, code')
+      .eq('is_active', true)
+      .order('name')
+
+    if (deptError) throw deptError
+
+    return {
+      success: true,
+      classLevels: levelsData || [],
+      departments: deptData || []
+    }
+  } catch (error: any) {
+    console.error('Error fetching filter dropdown data:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal memuat data filter',
+      classLevels: [],
+      departments: []
+    }
+  }
+}
