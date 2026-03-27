@@ -402,7 +402,7 @@ export default function UserManagementPage() {
                           </td>
                           <td className="py-4 px-6 text-sm text-slate-500">{formatLastLogin(user.last_login ?? null)}</td>
                           <td className="py-4 px-6 text-right">
-                            <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <div className="flex items-center justify-end gap-1">
                               <button
                                 className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
                                 title={t('admin.userManagement.action.view')}

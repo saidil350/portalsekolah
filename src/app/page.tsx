@@ -48,8 +48,8 @@ export default function LandingPage() {
         {/* Hero Section */}
         <section className="relative overflow-hidden pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pb-32">
           {/* Background decoration */}
-          <div className="absolute top-0 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:top-[-20rem] sm:ml-16 sm:translate-x-0" aria-hidden="true">
-            <div className="aspect-[1097/845] w-[68.5625rem] bg-gradient-to-tr from-[#ff4694] to-[#776fff] opacity-20" style={{ clipPath: 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)' }}></div>
+          <div className="absolute top-0 left-1/2 -z-10 -translate-x-1/2 transform-gpu blur-3xl sm:-top-80 sm:ml-16 sm:translate-x-0" aria-hidden="true">
+            <div className="aspect-1097/845 w-274.25 bg-linear-to-tr from-[#ff4694] to-[#776fff] opacity-20" style={{ clipPath: 'polygon(74.1% 44.1%, 100% 61.6%, 97.5% 26.9%, 85.5% 0.1%, 80.7% 2%, 72.5% 32.5%, 60.2% 62.4%, 52.4% 68.1%, 47.5% 58.3%, 45.2% 34.5%, 27.5% 76.7%, 0.1% 64.9%, 17.9% 100%, 27.6% 76.8%, 76.1% 97.7%, 74.1% 44.1%)' }}></div>
           </div>
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
             
@@ -109,10 +109,12 @@ export default function LandingPage() {
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                     <BookOpen className="h-6 w-6 text-blue-600" />
                   </div>
-                  <dt className="text-xl font-semibold leading-7 text-slate-900">Akademik Terpadu</dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">Kelola kurikulum, jadwal pelajaran, nilai, dan rapor siswa dalam satu platform yang mudah diakses oleh guru.</p>
-                  </dd>
+                  <dl>
+                    <dt className="text-xl font-semibold leading-7 text-slate-900">Akademik Terpadu</dt>
+                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                      <p className="flex-auto">Kelola kurikulum, jadwal pelajaran, nilai, dan rapor siswa dalam satu platform yang mudah diakses oleh guru.</p>
+                    </dd>
+                  </dl>
                 </div>
 
                 {/* Feature 2 */}
@@ -120,10 +122,12 @@ export default function LandingPage() {
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-green-100">
                     <Wallet className="h-6 w-6 text-green-600" />
                   </div>
-                  <dt className="text-xl font-semibold leading-7 text-slate-900">Manajemen Keuangan</dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">Otomatisasi tagihan SPP, pembayaran online gateway, dan pelaporan keuangan yang transparan dan akurat.</p>
-                  </dd>
+                  <dl>
+                    <dt className="text-xl font-semibold leading-7 text-slate-900">Manajemen Keuangan</dt>
+                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                      <p className="flex-auto">Otomatisasi tagihan SPP, pembayaran online gateway, dan pelaporan keuangan yang transparan dan akurat.</p>
+                    </dd>
+                  </dl>
                 </div>
 
                 {/* Feature 3 */}
@@ -131,10 +135,12 @@ export default function LandingPage() {
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-purple-100">
                     <Clock className="h-6 w-6 text-purple-600" />
                   </div>
-                  <dt className="text-xl font-semibold leading-7 text-slate-900">Presensi Real-time</dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">Pantau kehadiran siswa dan staf secara real-time dengan integrasi mesin fingerprint atau aplikasi mobile GPS.</p>
-                  </dd>
+                  <dl>
+                    <dt className="text-xl font-semibold leading-7 text-slate-900">Presensi Real-time</dt>
+                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                      <p className="flex-auto">Pantau kehadiran siswa dan staf secara real-time dengan integrasi mesin fingerprint atau aplikasi mobile GPS.</p>
+                    </dd>
+                  </dl>
                 </div>
 
                 {/* Feature 4 */}
@@ -142,10 +148,12 @@ export default function LandingPage() {
                   <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg bg-orange-100">
                     <BarChart3 className="h-6 w-6 text-orange-600" />
                   </div>
-                  <dt className="text-xl font-semibold leading-7 text-slate-900">Laporan Cerdas</dt>
-                  <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
-                    <p className="flex-auto">Dashboard analitik komprehensif untuk membantu kepala sekolah mengambil keputusan strategis berbasis data.</p>
-                  </dd>
+                  <dl>
+                    <dt className="text-xl font-semibold leading-7 text-slate-900">Laporan Cerdas</dt>
+                    <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                      <p className="flex-auto">Dashboard analitik komprehensif untuk membantu kepala sekolah mengambil keputusan strategis berbasis data.</p>
+                    </dd>
+                  </dl>
                 </div>
 
               </div>
@@ -188,7 +196,7 @@ export default function LandingPage() {
                 Bergabunglah dengan ratusan sekolah yang telah beralih ke sistem digital kami. Jadwalkan demo gratis hari ini tanpa komitmen.
               </p>
               <div className="mt-10 flex items-center justify-center gap-x-6">
-                <Link href="/demo" className="rounded-md bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors">
+                <Link href="/demo" className="rounded-md bg-blue-600 px-8 py-3.5 text-base font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors">
                   Jadwalkan Demo Gratis
                 </Link>
                 <Link href="/sales" className="text-base font-semibold leading-6 text-white hover:text-blue-300 transition-colors">
@@ -196,7 +204,7 @@ export default function LandingPage() {
                 </Link>
               </div>
               {/* Optional background decoration for CTA */}
-              <svg viewBox="0 0 1024 1024" className="absolute top-1/2 left-1/2 -z-10 h-[64rem] w-[64rem] -translate-x-1/2 [mask-image:radial-gradient(closest-side,white,transparent)]" aria-hidden="true">
+              <svg viewBox="0 0 1024 1024" className="absolute top-1/2 left-1/2 -z-10 h-256 w-5xl -translate-x-1/2 mask-[radial-gradient(closest-side,white,transparent)]" aria-hidden="true">
                 <circle cx="512" cy="512" r="512" fill="url(#827591b1-ce8c-4110-b064-7cb85a0b1217)" fillOpacity="0.7"></circle>
                 <defs>
                   <radialGradient id="827591b1-ce8c-4110-b064-7cb85a0b1217">
@@ -227,9 +235,9 @@ export default function LandingPage() {
                 Solusi manajemen sekolah #1 di Indonesia yang terpercaya, aman, dan mudah digunakan.
               </p>
               <div className="flex gap-4">
-                <a href="#" className="text-slate-400 hover:text-blue-600 transition-colors"><Twitter className="h-5 w-5"/></a>
-                <a href="#" className="text-slate-400 hover:text-pink-600 transition-colors"><Instagram className="h-5 w-5"/></a>
-                <a href="#" className="text-slate-400 hover:text-blue-800 transition-colors"><Linkedin className="h-5 w-5"/></a>
+                <a href="#" className="text-slate-400 hover:text-blue-600 transition-colors" aria-label="Twitter"><Twitter className="h-5 w-5"/></a>
+                <a href="#" className="text-slate-400 hover:text-pink-600 transition-colors" aria-label="Instagram"><Instagram className="h-5 w-5"/></a>
+                <a href="#" className="text-slate-400 hover:text-blue-800 transition-colors" aria-label="Linkedin"><Linkedin className="h-5 w-5"/></a>
               </div>
             </div>
 
@@ -266,7 +274,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
             <p className="text-sm text-slate-500">
-              © 2024 SIAKAD Plus. All rights reserved.
+              © 2026 SIAKAD Plus. All rights reserved.
             </p>
             <p className="text-sm text-slate-500">
                Jakarta, Indonesia
