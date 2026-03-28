@@ -3,65 +3,47 @@
 // Based on new database hierarchy: TA → Semester → Jurusan → Kelas
 // =====================================================
 
-// Re-export shared types to maintain compatibility
+// =====================================================
+// IMPORTS - Internal use
+// =====================================================
+
+import type {
+  ClassLevel,
+  Department,
+  AcademicYear,
+  Semester
+} from './shared';
+
+import type {
+  Room,
+  Subject
+} from './data-management';
+
+import type {
+  User
+} from './user';
+
+// =====================================================
+// RE-EXPORTS - For external consumers
+// =====================================================
+
 export type {
   AcademicYear,
   ClassLevel,
   Department,
-  Profile as User
+  Semester,
+  Profile as User,
+  AcademicYearFormData,
+  ClassLevelFormData,
+  DepartmentFormData
 } from './shared';
 
-// =====================================================
-// SEMESTER TYPES
-// =====================================================
-
-export interface Semester {
-  id: string;
-  academic_year_id: string;
-  name: string; // "Ganjil", "Genap"
-  semester_number: 1 | 2;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  created_at: string;
-}
-
-export interface SemesterFormData {
-  academic_year_id: string;
-  name: string;
-  semester_number: 1 | 2;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-}
-
-// =====================================================
-// FORM DATA TYPES
-// =====================================================
-
-export interface AcademicYearFormData {
-  name: string;
-  start_date: string;
-  end_date: string;
-  is_active: boolean;
-  description?: string;
-}
-
-export interface ClassLevelFormData {
-  name: string;
-  code: string;
-  level_order: number;
-  description?: string;
-  is_active: boolean;
-}
-
-export interface DepartmentFormData {
-  name: string;
-  code: string;
-  description?: string;
-  head_id?: string;
-  is_active: boolean;
-}
+export type {
+  Room,
+  RoomFormData,
+  Subject,
+  SubjectFormData
+} from './data-management';
 
 // =====================================================
 // CLASS (ROMBEL) TYPES
@@ -86,6 +68,10 @@ export interface Class {
   capacity: number; // Max 36-40 murid
   current_enrollment: number; // Auto-update via trigger
 
+  // Computed fields
+  total_hours_per_week?: number; // Total jam mengajar per minggu
+  occupancy_rate?: number; // Persentase isi kelas
+
   // Status
   is_active: boolean;
   description?: string | null;
@@ -104,7 +90,6 @@ export interface Class {
   wali_kelas?: User | null;
 
   // Computed fields
-  occupancy_rate?: number; // (current_enrollment / capacity) * 100
   occupancy_badge?: 'FULL' | 'AVAILABLE' | 'LOW';
 }
 
@@ -138,62 +123,6 @@ export interface ClassResponse {
   data?: Class[];
   total?: number;
   error?: string;
-}
-
-// =====================================================
-// SUBJECT (MATA PELAJARAN) TYPES
-// =====================================================
-
-export interface Subject {
-  id: string;
-  name: string;
-  code: string; // "MTK-101", "BIN-101"
-  subject_type: 'MANDATORY' | 'OPTIONAL' | 'EXTRACURRICULAR';
-  credit_hours: number; // SKS / jam per minggu
-  department_id?: string | null; // NULL = lintas jurusan
-  description?: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface SubjectFormData {
-  name: string;
-  code: string;
-  subject_type: 'MANDATORY' | 'OPTIONAL' | 'EXTRACURRICULAR';
-  credit_hours: number;
-  department_id?: string;
-  description?: string;
-  is_active: boolean;
-}
-
-// =====================================================
-// ROOM (RUANGAN) TYPES
-// =====================================================
-
-export interface Room {
-  id: string;
-  name: string; // "Ruang Kelas 10A"
-  code: string; // "RK-10A"
-  room_type: 'CLASSROOM' | 'LAB' | 'WORKSHOP' | 'OFFICE' | 'OTHER';
-  capacity: number;
-  floor?: number;
-  building?: string | null; // "Gedung A"
-  facilities?: string[] | null; // ['Projector', 'AC', 'Computer']
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-export interface RoomFormData {
-  name: string;
-  code: string;
-  room_type: 'CLASSROOM' | 'LAB' | 'WORKSHOP' | 'OFFICE' | 'OTHER';
-  capacity: number;
-  floor?: number;
-  building?: string;
-  facilities?: string[];
-  is_active: boolean;
 }
 
 // =====================================================
@@ -256,9 +185,9 @@ export interface ClassSchedule {
   academic_year_id: string;
 
   // Waktu
-  hari: DayOfWeek; // 1-7
-  jam_mulai: string; // HH:mm format
-  jam_selesai: string; // HH:mm format
+  day_of_week: DayOfWeek; // 1-7
+  start_time: string; // HH:mm format
+  end_time: string; // HH:mm format
 
   // Status
   is_active: boolean;
@@ -278,8 +207,8 @@ export interface ClassSchedule {
   academic_year?: AcademicYear | null;
 
   // Computed fields
-  hari_name?: string; // 'Senin', 'Selasa', etc.
-  waktu_range?: string; // '07:00 - 08:30'
+  day_name?: string; // 'Senin', 'Selasa', etc.
+  time_range?: string; // '07:00 - 08:30'
 }
 
 export interface ClassScheduleFormData {
@@ -287,11 +216,12 @@ export interface ClassScheduleFormData {
   subject_id: string;
   teacher_id: string;
   room_id?: string;
+  semester?: string;
   semester_id?: string;
   academic_year_id: string;
-  hari: DayOfWeek;
-  jam_mulai: string;
-  jam_selesai: string;
+  day_of_week: DayOfWeek;
+  start_time: string;
+  end_time: string;
   is_active?: boolean;
   notes?: string;
 }
@@ -301,9 +231,9 @@ export interface ClassScheduleFilters {
   teacher_id?: string;
   subject_id?: string;
   room_id?: string;
-  hari?: DayOfWeek;
+  day_of_week?: DayOfWeek;
   academic_year_id?: string;
-  semester_id?: string;
+  semester?: string;
   is_active?: boolean;
 }
 
@@ -321,7 +251,7 @@ export interface ClassScheduleResponse {
 export interface ClassRosterView {
   class_info: Class;
   students: User[];
-  schedules: ClassSchedule[][];
+  schedules: ClassSchedule[];
   teachers: User[];
   subjects: Subject[];
   statistics: {
@@ -519,8 +449,3 @@ export function calculateOccupancyRate(enrollment: number, capacity: number): nu
 // =====================================================
 // IMPORTS FROM OTHER TYPE FILES
 // =====================================================
-
-import type { User } from './user';
-
-// Re-export for convenience
-export type { User } from './user';

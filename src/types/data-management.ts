@@ -2,25 +2,18 @@
 // DATA MANAGEMENT TYPES
 // =====================================================
 
+// Import base types to extend
+import type { Room as BaseRoom, Subject as BaseSubject } from './shared';
+
 // =====================================================
 // ROOM TYPES
 // =====================================================
 
 export type RoomType = 'CLASSROOM' | 'LAB' | 'OFFICE' | 'AUDITORIUM' | 'OTHER';
 
-export interface Room {
-  id: string;
-  name: string;
-  code: string;
+export interface Room extends BaseRoom {
   room_type: RoomType;
-  capacity: number;
   floor: number;
-  building?: string | null;
-  facilities?: string[] | null;
-  description?: string | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
   created_by?: string | null;
 }
 
@@ -42,19 +35,12 @@ export interface RoomFormData {
 
 export type SubjectType = 'MANDATORY' | 'ELECTIVE' | 'EXTRACURRICULAR';
 
-export interface Subject {
-  id: string;
-  name: string;
-  code: string;
+export interface Subject extends BaseSubject {
   subject_type: SubjectType;
   credit_hours: number;
   department_id?: string | null;
   academic_year_id?: string | null;
-  description?: string | null;
   prerequisites?: string[] | null;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
   created_by?: string | null;
 }
 

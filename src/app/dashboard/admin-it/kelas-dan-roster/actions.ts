@@ -18,6 +18,7 @@ import type {
   ViewClassRosterComplete,
   DayOfWeek,
 } from '@/types/class-roster'
+import type { CreateResponse, UpdateResponse } from '@/types'
 import type { User } from '@/types/user'
 
 // =====================================================
@@ -110,7 +111,7 @@ export async function fetchClasses(
 /**
  * Create new class
  */
-export async function createClass(formData: ClassFormData): Promise<ClassResponse> {
+export async function createClass(formData: ClassFormData): Promise<CreateResponse<Class>> {
   console.log('=== CREATE CLASS START ===')
   console.log('Form data received:', JSON.stringify(formData, null, 2))
 
@@ -227,7 +228,7 @@ export async function createClass(formData: ClassFormData): Promise<ClassRespons
 /**
  * Update existing class
  */
-export async function updateClass(id: string, formData: Partial<ClassFormData>): Promise<ClassResponse> {
+export async function updateClass(id: string, formData: Partial<ClassFormData>): Promise<UpdateResponse<Class>> {
   try {
     const supabase = await createClient()
 
@@ -349,7 +350,7 @@ export async function enrollStudent(
   classId: string,
   studentId: string,
   academicYearId?: string
-): Promise<EnrollmentResponse> {
+): Promise<CreateResponse<Enrollment>> {
   try {
     const supabase = await createClient()
 
@@ -561,7 +562,7 @@ export async function fetchClassSchedules(
 /**
  * Create class schedule
  */
-export async function createClassSchedule(formData: ClassScheduleFormData): Promise<ClassScheduleResponse> {
+export async function createClassSchedule(formData: ClassScheduleFormData): Promise<CreateResponse<ClassSchedule>> {
   try {
     const supabase = await createClient()
 
@@ -627,7 +628,7 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
 export async function updateClassSchedule(
   id: string,
   formData: Partial<ClassScheduleFormData>
-): Promise<ClassScheduleResponse> {
+): Promise<UpdateResponse<ClassSchedule>> {
   try {
     const supabase = await createClient()
 
@@ -770,12 +771,12 @@ export async function fetchClassRosterView(classId: string): Promise<{
 
     // Get unique teachers
     const uniqueTeachers = Array.from(
-      new Map(schedulesData?.map((s: any) => [s.teacher.id, s.teacher]).filter(Boolean) || [])
+      new Map(schedulesData?.map((s: any) => [s.teacher.id, s.teacher] as [string, any]).filter(Boolean) || [])
     ).map(([_, teacher]) => teacher)
 
     // Get unique subjects
     const uniqueSubjects = Array.from(
-      new Map(schedulesData?.map((s: any) => [s.subject.id, s.subject]).filter(Boolean) || [])
+      new Map(schedulesData?.map((s: any) => [s.subject.id, s.subject] as [string, any]).filter(Boolean) || [])
     ).map(([_, subject]) => subject)
 
     // Calculate statistics
@@ -798,7 +799,7 @@ export async function fetchClassRosterView(classId: string): Promise<{
       data: {
         class_info: classData as Class,
         students: students as User[],
-        schedules: schedulesData as ClassSchedule[][],
+        schedules: schedulesData as ClassSchedule[],
         teachers: uniqueTeachers as User[],
         subjects: uniqueSubjects,
         statistics,

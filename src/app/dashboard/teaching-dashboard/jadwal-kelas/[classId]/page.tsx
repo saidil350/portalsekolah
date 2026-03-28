@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { ArrowLeft, Calendar, Users, BookOpen, Clock, MapPin, Loader2, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ClassRosterView, ClassSchedule } from '@/types/class-roster'
+import type { User, Subject } from '@/types'
 
 export default function TeacherClassDetailPage({ params }: { params: { classId: string } }) {
   const router = useRouter()
@@ -69,11 +70,11 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
 
       // Get unique teachers and subjects
       const uniqueTeachers = Array.from(
-        new Map(schedulesData?.map((s: any) => [s.teacher?.id, s.teacher]).filter(Boolean) || [])
+        new Map(schedulesData?.map((s: any) => [s.teacher?.id, s.teacher] as [string, any]).filter(Boolean) || [])
       ).map(([_, teacher]) => teacher)
 
       const uniqueSubjects = Array.from(
-        new Map(schedulesData?.map((s: any) => [s.subject?.id, s.subject]).filter(Boolean) || [])
+        new Map(schedulesData?.map((s: any) => [s.subject?.id, s.subject] as [string, any]).filter(Boolean) || [])
       ).map(([_, subject]) => subject)
 
       // Calculate statistics
@@ -89,8 +90,8 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
         class_info: classData,
         students: students,
         schedules: schedulesData || [],
-        teachers: uniqueTeachers,
-        subjects: uniqueSubjects,
+        teachers: (uniqueTeachers || []) as User[],
+        subjects: (uniqueSubjects || []) as Subject[],
         statistics: statistics as any,
       })
     } catch (err: any) {

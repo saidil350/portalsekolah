@@ -85,3 +85,31 @@ export interface Profile {
   updated_at: string;
   last_login?: string;
 }
+
+// =====================================================
+// FORM DATA TYPES
+// =====================================================
+
+export interface AcademicYearFormData {
+  name: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  description?: string;
+}
+
+export interface ClassLevelFormData {
+  name: string;
+  code: string;
+  level_order: number;
+  description?: string;
+  is_active: boolean;
+}
+
+export interface DepartmentFormData {
+  name: string;
+  code: string;
+  description?: string;
+  head_id?: string;
+  is_active: boolean;
+}

@@ -11,8 +11,9 @@ import type {
   DataManagementResponse,
   CreateResponse,
   UpdateResponse,
-  DeleteResponse
-} from '@/types/data-management'
+  DeleteResponse,
+  AcademicYear
+} from '@/types'
 
 // =====================================================
 // ROOMS ACTIONS

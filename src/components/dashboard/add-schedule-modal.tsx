@@ -65,7 +65,7 @@ export default function AddScheduleModal({
     start_time: '07:00',
     end_time: '08:30',
     academic_year_id: classAcademicYearId || '',
-    semester: 1,
+    semester: '',
     is_active: true
   })
 
@@ -131,15 +131,14 @@ export default function AddScheduleModal({
 
     setCheckingAvailability(true)
     try {
-      const result = await checkScheduleAvailability({
-        day_of_week: formData.day_of_week,
-        start_time: formData.start_time,
-        end_time: formData.end_time,
-        exclude_schedule_id: undefined
-      })
+      const result = await checkScheduleAvailability(
+        formData.day_of_week,
+        formData.start_time,
+        formData.end_time
+      )
 
       if (result.success) {
-        setAvailabilityStatus(result.data?.teacher_availability || [])
+        setAvailabilityStatus(result.available_teachers || [])
       }
     } catch (err) {
       console.error('Error checking availability:', err)
@@ -245,7 +244,7 @@ export default function AddScheduleModal({
       start_time: '07:00',
       end_time: '08:30',
       academic_year_id: classAcademicYearId || '',
-      semester: 1,
+      semester: '',
       is_active: true
     })
     setError('')
@@ -308,7 +307,7 @@ export default function AddScheduleModal({
                     <button
                       key={day.value}
                       type="button"
-                      onClick={() => setFormData(prev => ({ ...prev, day_of_week: day.value }))}
+                      onClick={() => setFormData(prev => ({ ...prev, day_of_week: day.value as 1 | 2 | 3 | 4 | 5 | 6 | 7 }))}
                       className={`py-3 px-4 rounded-lg font-medium transition-all ${
                         formData.day_of_week === day.value
                           ? 'bg-blue-600 text-white'
@@ -453,9 +452,9 @@ export default function AddScheduleModal({
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, semester: 1 }))}
+                    onClick={() => setFormData(prev => ({ ...prev, semester: 'Ganjil' }))}
                     className={`py-3 px-4 rounded-lg font-medium transition-all ${
-                      formData.semester === 1
+                      formData.semester === 'Ganjil'
                         ? 'bg-blue-600 text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
@@ -464,9 +463,9 @@ export default function AddScheduleModal({
                   </button>
                   <button
                     type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, semester: 2 }))}
+                    onClick={() => setFormData(prev => ({ ...prev, semester: 'Genap' }))}
                     className={`py-3 px-4 rounded-lg font-medium transition-all ${
-                      formData.semester === 2
+                      formData.semester === 'Genap'
                         ? 'bg-blue-600 text-white'
                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                     }`}
