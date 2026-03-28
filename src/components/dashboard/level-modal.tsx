@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from 'react'
 import { X, Loader2, GraduationCap, CheckCircle2, AlertCircle } from 'lucide-react'
 import type { ClassLevel, ClassLevelFormData } from '@/types/academic'
-import { useLanguage } from '@/contexts/LanguageContext'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface LevelModalProps {
@@ -30,7 +29,6 @@ export default function LevelModal({
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const { t } = useLanguage()
 
   useEffect(() => {
     if (isOpen) {
@@ -84,8 +82,9 @@ export default function LevelModal({
     try {
       await onSubmit(formData)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan data')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Gagal menyimpan data'
+      setError(errorMessage)
     } finally {
       setLoading(false)
     }
