@@ -14,6 +14,7 @@ export type RoomType = 'CLASSROOM' | 'LAB' | 'OFFICE' | 'AUDITORIUM' | 'OTHER';
 export interface Room extends BaseRoom {
   room_type: RoomType;
   floor: number;
+  facilities?: string[] | null;
   created_by?: string | null;
 }
 
@@ -183,4 +184,4 @@ export function getSubjectTypeConfig(subjectType: SubjectType): SubjectTypeConfi
 }
 
 // Re-use STATUS_CONFIGS from academic.ts
-export { getAcademicStatusConfig as getStatusConfig, type AcademicStatusConfig as StatusConfig } from '@/types/academic';
+export { getAcademicStatusConfig as getStatusConfig } from '@/types/academic';

@@ -204,7 +204,7 @@ export default function LandingPage() {
               <div className="flex flex-col items-center justify-center gap-4 border-t border-slate-200 pt-8 sm:flex-row">
                 <motion.div
                   className="flex -space-x-3"
-                  whileHover={{ spaceX: -4 }}
+                  whileHover={{ x: -4 }}
                 >
                   {[1, 2, 3, 4].map((i) => (
                     <motion.img
@@ -899,8 +899,6 @@ export default function LandingPage() {
                       <motion.div
                         className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-linear-to-br text-white text-2xl font-bold"
                         style={{
-                          from: `bg-${member.color}-500`,
-                          to: `bg-${member.color}-600`,
                           backgroundColor: member.color === "blue" ? "rgb(37, 99, 235)" :
                                          member.color === "purple" ? "rgb(147, 51, 234)" :
                                          member.color === "green" ? "rgb(5, 150, 105)" :

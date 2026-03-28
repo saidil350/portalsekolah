@@ -69,6 +69,15 @@ export interface Semester {
   created_at: string;
 }
 
+export interface SemesterFormData {
+  academic_year_id: string;
+  name: string;
+  semester_number: 1 | 2;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+}
+
 export interface Profile {
   id: string;
   user_id: string;

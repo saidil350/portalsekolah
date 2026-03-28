@@ -17,7 +17,8 @@
       "Bash(then echo:*)",
       "Read(//d/github/portalsekolah/**)",
       "Bash(fi)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

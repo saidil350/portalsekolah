@@ -24,9 +24,9 @@ interface Room {
 }
 
 interface AvailabilityStatus {
-  teacher_id: string
-  is_available: boolean
-  conflict_details?: string
+  id: string
+  full_name: string
+  reason?: string
 }
 
 interface AddScheduleModalProps {
@@ -183,9 +183,9 @@ export default function AddScheduleModal({
     }
 
     // Check if teacher is available
-    const teacherStatus = availabilityStatus.find(s => s.teacher_id === formData.teacher_id)
-    if (teacherStatus && !teacherStatus.is_available) {
-      setError(`Guru tidak tersedia: ${teacherStatus.conflict_details}`)
+    const teacherStatus = availabilityStatus.find(s => s.id === formData.teacher_id)
+    if (teacherStatus && teacherStatus.reason) {
+      setError(`Guru tidak tersedia: ${teacherStatus.reason}`)
       return
     }
 
@@ -253,7 +253,7 @@ export default function AddScheduleModal({
   }
 
   const getTeacherAvailability = (teacherId: string) => {
-    return availabilityStatus.find(s => s.teacher_id === teacherId)
+    return availabilityStatus.find(s => s.id === teacherId)
   }
 
   if (!isOpen) return null
@@ -384,7 +384,7 @@ export default function AddScheduleModal({
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {teachers.map(teacher => {
                     const availability = getTeacherAvailability(teacher.id)
-                    const isAvailable = !availability || availability.is_available
+                    const isAvailable = !availability || !availability.reason
 
                     return (
                       <button

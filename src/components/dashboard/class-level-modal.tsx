@@ -2,22 +2,14 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Layers } from 'lucide-react'
+import type { ClassLevel, ClassLevelFormData } from '@/types'
 
-interface ClassLevel {
-  id: string
-  name: string
-  code: string
-  level: number
-  description?: string | null
-  is_active: boolean
-}
-
-interface ClassLevelFormData {
-  name: string
-  code: string
-  level: number
-  description?: string
-  is_active: boolean
+interface ClassLevelModalProps {
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (data: ClassLevelFormData) => Promise<void>
+  classLevel?: ClassLevel | null
+  mode: 'create' | 'edit'
 }
 
 interface ClassLevelModalProps {
@@ -38,7 +30,7 @@ export default function ClassLevelModal({
   const [formData, setFormData] = useState<ClassLevelFormData>({
     name: '',
     code: '',
-    level: 10,
+    level_order: 10,
     description: '',
     is_active: true
   })
@@ -52,7 +44,7 @@ export default function ClassLevelModal({
         setFormData({
           name: classLevel.name,
           code: classLevel.code,
-          level: classLevel.level,
+          level_order: classLevel.level_order,
           description: classLevel.description || '',
           is_active: classLevel.is_active
         })
@@ -61,7 +53,7 @@ export default function ClassLevelModal({
         setFormData({
           name: '',
           code: '',
-          level: 10,
+          level_order: 10,
           description: '',
           is_active: true
         })
@@ -81,7 +73,7 @@ export default function ClassLevelModal({
       newErrors.code = 'Kode tingkat kelas wajib diisi'
     }
 
-    if (formData.level < 10 || formData.level > 12) {
+    if (formData.level_order < 10 || formData.level_order > 12) {
       newErrors.level = 'Level harus antara 10-12'
     }
 
@@ -118,7 +110,7 @@ export default function ClassLevelModal({
     if (preset) {
       setFormData({
         ...formData,
-        level,
+        level_order: level,
         name: preset.name,
         code: preset.code
       })
@@ -166,7 +158,7 @@ export default function ClassLevelModal({
                 type="button"
                 onClick={() => handlePresetChange(10)}
                 className={`flex-1 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
-                  formData.level === 10
+                  formData.level_order === 10
                     ? 'bg-emerald-600 text-white border-emerald-600'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                 }`}
@@ -178,7 +170,7 @@ export default function ClassLevelModal({
                 type="button"
                 onClick={() => handlePresetChange(11)}
                 className={`flex-1 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
-                  formData.level === 11
+                  formData.level_order === 11
                     ? 'bg-emerald-600 text-white border-emerald-600'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                 }`}
@@ -190,7 +182,7 @@ export default function ClassLevelModal({
                 type="button"
                 onClick={() => handlePresetChange(12)}
                 className={`flex-1 px-4 py-2 border rounded-lg text-sm font-medium transition-colors ${
-                  formData.level === 12
+                  formData.level_order === 12
                     ? 'bg-emerald-600 text-white border-emerald-600'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
                 }`}
@@ -248,8 +240,8 @@ export default function ClassLevelModal({
             </label>
             <input
               type="number"
-              value={formData.level}
-              onChange={(e) => setFormData({ ...formData, level: parseInt(e.target.value) || 10 })}
+              value={formData.level_order}
+              onChange={(e) => setFormData({ ...formData, level_order: parseInt(e.target.value) || 10 })}
               min="10"
               max="12"
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${

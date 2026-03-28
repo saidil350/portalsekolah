@@ -1257,7 +1257,7 @@ export default function DataManagementPage() {
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                              <span className="text-slate-600 text-sm font-bold">{cl.level}</span>
+                                              <span className="text-slate-600 text-sm font-bold">{cl.level_order}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center gap-2">

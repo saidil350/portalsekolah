@@ -1,6 +1,22 @@
 // Export all types from individual modules
 export * from './user';
-export * from './shared';
+
+// Export from shared - selectively exclude Room and Subject
+// (use data-management versions which are complete types)
+export type {
+  // Academic types
+  AcademicYear,
+  ClassLevel,
+  Department,
+  Semester,
+  Profile,
+
+  // FormData types
+  AcademicYearFormData,
+  ClassLevelFormData,
+  DepartmentFormData,
+  SemesterFormData
+} from './shared';
 
 // Export from academic (excluding duplicates with data-management)
 export type {
@@ -13,7 +29,7 @@ export type {
   formatDateRange
 } from './academic';
 
-// Export from data-management (includes Room, Subject)
+// Export from data-management (includes complete Room & Subject)
 export * from './data-management';
 
 // Re-export from class-roster (excluding duplicates)

@@ -12,7 +12,13 @@ import type {
   CreateResponse,
   UpdateResponse,
   DeleteResponse,
-  AcademicYear
+  AcademicYear,
+  ClassLevel,
+  ClassLevelFormData,
+  Department,
+  DepartmentFormData,
+  Semester,
+  SemesterFormData
 } from '@/types'
 
 // =====================================================
@@ -442,14 +448,14 @@ export async function deleteSubject(id: string): Promise<DeleteResponse> {
 // DROPDOWN DATA ACTIONS
 // =====================================================
 
-interface Department {
+interface DepartmentDropdownData {
   id: string
   name: string
 }
 
 interface DropdownDataResponse {
   success: boolean
-  departments?: Department[]
+  departments?: DepartmentDropdownData[]
   academicYears?: AcademicYear[]
   error?: string
 }
@@ -502,62 +508,6 @@ export interface AcademicYearFormData {
   end_date: string
   is_active: boolean
   description?: string
-}
-
-export interface Semester {
-  id: string
-  academic_year_id: string
-  name: string
-  semester_number: 1 | 2
-  start_date: string
-  end_date: string
-  is_active: boolean
-  created_at: string
-}
-
-export interface SemesterFormData {
-  academic_year_id: string
-  name: string
-  semester_number: 1 | 2
-  start_date: string
-  end_date: string
-  is_active: boolean
-}
-
-export interface ClassLevel {
-  id: string
-  name: string
-  code: string
-  level: number
-  description?: string | null
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface ClassLevelFormData {
-  name: string
-  code: string
-  level: number
-  description?: string
-  is_active: boolean
-}
-
-export interface DepartmentData {
-  id: string
-  name: string
-  code: string
-  description?: string | null
-  is_active: boolean
-  created_at: string
-  updated_at: string
-}
-
-export interface DepartmentFormData {
-  name: string
-  code: string
-  description?: string
-  is_active: boolean
 }
 
 // =====================================================
@@ -932,7 +882,7 @@ export async function createClassLevel(formData: ClassLevelFormData): Promise<Cr
       return { success: false, error: 'Kode tingkat kelas wajib diisi' }
     }
 
-    if (formData.level < 10 || formData.level > 12) {
+    if (formData.level_order < 10 || formData.level_order > 12) {
       return { success: false, error: 'Level harus antara 10-12' }
     }
 
@@ -941,7 +891,7 @@ export async function createClassLevel(formData: ClassLevelFormData): Promise<Cr
       .insert({
         name: formData.name.trim(),
         code: formData.code.trim(),
-        level: formData.level,
+        level_order: formData.level_order,
         description: formData.description || null,
         is_active: formData.is_active
       })
@@ -972,7 +922,7 @@ export async function updateClassLevel(id: string, formData: Partial<ClassLevelF
     const updateData: any = {}
     if (formData.name) updateData.name = formData.name.trim()
     if (formData.code) updateData.code = formData.code.trim()
-    if (formData.level) updateData.level = formData.level
+    if (formData.level_order) updateData.level_order = formData.level_order
     if (formData.description !== undefined) updateData.description = formData.description || null
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
 
@@ -1029,7 +979,7 @@ export async function deleteClassLevel(id: string): Promise<DeleteResponse> {
 
 export async function fetchDepartments(
   filters: DataManagementFilters & { page?: number; limit?: number }
-): Promise<DataManagementResponse<DepartmentData>> {
+): Promise<DataManagementResponse<Department>> {
   try {
     const supabase = await createClient()
 
@@ -1058,7 +1008,7 @@ export async function fetchDepartments(
 
     return {
       success: true,
-      data: (data as DepartmentData[]) || [],
+      data: (data as Department[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -1070,7 +1020,7 @@ export async function fetchDepartments(
   }
 }
 
-export async function createDepartment(formData: DepartmentFormData): Promise<CreateResponse<DepartmentData>> {
+export async function createDepartment(formData: DepartmentFormData): Promise<CreateResponse<Department>> {
   try {
     const supabase = await createClient()
 
@@ -1103,7 +1053,7 @@ export async function createDepartment(formData: DepartmentFormData): Promise<Cr
 
     return {
       success: true,
-      data: data as DepartmentData
+      data: data as Department
     }
   } catch (error: any) {
     console.error('Error creating department:', error)
@@ -1114,7 +1064,7 @@ export async function createDepartment(formData: DepartmentFormData): Promise<Cr
   }
 }
 
-export async function updateDepartment(id: string, formData: Partial<DepartmentFormData>): Promise<UpdateResponse<DepartmentData>> {
+export async function updateDepartment(id: string, formData: Partial<DepartmentFormData>): Promise<UpdateResponse<Department>> {
   try {
     const supabase = await createClient()
 
@@ -1137,7 +1087,7 @@ export async function updateDepartment(id: string, formData: Partial<DepartmentF
 
     return {
       success: true,
-      data: data as DepartmentData
+      data: data as Department
     }
   } catch (error: any) {
     console.error('Error updating department:', error)
