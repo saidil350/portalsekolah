@@ -277,8 +277,7 @@ export default function AdminDashboardPage() {
                   </tbody>
                 </table>
               </div>
-            </div>
-            
+            </div>            
           </div>
         </div>
       </main>
