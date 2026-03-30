@@ -1,12 +1,43 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { MoreVertical } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
+interface DashboardStats {
+  totalStudents: number;
+  totalTeachers: number;
+  activeClasses: number;
+}
+
 export default function AdminDashboardPage() {
   const { t } = useLanguage();
+  const [stats, setStats] = useState<DashboardStats>({
+    totalStudents: 0,
+    totalTeachers: 0,
+    activeClasses: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const response = await fetch('/api/admin/stats');
+        const result = await response.json();
+
+        if (result.success) {
+          setStats(result.data);
+        }
+      } catch (error) {
+        console.error('Error fetching stats:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchStats();
+  }, []);
 
   return (
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
@@ -43,7 +74,9 @@ export default function AdminDashboardPage() {
                 </div>
                 <div>
                   <p className="text-text-sub text-sm font-medium">{t('admin.db.totalStudents')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">1,245</h3>
+                  <h3 className="text-text-main text-3xl font-bold mt-1">
+                    {loading ? '...' : stats.totalStudents.toLocaleString('id-ID')}
+                  </h3>
                 </div>
               </div>
 
@@ -57,7 +90,9 @@ export default function AdminDashboardPage() {
                 </div>
                 <div>
                   <p className="text-text-sub text-sm font-medium">{t('admin.db.totalTeachers')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">84</h3>
+                  <h3 className="text-text-main text-3xl font-bold mt-1">
+                    {loading ? '...' : stats.totalTeachers.toLocaleString('id-ID')}
+                  </h3>
                 </div>
               </div>
 
@@ -71,7 +106,9 @@ export default function AdminDashboardPage() {
                 </div>
                 <div>
                   <p className="text-text-sub text-sm font-medium">{t('admin.db.activeClasses')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">42</h3>
+                  <h3 className="text-text-main text-3xl font-bold mt-1">
+                    {loading ? '...' : stats.activeClasses.toLocaleString('id-ID')}
+                  </h3>
                 </div>
               </div>
 
