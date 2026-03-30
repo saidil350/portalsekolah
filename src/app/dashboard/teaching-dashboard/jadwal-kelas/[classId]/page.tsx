@@ -5,6 +5,7 @@ import { ArrowLeft, Calendar, Users, BookOpen, Clock, MapPin, Loader2, AlertCirc
 import { useRouter } from 'next/navigation'
 import type { ClassRosterView, ClassSchedule } from '@/types/class-roster'
 import type { User, Subject } from '@/types'
+import { detectScheduleColumnMode, getScheduleColumns, getScheduleSelect } from '@/utils/supabase/schedule-columns'
 
 export default function TeacherClassDetailPage({ params }: { params: { classId: string } }) {
   const router = useRouter()
@@ -25,6 +26,8 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
     try {
       const { createClient } = await import('@/utils/supabase/client')
       const supabase = createClient()
+      const scheduleMode = await detectScheduleColumnMode(supabase)
+      const scheduleColumns = getScheduleColumns(scheduleMode)
 
       // Fetch class info
       const { data: classData, error: classError } = await supabase
@@ -55,16 +58,15 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
       // Fetch schedules
       const { data: schedulesData, error: schedulesError } = await supabase
         .from('class_schedules')
-        .select(`
-          *,
+        .select(getScheduleSelect(scheduleMode, `
           subject:subjects(*),
           teacher:profiles!class_schedules_teacher_id_fkey(*),
           room:rooms(*)
-        `)
+        `))
         .eq('class_id', classId)
         .eq('is_active', true)
         .order('day_of_week')
-        .order('start_time')
+        .order(scheduleColumns.start)
 
       if (schedulesError) throw schedulesError
 
@@ -149,7 +151,8 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
   days.forEach(day => {
     scheduleGrid[day.value] = {}
     timeSlots.forEach(time => {
-      const schedule = schedules.find(s => s.day_of_week === day.value && s.start_time === time)
+      // Extract HH:mm from start_time (database stores "07:00:00", we need "07:00")
+      const schedule = schedules.find(s => s.day_of_week === day.value && s.start_time?.substring(0, 5) === time)
       scheduleGrid[day.value][time] = schedule || null
     })
   })

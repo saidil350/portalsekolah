@@ -18,7 +18,11 @@ import type {
   Department,
   DepartmentFormData,
   Semester,
-  SemesterFormData
+  SemesterFormData,
+  SubjectTeacher,
+  SubjectTeachersResponse,
+  TeacherRank,
+  TeacherRankCode
 } from '@/types'
 
 // =====================================================
@@ -1117,6 +1121,249 @@ export async function deleteDepartment(id: string): Promise<DeleteResponse> {
     return {
       success: false,
       error: error.message || 'Gagal menghapus jurusan'
+    }
+  }
+}
+
+// =====================================================
+// SUBJECT TEACHERS ACTIONS
+// =====================================================
+
+/**
+ * Fetch all teachers assigned to a subject
+ */
+export async function fetchSubjectTeachers(subjectId: string): Promise<SubjectTeachersResponse> {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('subject_teachers')
+      .select(`
+        *,
+        teacher:profiles!subject_teachers_teacher_id_fkey(
+          id,
+          full_name,
+          email,
+          nip
+        ),
+        teacher_rank:teacher_ranks(*)
+      `)
+      .eq('subject_id', subjectId)
+      .order('created_at', { ascending: true })
+
+    if (error) throw error
+
+    // Sort by teacher rank level (highest first)
+    const sortedData = (data as SubjectTeacher[])
+      .sort((a, b) => {
+        const levelA = a.teacher_rank?.level_order || 0;
+        const levelB = b.teacher_rank?.level_order || 0;
+        return levelB - levelA; // Descending order (UTAMA first)
+      });
+
+    return {
+      success: true,
+      data: sortedData || []
+    }
+  } catch (error: any) {
+    console.error('Error fetching subject teachers:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal memuat data guru pengajar'
+    }
+  }
+}
+
+/**
+ * Fetch all teachers (for dropdown)
+ */
+export async function fetchTeachersForDropdown(): Promise<any> {
+  try {
+    const supabase = await createClient()
+
+    // NOTE: is_active filter removed temporarily - add it back after running migration 006
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, nip')
+      .eq('role', 'GURU')
+      .order('full_name', { ascending: true })
+
+    if (error) throw error
+
+    return {
+      success: true,
+      teachers: data || []
+    }
+  } catch (error: any) {
+    console.error('Error fetching teachers:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal memuat data guru'
+    }
+  }
+}
+
+/**
+ * Fetch all teacher ranks
+ */
+export async function fetchTeacherRanks(): Promise<any> {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('teacher_ranks')
+      .select('*')
+      .eq('is_active', true)
+      .order('level_order', { ascending: true })
+
+    if (error) throw error
+
+    return {
+      success: true,
+      teacherRanks: data || []
+    }
+  } catch (error: any) {
+    console.error('Error fetching teacher ranks:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal memuat data tingkat guru'
+    }
+  }
+}
+
+/**
+ * Assign a teacher to a subject
+ */
+export async function assignTeacherToSubject(
+  subjectId: string,
+  teacherId: string,
+  teacherRankId: string | null = null
+): Promise<CreateResponse<SubjectTeacher>> {
+  try {
+    const supabase = await createClient()
+
+    // Check if already assigned
+    const { data: existing } = await supabase
+      .from('subject_teachers')
+      .select('id')
+      .eq('subject_id', subjectId)
+      .eq('teacher_id', teacherId)
+      .single()
+
+    if (existing) {
+      return {
+        success: false,
+        error: 'Guru sudah ditugaskan pada mata pelajaran ini'
+      }
+    }
+
+    const { data, error } = await supabase
+      .from('subject_teachers')
+      .insert({
+        subject_id: subjectId,
+        teacher_id: teacherId,
+        teacher_rank_id: teacherRankId
+      })
+      .select(`
+        *,
+        teacher:profiles!subject_teachers_teacher_id_fkey(
+          id,
+          full_name,
+          email,
+          nip
+        ),
+        teacher_rank:teacher_ranks(*)
+      `)
+      .single()
+
+    if (error) throw error
+
+    revalidatePath('/dashboard/admin-it/data-management')
+
+    return {
+      success: true,
+      data: data as SubjectTeacher
+    }
+  } catch (error: any) {
+    console.error('Error assigning teacher to subject:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal menugaskan guru ke mata pelajaran'
+    }
+  }
+}
+
+/**
+ * Remove a teacher from a subject
+ */
+export async function removeTeacherFromSubject(
+  subjectId: string,
+  teacherId: string
+): Promise<DeleteResponse> {
+  try {
+    const supabase = await createClient()
+
+    const { error } = await supabase
+      .from('subject_teachers')
+      .delete()
+      .eq('subject_id', subjectId)
+      .eq('teacher_id', teacherId)
+
+    if (error) throw error
+
+    revalidatePath('/dashboard/admin-it/data-management')
+
+    return { success: true }
+  } catch (error: any) {
+    console.error('Error removing teacher from subject:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal menghapus guru dari mata pelajaran'
+    }
+  }
+}
+
+/**
+ * Update teacher rank for a subject teacher
+ */
+export async function updateTeacherRank(
+  subjectId: string,
+  teacherId: string,
+  teacherRankId: string
+): Promise<UpdateResponse<SubjectTeacher>> {
+  try {
+    const supabase = await createClient()
+
+    const { data, error } = await supabase
+      .from('subject_teachers')
+      .update({ teacher_rank_id: teacherRankId })
+      .eq('subject_id', subjectId)
+      .eq('teacher_id', teacherId)
+      .select(`
+        *,
+        teacher:profiles!subject_teachers_teacher_id_fkey(
+          id,
+          full_name,
+          email,
+          nip
+        ),
+        teacher_rank:teacher_ranks(*)
+      `)
+      .single()
+
+    if (error) throw error
+
+    revalidatePath('/dashboard/admin-it/data-management')
+
+    return {
+      success: true,
+      data: data as SubjectTeacher
+    }
+  } catch (error: any) {
+    console.error('Error updating teacher rank:', error)
+    return {
+      success: false,
+      error: error.message || 'Gagal mengupdate tingkat guru'
     }
   }
 }

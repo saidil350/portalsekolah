@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { X, Loader2, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { createClassSchedule, checkScheduleAvailability } from '@/app/dashboard/admin-it/kelas-dan-roster/actions'
 import type { ClassScheduleFormData } from '@/types/class-roster'
+import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
 
 interface Subject {
   id: string
@@ -65,7 +66,6 @@ export default function AddScheduleModal({
     start_time: '07:00',
     end_time: '08:30',
     academic_year_id: classAcademicYearId || '',
-    semester: '',
     is_active: true
   })
 
@@ -85,8 +85,10 @@ export default function AddScheduleModal({
 
     setLoadingData(true)
     try {
-      const { createClient } = await import('@/utils/supabase/server')
-      const supabase = await createClient()
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
+
+      const hasProfilesIsActive = await detectProfilesHasIsActive(supabase)
 
       // Fetch subjects
       const { data: subjectsData } = await supabase
@@ -97,13 +99,18 @@ export default function AddScheduleModal({
 
       if (subjectsData) setSubjects(subjectsData as Subject[])
 
-      // Fetch teachers
-      const { data: teachersData } = await supabase
+      // Fetch teachers (all active teachers initially)
+      let teachersQuery = supabase
         .from('profiles')
         .select('id, full_name')
         .eq('role', 'GURU')
-        .eq('is_active', true)
         .order('full_name')
+
+      if (hasProfilesIsActive) {
+        teachersQuery = teachersQuery.eq('is_active', true)
+      }
+
+      const { data: teachersData } = await teachersQuery
 
       if (teachersData) setTeachers(teachersData as Teacher[])
 
@@ -121,6 +128,41 @@ export default function AddScheduleModal({
       setLoadingData(false)
     }
   }, [isOpen])
+
+  // Fetch teachers assigned to specific subject
+  const fetchSubjectTeachers = useCallback(async (subjectId: string) => {
+    if (!subjectId) return
+
+    try {
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
+
+      // Fetch teachers assigned to this subject
+      const { data: subjectTeachersData, error } = await supabase
+        .from('subject_teachers')
+        .select('teacher_id, teacher:profiles!subject_teachers_teacher_id_fkey(id, full_name)')
+        .eq('subject_id', subjectId)
+
+      if (error) {
+        console.error('Error fetching subject teachers:', error)
+        return
+      }
+
+      if (subjectTeachersData && subjectTeachersData.length > 0) {
+        // Update teachers list with only those assigned to this subject
+        const filteredTeachers = subjectTeachersData
+          .map(st => st.teacher)
+          .filter(Boolean) as Teacher[]
+
+        setTeachers(filteredTeachers)
+      } else {
+        // If no teachers assigned to this subject, show all teachers
+        await fetchDropdownData()
+      }
+    } catch (err) {
+      console.error('Error fetching subject teachers:', err)
+    }
+  }, [fetchDropdownData])
 
   // Check availability
   const checkAvailability = useCallback(async () => {
@@ -214,10 +256,21 @@ export default function AddScheduleModal({
 
     setFormData(prev => ({
       ...prev,
-      [name]: name === 'day_of_week' || name === 'semester'
+      [name]: name === 'day_of_week'
         ? parseInt(value)
         : value
     }))
+
+    // When subject changes, fetch teachers for that subject
+    if (name === 'subject_id' && value) {
+      fetchSubjectTeachers(value)
+      // Reset teacher selection since teacher list changed
+      setFormData(prev => ({
+        ...prev,
+        subject_id: value,
+        teacher_id: ''
+      }))
+    }
   }
 
   const handleTimeSlotChange = (startTime: string) => {
@@ -244,7 +297,6 @@ export default function AddScheduleModal({
       start_time: '07:00',
       end_time: '08:30',
       academic_year_id: classAcademicYearId || '',
-      semester: '',
       is_active: true
     })
     setError('')
@@ -381,6 +433,12 @@ export default function AddScheduleModal({
                     </span>
                   )}
                 </label>
+                {formData.subject_id && (
+                  <div className="mb-2 flex items-center gap-2 text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
+                    <BookOpen className="w-3 h-3" />
+                    <span>Menampilkan guru yang mengajar mata pelajaran ini</span>
+                  </div>
+                )}
                 <div className="space-y-2 max-h-48 overflow-y-auto">
                   {teachers.map(teacher => {
                     const availability = getTeacherAvailability(teacher.id)
@@ -444,36 +502,6 @@ export default function AddScheduleModal({
                 </select>
               </div>
 
-              {/* Semester */}
-              <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
-                  Semester
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, semester: 'Ganjil' }))}
-                    className={`py-3 px-4 rounded-lg font-medium transition-all ${
-                      formData.semester === 'Ganjil'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    Ganjil
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, semester: 'Genap' }))}
-                    className={`py-3 px-4 rounded-lg font-medium transition-all ${
-                      formData.semester === 'Genap'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                    }`}
-                  >
-                    Genap
-                  </button>
-                </div>
-              </div>
             </form>
           )}
         </div>

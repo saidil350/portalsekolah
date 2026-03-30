@@ -2,8 +2,10 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { DownloadCloud, Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus } from 'lucide-react';
+import { DownloadCloud, Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus, GraduationCap } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToastHelpers } from '@/components/ui/toaster';
+import { Button, Input, EmptyTableState } from '@/components/ui';
 import {
   fetchRooms, createRoom, updateRoom, deleteRoom,
   fetchSubjects, createSubject, updateSubject, deleteSubject,
@@ -16,8 +18,10 @@ import { fetchClasses } from '@/app/dashboard/admin-it/kelas-dan-roster/actions'
 import { getOccupancyBadge } from '@/types/class-roster';
 import { getRoomTypeConfig, getSubjectTypeConfig, getStatusConfig, type Room, type Subject, type RoomFormData, type SubjectFormData } from '@/types/data-management';
 import type { Class, AcademicYear, Semester, ClassLevel, Department } from '@/types/class-roster';
+import { getTeacherRankConfig } from '@/types/data-management';
 import RoomModal from '@/components/dashboard/room-modal';
 import SubjectModal from '@/components/dashboard/subject-modal';
+import SubjectTeachersModal from '@/components/dashboard/subject-teachers-modal';
 import AcademicYearModal from '@/components/dashboard/academic-year-modal';
 import SemesterModal from '@/components/dashboard/semester-modal';
 import ClassLevelModal from '@/components/dashboard/class-level-modal';
@@ -25,11 +29,6 @@ import DepartmentModal from '@/components/dashboard/department-modal';
 
 type Tab = 'kelas_dan_roster' | 'ruangan' | 'mata_pelajaran' | 'master_data';
 type MasterDataSubTab = 'academic_years' | 'semesters' | 'class_levels' | 'departments';
-
-interface Toast {
-  message: string;
-  type: 'success' | 'error';
-}
 
 interface ConfirmDialog {
   isOpen: boolean;
@@ -41,6 +40,7 @@ interface ConfirmDialog {
 export default function DataManagementPage() {
   const { t } = useLanguage();
   const router = useRouter();
+  const { success, error } = useToastHelpers();
   const [activeTab, setActiveTab] = useState<Tab>('kelas_dan_roster');
 
   // Class state
@@ -85,19 +85,36 @@ export default function DataManagementPage() {
   // Modal state
   const [roomModal, setRoomModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', room: null as Room | null });
   const [subjectModal, setSubjectModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', subject: null as Subject | null });
+  const [subjectTeachersModal, setSubjectTeachersModal] = useState({ isOpen: false, subjectId: '', subjectName: '' });
   const [academicYearModal, setAcademicYearModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', academicYear: null as AcademicYear | null });
   const [semesterModal, setSemesterModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', semester: null as Semester | null });
   const [classLevelModal, setClassLevelModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', classLevel: null as ClassLevel | null });
   const [departmentModal, setDepartmentModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', department: null as Department | null });
 
-  // Toast and confirmation state
-  const [toast, setToast] = useState<Toast | null>(null);
+  // Confirmation state
   const [confirmDialog, setConfirmDialog] = useState<ConfirmDialog>({ isOpen: false, type: null, id: null, name: '' });
 
   // Search debounce refs
   const classesSearchRef = useRef<string>('');
   const roomsSearchRef = useRef<string>('');
   const subjectsSearchRef = useRef<string>('');
+
+  // Fetch initial metadata needed for filters
+  useEffect(() => {
+    const fetchMetadata = async () => {
+      try {
+        const [levelsRes, deptsRes] = await Promise.all([
+          fetchClassLevels({ page: 1, limit: 100 }),
+          fetchDepartments({ page: 1, limit: 100 })
+        ]);
+        if (levelsRes.success && levelsRes.data) setClassLevels(levelsRes.data);
+        if (deptsRes.success && deptsRes.data) setDepartments(deptsRes.data);
+      } catch (err) {
+        console.error('Error fetching filter metadata:', err);
+      }
+    };
+    fetchMetadata();
+  }, []);
 
   // Fetch data based on active tab
   useEffect(() => {
@@ -160,6 +177,8 @@ export default function DataManagementPage() {
           *,
           class_level:class_levels(*),
           department:departments(*),
+          academic_year:academic_years(*),
+          home_room:rooms(*),
           wali_kelas:profiles!classes_wali_kelas_id_fkey(id, full_name)
         `, { count: 'exact' });
 
@@ -180,7 +199,8 @@ export default function DataManagementPage() {
 
       const { data, error, count } = await query
         .eq('is_active', true)
-        .order('created_at', { ascending: false })
+        .order('class_level(level_order)', { ascending: true })
+        .order('name', { ascending: true })
         .range(from, to);
 
       if (error) throw error;
@@ -232,7 +252,18 @@ export default function DataManagementPage() {
       });
 
       if (result.success && result.data) {
-        setSubjects(result.data);
+        // Fetch teachers for each subject
+        const { fetchSubjectTeachers } = await import('./actions');
+        const subjectsWithTeachers = await Promise.all(
+          result.data.map(async (subject) => {
+            const teachersResult = await fetchSubjectTeachers(subject.id);
+            return {
+              ...subject,
+              teachers: teachersResult.data || []
+            };
+          })
+        );
+        setSubjects(subjectsWithTeachers);
         setSubjectsTotal(result.total || 0);
       } else {
         setSubjectsError(result.error || 'Gagal memuat data mata pelajaran');
@@ -272,24 +303,18 @@ export default function DataManagementPage() {
     }
   };
 
-  // Toast notification
-  const showToast = (message: string, type: 'success' | 'error') => {
-    setToast({ message, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
   // CRUD operations for Rooms
   const handleCreateRoom = async (data: RoomFormData) => {
     try {
       const result = await createRoom(data);
       if (result.success) {
-        showToast('Ruangan berhasil ditambahkan', 'success');
+        success('Ruangan berhasil ditambahkan');
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan ruangan', 'error');
+      error('Gagal menambahkan ruangan', err.message);
       throw err;
     }
   };
@@ -299,13 +324,13 @@ export default function DataManagementPage() {
     try {
       const result = await updateRoom(roomModal.room.id, data);
       if (result.success) {
-        showToast('Ruangan berhasil diupdate', 'success');
+        success('Ruangan berhasil diupdate');
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate ruangan', 'error');
+      error('Gagal mengupdate ruangan', err.message);
       throw err;
     }
   };
@@ -314,13 +339,13 @@ export default function DataManagementPage() {
     try {
       const result = await deleteRoom(id);
       if (result.success) {
-        showToast('Ruangan berhasil dihapus', 'success');
+        success('Ruangan berhasil dihapus');
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus ruangan', 'error');
+      error('Gagal menghapus ruangan', err.message);
     }
   };
 
@@ -329,13 +354,13 @@ export default function DataManagementPage() {
     try {
       const result = await createSubject(data);
       if (result.success) {
-        showToast('Mata pelajaran berhasil ditambahkan', 'success');
+        success('Mata pelajaran berhasil ditambahkan');
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan mata pelajaran', 'error');
+      error('Gagal menambahkan mata pelajaran', err.message);
       throw err;
     }
   };
@@ -345,13 +370,13 @@ export default function DataManagementPage() {
     try {
       const result = await updateSubject(subjectModal.subject.id, data);
       if (result.success) {
-        showToast('Mata pelajaran berhasil diupdate', 'success');
+        success('Mata pelajaran berhasil diupdate');
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate mata pelajaran', 'error');
+      error('Gagal mengupdate mata pelajaran', err.message);
       throw err;
     }
   };
@@ -360,13 +385,50 @@ export default function DataManagementPage() {
     try {
       const result = await deleteSubject(id);
       if (result.success) {
-        showToast('Mata pelajaran berhasil dihapus', 'success');
+        success('Mata pelajaran berhasil dihapus');
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus mata pelajaran', 'error');
+      error('Gagal menghapus mata pelajaran', err.message);
+    }
+  };
+
+  // Subject Teachers handlers
+  const handleAssignTeacher = async (teacherId: string, teacherRankId: string | null) => {
+    const { assignTeacherToSubject } = await import('./actions');
+    try {
+      await assignTeacherToSubject(subjectTeachersModal.subjectId, teacherId, teacherRankId);
+      success('Guru berhasil ditugaskan');
+      fetchSubjectsData();
+    } catch (err: any) {
+      error('Gagal menugaskan guru', err.message);
+      throw err;
+    }
+  };
+
+  const handleRemoveTeacher = async (teacherId: string) => {
+    const { removeTeacherFromSubject } = await import('./actions');
+    try {
+      await removeTeacherFromSubject(subjectTeachersModal.subjectId, teacherId);
+      success('Guru berhasil dihapus dari mata pelajaran');
+      fetchSubjectsData();
+    } catch (err: any) {
+      error('Gagal menghapus guru', err.message);
+      throw err;
+    }
+  };
+
+  const handleUpdateTeacherRank = async (teacherId: string, teacherRankId: string) => {
+    const { updateTeacherRank } = await import('./actions');
+    try {
+      await updateTeacherRank(subjectTeachersModal.subjectId, teacherId, teacherRankId);
+      success('Tingkat guru berhasil diperbarui');
+      fetchSubjectsData();
+    } catch (err: any) {
+      error('Gagal mengupdate tingkat guru', err.message);
+      throw err;
     }
   };
 
@@ -383,10 +445,10 @@ export default function DataManagementPage() {
 
       if (error) throw error;
 
-      showToast('Kelas berhasil dihapus', 'success');
+      success('Kelas berhasil dihapus');
       fetchClassesData();
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus kelas', 'error');
+      error('Gagal menghapus kelas', err.message);
     }
   };
 
@@ -399,11 +461,11 @@ export default function DataManagementPage() {
     try {
       const result = await createAcademicYear(data);
       if (result.success) {
-        showToast('Tahun ajaran berhasil ditambahkan', 'success');
+        success('Tahun ajaran berhasil ditambahkan');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan tahun ajaran', 'error');
+      error('Gagal menambahkan tahun ajaran', err.message);
       throw err;
     }
   };
@@ -413,11 +475,11 @@ export default function DataManagementPage() {
     try {
       const result = await updateAcademicYear(academicYearModal.academicYear.id, data);
       if (result.success) {
-        showToast('Tahun ajaran berhasil diupdate', 'success');
+        success('Tahun ajaran berhasil diupdate');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate tahun ajaran', 'error');
+      error('Gagal mengupdate tahun ajaran', err.message);
       throw err;
     }
   };
@@ -426,11 +488,11 @@ export default function DataManagementPage() {
     try {
       const result = await deleteAcademicYear(id);
       if (result.success) {
-        showToast('Tahun ajaran berhasil dihapus', 'success');
+        success('Tahun ajaran berhasil dihapus');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus tahun ajaran', 'error');
+      error('Gagal menghapus tahun ajaran', err.message);
     }
   };
 
@@ -438,11 +500,11 @@ export default function DataManagementPage() {
     try {
       const result = await createSemester(data);
       if (result.success) {
-        showToast('Semester berhasil ditambahkan', 'success');
+        success('Semester berhasil ditambahkan');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan semester', 'error');
+      error('Gagal menambahkan semester', err.message);
       throw err;
     }
   };
@@ -452,11 +514,11 @@ export default function DataManagementPage() {
     try {
       const result = await updateSemester(semesterModal.semester.id, data);
       if (result.success) {
-        showToast('Semester berhasil diupdate', 'success');
+        success('Semester berhasil diupdate');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate semester', 'error');
+      error('Gagal mengupdate semester', err.message);
       throw err;
     }
   };
@@ -465,11 +527,11 @@ export default function DataManagementPage() {
     try {
       const result = await deleteSemester(id);
       if (result.success) {
-        showToast('Semester berhasil dihapus', 'success');
+        success('Semester berhasil dihapus');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus semester', 'error');
+      error('Gagal menghapus semester', err.message);
     }
   };
 
@@ -477,11 +539,11 @@ export default function DataManagementPage() {
     try {
       const result = await createClassLevel(data);
       if (result.success) {
-        showToast('Tingkat kelas berhasil ditambahkan', 'success');
+        success('Tingkat kelas berhasil ditambahkan');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan tingkat kelas', 'error');
+      error('Gagal menambahkan tingkat kelas', err.message);
       throw err;
     }
   };
@@ -491,11 +553,11 @@ export default function DataManagementPage() {
     try {
       const result = await updateClassLevel(classLevelModal.classLevel.id, data);
       if (result.success) {
-        showToast('Tingkat kelas berhasil diupdate', 'success');
+        success('Tingkat kelas berhasil diupdate');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate tingkat kelas', 'error');
+      error('Gagal mengupdate tingkat kelas', err.message);
       throw err;
     }
   };
@@ -504,11 +566,11 @@ export default function DataManagementPage() {
     try {
       const result = await deleteClassLevel(id);
       if (result.success) {
-        showToast('Tingkat kelas berhasil dihapus', 'success');
+        success('Tingkat kelas berhasil dihapus');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus tingkat kelas', 'error');
+      error('Gagal menghapus tingkat kelas', err.message);
     }
   };
 
@@ -516,11 +578,11 @@ export default function DataManagementPage() {
     try {
       const result = await createDepartment(data);
       if (result.success) {
-        showToast('Jurusan berhasil ditambahkan', 'success');
+        success('Jurusan berhasil ditambahkan');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menambahkan jurusan', 'error');
+      error('Gagal menambahkan jurusan', err.message);
       throw err;
     }
   };
@@ -530,11 +592,11 @@ export default function DataManagementPage() {
     try {
       const result = await updateDepartment(departmentModal.department.id, data);
       if (result.success) {
-        showToast('Jurusan berhasil diupdate', 'success');
+        success('Jurusan berhasil diupdate');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal mengupdate jurusan', 'error');
+      error('Gagal mengupdate jurusan', err.message);
       throw err;
     }
   };
@@ -543,11 +605,11 @@ export default function DataManagementPage() {
     try {
       const result = await deleteDepartment(id);
       if (result.success) {
-        showToast('Jurusan berhasil dihapus', 'success');
+        success('Jurusan berhasil dihapus');
         fetchMasterData();
       } else throw new Error(result.error);
     } catch (err: any) {
-      showToast(err.message || 'Gagal menghapus jurusan', 'error');
+      error('Gagal menghapus jurusan', err.message);
     }
   };
 
@@ -582,7 +644,7 @@ export default function DataManagementPage() {
     link.href = URL.createObjectURL(blob);
     link.download = filename;
     link.click();
-    showToast('Data berhasil diekspor', 'success');
+    success('Data berhasil diekspor');
   };
 
   // Get initials for avatar
@@ -610,15 +672,6 @@ export default function DataManagementPage() {
 
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA] relative min-w-0 overflow-hidden text-sm">
-      {/* Toast Notification */}
-      {toast && (
-        <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg animate-in slide-in-from-right duration-300 ${
-          toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
-        } text-white text-sm font-medium`}>
-          {toast.message}
-        </div>
-      )}
-
       {/* Confirm Dialog */}
       {confirmDialog.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
@@ -743,6 +796,7 @@ export default function DataManagementPage() {
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
+                  aria-label="Cari data"
                   placeholder="Cari data..."
                   value={activeTab === 'kelas_dan_roster' ? classesSearch : activeTab === 'ruangan' ? roomsSearch : subjectsSearch}
                   onChange={(e) => {
@@ -755,58 +809,79 @@ export default function DataManagementPage() {
               </div>
 
               {/* Filter Dropdown */}
-              <div className="relative">
-                <select
-                  className="appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 cursor-pointer min-w-[150px]"
-                  value={activeTab === 'kelas_dan_roster' ? classesLevelFilter : activeTab === 'ruangan' ? roomsTypeFilter : subjectsTypeFilter}
-                  onChange={(e) => {
-                    if (activeTab === 'kelas_dan_roster') { setClassesLevelFilter(e.target.value); setClassesPage(1); }
-                    else if (activeTab === 'ruangan') { setRoomsTypeFilter(e.target.value); setRoomsPage(1); }
-                    else { setSubjectsTypeFilter(e.target.value); setSubjectsPage(1); }
-                  }}
-                >
-                  <option value="">{activeTab === 'kelas_dan_roster' ? 'Semua Level' : activeTab === 'ruangan' ? 'Semua Tipe' : 'Semua Tipe'}</option>
-                  {activeTab === 'kelas_dan_roster' && [
-                    { value: 'X', label: 'Kelas X' },
-                    { value: 'XI', label: 'Kelas XI' },
-                    { value: 'XII', label: 'Kelas XII' }
-                  ].map(level => (
-                    <option key={level.value} value={level.value}>{level.label}</option>
-                  ))}
-                  {activeTab === 'ruangan' && [
-                    { value: 'CLASSROOM', label: 'Ruang Kelas' },
-                    { value: 'LAB', label: 'Laboratorium' },
-                    { value: 'OFFICE', label: 'Kantor' },
-                    { value: 'AUDITORIUM', label: 'Aula' },
-                    { value: 'OTHER', label: 'Lainnya' }
-                  ].map(type => (
-                    <option key={type.value} value={type.value}>{type.label}</option>
-                  ))}
-                  {activeTab === 'mata_pelajaran' && [
-                    { value: 'MANDATORY', label: 'Wajib' },
-                    { value: 'ELECTIVE', label: 'Pilihan' },
-                    { value: 'EXTRACURRICULAR', label: 'Ekstrakurikuler' }
-                  ].map(type => (
-                    <option key={type.value} value={type.value}>{type.label}</option>
-                  ))}
-                </select>
-                <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <div className="flex items-center gap-2">
+                {/* Level/Type Filter */}
+                <div className="relative">
+                  <select
+                    className="appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 cursor-pointer min-w-[150px]"
+                    value={activeTab === 'kelas_dan_roster' ? classesLevelFilter : activeTab === 'ruangan' ? roomsTypeFilter : subjectsTypeFilter}
+                    aria-label={activeTab === 'kelas_dan_roster' ? 'Filter Level' : 'Filter Tipe'}
+                    onChange={(e) => {
+                      if (activeTab === 'kelas_dan_roster') { setClassesLevelFilter(e.target.value); setClassesPage(1); }
+                      else if (activeTab === 'ruangan') { setRoomsTypeFilter(e.target.value); setRoomsPage(1); }
+                      else { setSubjectsTypeFilter(e.target.value); setSubjectsPage(1); }
+                    }}
+                  >
+                    <option value="">{activeTab === 'kelas_dan_roster' ? 'Semua Level' : activeTab === 'ruangan' ? 'Semua Tipe' : 'Semua Tipe'}</option>
+                    {activeTab === 'kelas_dan_roster' && classLevels.map(level => (
+                      <option key={level.id} value={level.id}>{level.name}</option>
+                    ))}
+                    {activeTab === 'ruangan' && [
+                      { value: 'CLASSROOM', label: 'Ruang Kelas' },
+                      { value: 'LAB', label: 'Laboratorium' },
+                      { value: 'OFFICE', label: 'Kantor' },
+                      { value: 'AUDITORIUM', label: 'Aula' },
+                      { value: 'OTHER', label: 'Lainnya' }
+                    ].map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                    {activeTab === 'mata_pelajaran' && [
+                      { value: 'MANDATORY', label: 'Wajib' },
+                      { value: 'ELECTIVE', label: 'Pilihan' },
+                      { value: 'EXTRACURRICULAR', label: 'Ekstrakurikuler' }
+                    ].map(type => (
+                      <option key={type.value} value={type.value}>{type.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                </div>
+
+                {/* Department Filter (Only for Classes and Subjects) */}
+                {(activeTab === 'kelas_dan_roster' || activeTab === 'mata_pelajaran') && (
+                  <div className="relative">
+                    <select
+                      className="appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 cursor-pointer min-w-[150px]"
+                      value={activeTab === 'kelas_dan_roster' ? classesDeptFilter : subjectsDeptFilter}
+                      aria-label="Filter Jurusan"
+                      onChange={(e) => {
+                        if (activeTab === 'kelas_dan_roster') { setClassesDeptFilter(e.target.value); setClassesPage(1); }
+                        else { setSubjectsDeptFilter(e.target.value); setSubjectsPage(1); }
+                      }}
+                    >
+                      <option value="">Semua Jurusan</option>
+                      {departments.map(dept => (
+                        <option key={dept.id} value={dept.id}>{dept.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  </div>
+                )}
               </div>
             </div>
 
             {/* Table */}
-            <div className="w-full overflow-x-auto">
+            <div className="w-full flex-1 flex flex-col overflow-x-auto">
               {/* Loading State */}
               {(activeTab === 'kelas_dan_roster' && classesLoading) || (activeTab === 'ruangan' && roomsLoading) || (activeTab === 'mata_pelajaran' && subjectsLoading) ? (
-                <div className="flex items-center justify-center py-12">
+                <div className="flex-1 flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <span className="ml-3 text-slate-600">Memuat data...</span>
+                  <span className="ml-3 text-slate-600 font-medium">Memuat data...</span>
                 </div>
               ) : (
                 <>
                   {/* Error State */}
                   {((activeTab === 'kelas_dan_roster' && classesError) || (activeTab === 'ruangan' && roomsError) || (activeTab === 'mata_pelajaran' && subjectsError)) ? (
-                    <div className="flex flex-col items-center justify-center py-12">
+                    <div className="flex-1 flex flex-col items-center justify-center py-12">
                       <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-3">
                         <span className="text-red-600 text-xl">⚠</span>
                       </div>
@@ -817,14 +892,15 @@ export default function DataManagementPage() {
                       {/* Classes Grid */}
                       {activeTab === 'kelas_dan_roster' && (
                         <div className="p-6">
-                          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                            {classes.length === 0 ? (
-                              <div className="col-span-full flex flex-col items-center justify-center py-12">
-                                <Users className="w-12 h-12 text-slate-300 mb-3" />
-                                <p className="text-slate-500 text-center">Belum ada data kelas</p>
-                              </div>
-                            ) : (
-                              classes.map((cls) => {
+                          {classes.length === 0 ? (
+                            <EmptyTableState
+                              type="classes"
+                              hasFilters={!!classesSearch || !!classesLevelFilter || !!classesDeptFilter}
+                              hasSearch={!!classesSearch}
+                            />
+                          ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+                              {classes.map((cls) => {
                                 const badge = getOccupancyBadge(cls.current_enrollment, cls.capacity);
                                 return (
                                   <div
@@ -886,32 +962,36 @@ export default function DataManagementPage() {
                                     </div>
                                   </div>
                                 );
-                              })
-                            )}
-                          </div>
+                              })}
+                            </div>
+                          )}
                         </div>
                       )}
 
                       {/* Rooms Table */}
                       {activeTab === 'ruangan' && (
-                        <table className="w-full text-left border-collapse">
-                          <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-200">
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">KAPASITAS & LANTAI</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GEDUNG</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {rooms.length === 0 ? (
-                              <tr>
-                                <td colSpan={6} className="px-6 py-12 text-center text-slate-500">Tidak ada data yang ditemukan</td>
+                        rooms.length === 0 ? (
+                          <EmptyTableState
+                            type="rooms"
+                            hasFilters={!!roomsSearch || !!roomsTypeFilter || roomsActiveFilter !== undefined}
+                            hasSearch={!!roomsSearch}
+                            onAdd={() => setRoomModal({ isOpen: true, mode: 'create', room: null })}
+                            addLabel="Tambah Ruangan"
+                          />
+                        ) : (
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="bg-slate-50/50 border-b border-slate-200">
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">KAPASITAS & LANTAI</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GEDUNG</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                               </tr>
-                            ) : (
-                              rooms.map((room) => {
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              {rooms.map((room) => {
                                 const typeConfig = getRoomTypeConfig(room.room_type);
                                 const statusConfig = getStatusConfig(room.is_active);
                                 return (
@@ -965,33 +1045,41 @@ export default function DataManagementPage() {
                                     </td>
                                   </tr>
                                 );
-                              })
-                            )}
-                          </tbody>
+                              })}
+                            </tbody>
                         </table>
+                        )
                       )}
 
                       {/* Subjects Table */}
                       {activeTab === 'mata_pelajaran' && (
-                        <table className="w-full text-left border-collapse">
-                          <thead>
-                            <tr className="bg-slate-50/50 border-b border-slate-200">
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">SKS</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                              <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-slate-100">
-                            {subjects.length === 0 ? (
-                              <tr>
-                                <td colSpan={5} className="px-6 py-12 text-center text-slate-500">Tidak ada data yang ditemukan</td>
+                        subjects.length === 0 ? (
+                          <EmptyTableState
+                            type="subjects"
+                            hasFilters={!!subjectsSearch || !!subjectsTypeFilter || !!subjectsDeptFilter}
+                            hasSearch={!!subjectsSearch}
+                            onAdd={() => setSubjectModal({ isOpen: true, mode: 'create', subject: null })}
+                            addLabel="Tambah Mata Pelajaran"
+                          />
+                        ) : (
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="bg-slate-50/50 border-b border-slate-200">
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GURU PENGAJAR</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">SKS</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                               </tr>
-                            ) : (
-                              subjects.map((subject) => {
+                            </thead>
+                            <tbody className="divide-y divide-slate-100">
+                              {subjects.map((subject) => {
                                 const typeConfig = getSubjectTypeConfig(subject.subject_type);
                                 const statusConfig = getStatusConfig(subject.is_active);
+                                const teachers = subject.teachers || [];
+                                const primaryTeacher = teachers.find(t => t.is_primary);
+
                                 return (
                                   <tr key={subject.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">
@@ -1008,6 +1096,52 @@ export default function DataManagementPage() {
                                       </span>
                                     </td>
                                     <td className="px-6 py-4">
+                                      <div className="flex flex-col gap-1">
+                                        {teachers.length === 0 ? (
+                                          <span className="text-slate-400 text-xs italic">Belum ada guru</span>
+                                        ) : (
+                                          <>
+                                            {teachers.slice(0, 2).map((subjectTeacher) => {
+                                              const rankConfig = getTeacherRankConfig(subjectTeacher.teacher_rank?.code)
+
+                                              return (
+                                                <div key={subjectTeacher.id} className="flex items-center gap-1.5">
+                                                  <div className="w-6 h-6 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-[10px] font-bold">
+                                                    {subjectTeacher.teacher?.full_name
+                                                      .split(' ')
+                                                      .map((n) => n[0])
+                                                      .join('')
+                                                      .slice(0, 2)
+                                                      .toUpperCase()}
+                                                  </div>
+                                                  <div className="flex flex-col">
+                                                    <div className="flex items-center gap-1.5">
+                                                      <span className="text-xs font-semibold text-slate-900">{subjectTeacher.teacher?.full_name}</span>
+                                                      {rankConfig && (
+                                                        <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold ${rankConfig.bgColor} ${rankConfig.color}`}>
+                                                          {rankConfig.icon}
+                                                        </span>
+                                                      )}
+                                                    </div>
+                                                    {rankConfig && (
+                                                      <span className={`text-[9px] font-medium ${rankConfig.color}`}>
+                                                        {rankConfig.label}
+                                                      </span>
+                                                    )}
+                                                  </div>
+                                                </div>
+                                              );
+                                            })}
+                                            {teachers.length > 2 && (
+                                              <span className="text-[10px] text-slate-500">
+                                                +{teachers.length - 2} guru lainnya
+                                              </span>
+                                            )}
+                                          </>
+                                        )}
+                                      </div>
+                                    </td>
+                                    <td className="px-6 py-4">
                                       <span className="text-slate-600 text-sm font-medium">{subject.credit_hours} SKS</span>
                                     </td>
                                     <td className="px-6 py-4">
@@ -1018,6 +1152,13 @@ export default function DataManagementPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                       <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <button
+                                          onClick={() => setSubjectTeachersModal({ isOpen: true, subjectId: subject.id, subjectName: subject.name })}
+                                          className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
+                                          title="Distribusi Guru"
+                                        >
+                                          <UserPlus className="w-4 h-4" />
+                                        </button>
                                         <button
                                           onClick={() => setSubjectModal({ isOpen: true, mode: 'edit', subject })}
                                           className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
@@ -1036,10 +1177,10 @@ export default function DataManagementPage() {
                                     </td>
                                   </tr>
                                 );
-                              })
-                            )}
-                          </tbody>
+                              })}
+                            </tbody>
                         </table>
+                        )
                       )}
 
                       {/* Master Data */}
@@ -1094,14 +1235,14 @@ export default function DataManagementPage() {
                           </div>
 
                           {/* Content */}
-                          <div className="p-6">
+                          <div className="p-6 min-h-[500px] flex flex-col">
                             {masterDataLoading ? (
-                              <div className="flex items-center justify-center py-12">
+                              <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                <span className="ml-3 text-slate-600">Memuat data...</span>
+                                <span className="mt-3 text-slate-600 font-medium">Memuat data...</span>
                               </div>
                             ) : masterDataError ? (
-                              <div className="flex flex-col items-center justify-center py-12">
+                              <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mb-3">
                                   <span className="text-red-600 text-xl">⚠</span>
                                 </div>
@@ -1111,22 +1252,26 @@ export default function DataManagementPage() {
                               <>
                                 {/* Academic Years Table */}
                                 {masterDataSubTab === 'academic_years' && (
-                                  <table className="w-full text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50/50 border-b border-slate-200">
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                      {academicYears.length === 0 ? (
-                                        <tr>
-                                          <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Tidak ada data tahun ajaran</td>
+                                  academicYears.length === 0 ? (
+                                    <EmptyTableState
+                                      type="generic"
+                                      hasSearch={false}
+                                      hasFilters={false}
+                                      onAdd={() => setAcademicYearModal({ isOpen: true, mode: 'create', academicYear: null })}
+                                      addLabel="Tambah Tahun Ajaran"
+                                    />
+                                  ) : (
+                                    <table className="w-full text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/50 border-b border-slate-200">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                                         </tr>
-                                      ) : (
-                                        academicYears.map((ay) => (
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100">
+                                        {academicYears.map((ay) => (
                                           <tr key={ay.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <span className="text-slate-900 font-bold text-sm tracking-tight">{ay.name}</span>
@@ -1164,30 +1309,34 @@ export default function DataManagementPage() {
                                               </div>
                                             </td>
                                           </tr>
-                                        ))
-                                      )}
-                                    </tbody>
+                                        ))}
+                                      </tbody>
                                   </table>
+                                  )
                                 )}
 
                                 {/* Semesters Table */}
                                 {masterDataSubTab === 'semesters' && (
-                                  <table className="w-full text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50/50 border-b border-slate-200">
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TAHUN AJARAN</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                      {semesters.length === 0 ? (
-                                        <tr>
-                                          <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Tidak ada data semester</td>
+                                  semesters.length === 0 ? (
+                                    <EmptyTableState
+                                      type="generic"
+                                      hasSearch={false}
+                                      hasFilters={false}
+                                      onAdd={() => setSemesterModal({ isOpen: true, mode: 'create', semester: null })}
+                                      addLabel="Tambah Semester"
+                                    />
+                                  ) : (
+                                    <table className="w-full text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/50 border-b border-slate-200">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TAHUN AJARAN</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                                         </tr>
-                                      ) : (
-                                        semesters.map((sem) => (
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100">
+                                        {semesters.map((sem) => (
                                           <tr key={sem.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
@@ -1223,30 +1372,34 @@ export default function DataManagementPage() {
                                               </div>
                                             </td>
                                           </tr>
-                                        ))
-                                      )}
-                                    </tbody>
-                                  </table>
+                                        ))}
+                                      </tbody>
+                                    </table>
+                                  )
                                 )}
 
                                 {/* Class Levels Table */}
                                 {masterDataSubTab === 'class_levels' && (
-                                  <table className="w-full text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50/50 border-b border-slate-200">
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">LEVEL</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                      {classLevels.length === 0 ? (
-                                        <tr>
-                                          <td colSpan={4} className="px-6 py-12 text-center text-slate-500">Tidak ada data tingkat kelas</td>
+                                  classLevels.length === 0 ? (
+                                    <EmptyTableState
+                                      type="generic"
+                                      hasSearch={false}
+                                      hasFilters={false}
+                                      onAdd={() => setClassLevelModal({ isOpen: true, mode: 'create', classLevel: null })}
+                                      addLabel="Tambah Tingkat Kelas"
+                                    />
+                                  ) : (
+                                    <table className="w-full text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/50 border-b border-slate-200">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">LEVEL</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                                         </tr>
-                                      ) : (
-                                        classLevels.map((cl) => (
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100">
+                                        {classLevels.map((cl) => (
                                           <tr key={cl.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
@@ -1286,29 +1439,33 @@ export default function DataManagementPage() {
                                               </div>
                                             </td>
                                           </tr>
-                                        ))
-                                      )}
+                                        ))}
                                     </tbody>
                                   </table>
+                                  )
                                 )}
 
                                 {/* Departments Table */}
                                 {masterDataSubTab === 'departments' && (
-                                  <table className="w-full text-left border-collapse">
-                                    <thead>
-                                      <tr className="bg-slate-50/50 border-b border-slate-200">
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                        <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-100">
-                                      {departments.length === 0 ? (
-                                        <tr>
-                                          <td colSpan={3} className="px-6 py-12 text-center text-slate-500">Tidak ada data jurusan</td>
+                                  departments.length === 0 ? (
+                                    <EmptyTableState
+                                      type="generic"
+                                      hasSearch={false}
+                                      hasFilters={false}
+                                      onAdd={() => setDepartmentModal({ isOpen: true, mode: 'create', department: null })}
+                                      addLabel="Tambah Jurusan"
+                                    />
+                                  ) : (
+                                    <table className="w-full text-left border-collapse">
+                                      <thead>
+                                        <tr className="bg-slate-50/50 border-b border-slate-200">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                                         </tr>
-                                      ) : (
-                                        departments.map((dept) => (
+                                      </thead>
+                                      <tbody className="divide-y divide-slate-100">
+                                        {departments.map((dept) => (
                                           <tr key={dept.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
@@ -1348,10 +1505,10 @@ export default function DataManagementPage() {
                                               </div>
                                             </td>
                                           </tr>
-                                        ))
-                                      )}
+                                        ))}
                                     </tbody>
                                   </table>
+                                  )
                                 )}
                               </>
                             )}
@@ -1417,6 +1574,16 @@ export default function DataManagementPage() {
         onSubmit={subjectModal.mode === 'create' ? handleCreateSubject : handleUpdateSubject}
         subject={subjectModal.subject}
         mode={subjectModal.mode}
+      />
+
+      <SubjectTeachersModal
+        isOpen={subjectTeachersModal.isOpen}
+        onClose={() => setSubjectTeachersModal({ isOpen: false, subjectId: '', subjectName: '' })}
+        subjectId={subjectTeachersModal.subjectId}
+        subjectName={subjectTeachersModal.subjectName}
+        onAssign={handleAssignTeacher}
+        onRemove={handleRemoveTeacher}
+        onUpdateRank={handleUpdateTeacherRank}
       />
 
       <AcademicYearModal

@@ -22,14 +22,19 @@ import {
   Pencil,
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToastHelpers } from '@/components/ui/toaster';
+import { Button, Skeleton, MetricSkeleton } from '@/components/ui';
 import { getStudentsForGrading, getTeachingStats } from './actions';
 import type { User } from '@/types/user';
 
 export default function TeachingDashboardPage() {
   const { t } = useLanguage();
+  const { success, error } = useToastHelpers();
   const [students, setStudents] = useState<User[]>([]);
   const [stats, setStats] = useState({ totalStudents: 0, pendingReviews: 0 });
   const [loading, setLoading] = useState(true);
+  const [assignmentLoading, setAssignmentLoading] = useState(false);
+  const [announcementLoading, setAnnouncementLoading] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -163,64 +168,103 @@ export default function TeachingDashboardPage() {
               <p className="text-text-sub mt-1">{t('db.subtitle')}</p>
             </div>
             <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-text-main hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
-                <FileText className="w-3.5 h-3.5" />
+              <Button
+                variant="secondary"
+                size="md"
+                loading={assignmentLoading}
+                onClick={async () => {
+                  setAssignmentLoading(true);
+                  try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    success('Assignment created', 'New assignment has been created successfully');
+                  } catch (err) {
+                    error('Failed to create assignment', 'Please try again later');
+                  } finally {
+                    setAssignmentLoading(false);
+                  }
+                }}
+                leftIcon={<FileText className="w-3.5 h-3.5" />}
+              >
                 {t('db.newAssignment')}
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-[0px_4px_6px_-1px_rgba(19,127,236,0.2),0px_2px_4px_-2px_rgba(19,127,236,0.2)] transition-all cursor-pointer">
-                <Megaphone className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="primary"
+                size="md"
+                loading={announcementLoading}
+                onClick={async () => {
+                  setAnnouncementLoading(true);
+                  try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    success('Announcement sent', 'Your announcement has been sent to all students');
+                  } catch (err) {
+                    error('Failed to send announcement', 'Please try again later');
+                  } finally {
+                    setAnnouncementLoading(false);
+                  }
+                }}
+                leftIcon={<Megaphone className="w-4 h-4" />}
+              >
                 {t('db.makeAnnouncement')}
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Stats Overview */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Total Students */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-text-sub">{t('stat.totalStudents')}</p>
-                <Users className="w-5 h-5 text-slate-400" />
+          {loading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <MetricSkeleton />
+              <MetricSkeleton />
+              <MetricSkeleton />
+              <MetricSkeleton />
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Total Students */}
+              <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-text-sub">{t('stat.totalStudents')}</p>
+                  <Users className="w-5 h-5 text-slate-400" />
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <h3 className="text-2xl font-bold text-text-main">{stats.totalStudents}</h3>
+                  <span className="text-xs font-medium text-emerald-600">+2 {t('stat.new')}</span>
+                </div>
               </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-text-main">{loading ? '...' : stats.totalStudents}</h3>
-                <span className="text-xs font-medium text-emerald-600">+2 {t('stat.new')}</span>
+              {/* Classes Today */}
+              <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-text-sub">{t('stat.classesToday')}</p>
+                  <BookOpen className="w-5 h-5 text-slate-400" />
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <h3 className="text-2xl font-bold text-text-main">4</h3>
+                  <span className="text-xs font-medium text-text-sub">2 {t('stat.remaining')}</span>
+                </div>
+              </div>
+              {/* Pending Reviews */}
+              <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-text-sub">{t('stat.pendingReviews')}</p>
+                  <ClipboardCheck className="w-5 h-5 text-slate-400" />
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <h3 className="text-2xl font-bold text-text-main">{stats.pendingReviews}</h3>
+                  <span className="text-xs font-medium text-orange-600">{t('stat.highPriority')}</span>
+                </div>
+              </div>
+              {/* Avg. Attendance */}
+              <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-text-sub">{t('stat.avgAttendance')}</p>
+                  <TrendingUp className="w-5 h-5 text-slate-400" />
+                </div>
+                <div className="flex items-baseline gap-2 mt-1">
+                  <h3 className="text-2xl font-bold text-text-main">94%</h3>
+                  <span className="text-xs font-medium text-emerald-600">+1.2%</span>
+                </div>
               </div>
             </div>
-            {/* Classes Today */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-text-sub">{t('stat.classesToday')}</p>
-                <BookOpen className="w-5 h-5 text-slate-400" />
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-text-main">4</h3>
-                <span className="text-xs font-medium text-text-sub">2 {t('stat.remaining')}</span>
-              </div>
-            </div>
-            {/* Pending Reviews */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-text-sub">{t('stat.pendingReviews')}</p>
-                <ClipboardCheck className="w-5 h-5 text-slate-400" />
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-text-main">{loading ? '...' : stats.pendingReviews}</h3>
-                <span className="text-xs font-medium text-orange-600">{t('stat.highPriority')}</span>
-              </div>
-            </div>
-            {/* Avg. Attendance */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium text-text-sub">{t('stat.avgAttendance')}</p>
-                <TrendingUp className="w-5 h-5 text-slate-400" />
-              </div>
-              <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-text-main">94%</h3>
-                <span className="text-xs font-medium text-emerald-600">+1.2%</span>
-              </div>
-            </div>
-          </div>
+          )}
 
           {/* Two Column Layout */}
           <div className="flex gap-8 items-start">

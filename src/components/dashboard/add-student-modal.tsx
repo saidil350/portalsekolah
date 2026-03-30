@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react'
 import { X, Search, Users, Loader2, Check, UserPlus } from 'lucide-react'
-import { fetchEnrollments, enrollStudent } from '@/app/dashboard/admin-it/kelas-dan-roster/actions'
 import type { User } from '@/types/class-roster'
 
 interface AddStudentModalProps {
@@ -35,42 +34,21 @@ export default function AddStudentModal({
     setError('')
 
     try {
-      // Get currently enrolled students
-      const enrollmentsResult = await fetchEnrollments(classId)
-      const enrolledStudentIds = new Set<string>()
+      const res = await fetch(`/api/students/available?classId=${classId}&search=${encodeURIComponent(search)}`)
+      const json = await res.json().catch(() => null)
 
-      if (enrollmentsResult.success && enrollmentsResult.data) {
-        enrollmentsResult.data.forEach((enrollment: any) => {
-          enrolledStudentIds.add(enrollment.student_id)
-        })
+      if (!json || typeof json.success === 'undefined') {
+        if (!res.ok) {
+          throw new Error(`HTTP error: ${res.status}`)
+        }
+        throw new Error('Format response tidak valid')
       }
 
-      // Fetch all students with SISWA role
-      const { createClient } = await import('@/utils/supabase/server')
-      const supabase = await createClient()
-
-      let query = supabase
-        .from('profiles')
-        .select('id, full_name, email, nisn, role')
-        .eq('role', 'SISWA')
-        .eq('is_active', true)
-        .order('full_name')
-
-      // Apply search filter
-      if (search && search.trim() !== '') {
-        query = query.or(`full_name.ilike.%${search}%,nisn.ilike.%${search}%,email.ilike.%${search}%`)
+      if (json.success) {
+        setAvailableStudents(json.data || [])
+      } else {
+        throw new Error(json.error || `HTTP error: ${res.status}`)
       }
-
-      const { data, error: fetchError } = await query.limit(50)
-
-      if (fetchError) throw fetchError
-
-      // Filter out already enrolled students
-      const available = (data as User[]).filter(
-        student => !enrolledStudentIds.has(student.id)
-      )
-
-      setAvailableStudents(available)
     } catch (err: any) {
       console.error('Error fetching students:', err)
       setError(err.message || 'Gagal memuat data siswa')
@@ -97,6 +75,9 @@ export default function AddStudentModal({
         newSet.delete(studentId)
         return newSet
       })
+
+      // Auto-close modal after successful enrollment
+      onClose()
     } catch (err: any) {
       setError(err.message || 'Gagal menambahkan siswa')
     } finally {
@@ -133,6 +114,9 @@ export default function AddStudentModal({
 
       // Clear selection
       setSelectedStudents(new Set())
+
+      // Auto-close modal after successful batch enrollment
+      onClose()
     } catch (err: any) {
       setError(err.message || 'Gagal menambahkan siswa')
     } finally {

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { fetchClasses, fetchFilterDropdownData } from './actions'
 import type { Class, ClassFilters } from '@/types/class-roster'
 import { getOccupancyBadge } from '@/types/class-roster'
+import { EmptyTableState } from '@/components/ui'
 
 interface ClassLevel {
   id: string
@@ -204,30 +205,13 @@ export default function KelasDanRosterPage() {
             </button>
           </div>
         ) : classes.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4">
-              <Users className="w-8 h-8 text-slate-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">
-              {search || levelFilter || departmentFilter
-                ? 'Tidak ada kelas ditemukan'
-                : 'Belum ada kelas'}
-            </h3>
-            <p className="text-slate-500 text-sm mb-6">
-              {search || levelFilter || departmentFilter
-                ? 'Coba ubah filter atau kata kunci pencarian'
-                : 'Mulai dengan membuat kelas baru'}
-            </p>
-            {!search && !levelFilter && !departmentFilter && (
-              <button
-                onClick={handleCreateClass}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
-              >
-                <Plus className="w-4 h-4" />
-                Buat Kelas Pertama
-              </button>
-            )}
-          </div>
+          <EmptyTableState
+            type="classes"
+            hasFilters={!!search || !!levelFilter || !!departmentFilter}
+            hasSearch={!!search}
+            onAdd={handleCreateClass}
+            addLabel="Buat Kelas Pertama"
+          />
         ) : (
           /* Class Grid */
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -20,6 +20,8 @@ import type {
 } from '@/types/class-roster'
 import type { CreateResponse, UpdateResponse } from '@/types'
 import type { User } from '@/types/user'
+import { detectScheduleColumnMode, getScheduleColumns, getScheduleSelect } from '@/utils/supabase/schedule-columns'
+import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
 
 // =====================================================
 // CLASSES ACTIONS
@@ -344,6 +346,58 @@ export async function fetchEnrollments(classId: string): Promise<EnrollmentRespo
 }
 
 /**
+ * Fetch available students for enrollment
+ */
+export async function fetchAvailableStudents(
+  classId: string,
+  search?: string
+): Promise<{ success: boolean; data?: User[]; error?: string }> {
+  try {
+    const supabase = await createClient()
+    const hasIsActive = await detectProfilesHasIsActive(supabase)
+
+    // Get currently enrolled students
+    const { data: enrollmentsData, error: enrollmentsError } = await supabase
+      .from('enrollments')
+      .select('student_id')
+      .eq('class_id', classId)
+      .eq('status', 'ACTIVE')
+
+    if (enrollmentsError) throw enrollmentsError
+
+    const enrolledStudentIds = new Set<string>(
+      enrollmentsData?.map((e: any) => e.student_id).filter(Boolean) || []
+    )
+
+    let query = supabase
+      .from('profiles')
+      .select('id, full_name, email, nisn, role')
+      .eq('role', 'SISWA')
+      .order('full_name')
+
+    if (hasIsActive) {
+      query = query.eq('is_active', true)
+    }
+
+    if (search && search.trim() !== '') {
+      query = query.or(`full_name.ilike.%${search}%,nisn.ilike.%${search}%,email.ilike.%${search}%`)
+    }
+
+    const { data, error } = await query.limit(50)
+    if (error) throw error
+
+    const available = (data as User[]).filter(
+      (student) => !enrolledStudentIds.has(student.id)
+    )
+
+    return { success: true, data: available }
+  } catch (error: any) {
+    console.error('Error fetching available students:', error)
+    return { success: false, error: error.message || 'Gagal memuat data siswa' }
+  }
+}
+
+/**
  * Enroll student to class
  */
 export async function enrollStudent(
@@ -418,17 +472,18 @@ export async function withdrawStudent(enrollmentId: string): Promise<{ success: 
   try {
     const supabase = await createClient()
 
-    // Get enrollment details first
+    // Get enrollment details first for revalidation
     const { data: enrollment } = await supabase
       .from('enrollments')
       .select('class_id')
       .eq('id', enrollmentId)
       .single()
 
-    // Update enrollment status
+    // Always delete the enrollment (instead of updating status)
+    // This allows students to be re-enrolled without UNIQUE constraint issues
     const { error } = await supabase
       .from('enrollments')
-      .update({ status: 'WITHDRAWN' })
+      .delete()
       .eq('id', enrollmentId)
 
     if (error) throw error
@@ -497,17 +552,18 @@ export async function fetchClassSchedules(
 ): Promise<ClassScheduleResponse> {
   try {
     const supabase = await createClient()
+    const scheduleMode = await detectScheduleColumnMode(supabase)
+    const scheduleColumns = getScheduleColumns(scheduleMode)
 
     let query = supabase
       .from('class_schedules')
-      .select(`
-        *,
+      .select(getScheduleSelect(scheduleMode, `
         class:classes(*),
         subject:subjects(*),
         teacher:profiles!class_schedules_teacher_id_fkey(*),
         room:rooms(*),
         academic_year:academic_years(*)
-      `)
+      `))
 
     // Apply filters
     if (filters.class_id) {
@@ -535,7 +591,7 @@ export async function fetchClassSchedules(
       query = query.eq('is_active', filters.is_active)
     }
 
-    const { data, error } = await query.order('day_of_week').order('start_time')
+    const { data, error } = await query.order('day_of_week').order(scheduleColumns.start)
 
     if (error) throw error
 
@@ -565,6 +621,8 @@ export async function fetchClassSchedules(
 export async function createClassSchedule(formData: ClassScheduleFormData): Promise<CreateResponse<ClassSchedule>> {
   try {
     const supabase = await createClient()
+    const scheduleMode = await detectScheduleColumnMode(supabase)
+    const scheduleColumns = getScheduleColumns(scheduleMode)
 
     // Validation
     if (!formData.class_id) {
@@ -580,22 +638,25 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       return { success: false, error: 'Waktu mulai dan selesai wajib diisi' }
     }
 
+    const insertData: any = {
+      class_id: formData.class_id,
+      subject_id: formData.subject_id,
+      teacher_id: formData.teacher_id,
+      room_id: formData.room_id || null,
+      day_of_week: formData.day_of_week,
+      academic_year_id: formData.academic_year_id || null,
+      semester: formData.semester || null,
+      is_active: formData.is_active !== undefined ? formData.is_active : true,
+      notes: formData.notes || null,
+    }
+
+    insertData[scheduleColumns.start] = formData.start_time
+    insertData[scheduleColumns.end] = formData.end_time
+
     const { data, error } = await supabase
       .from('class_schedules')
-      .insert({
-        class_id: formData.class_id,
-        subject_id: formData.subject_id,
-        teacher_id: formData.teacher_id,
-        room_id: formData.room_id || null,
-        day_of_week: formData.day_of_week,
-        start_time: formData.start_time,
-        end_time: formData.end_time,
-        academic_year_id: formData.academic_year_id || null,
-        semester: formData.semester || null,
-        is_active: formData.is_active !== undefined ? formData.is_active : true,
-        notes: formData.notes || null,
-      })
-      .select()
+      .insert(insertData)
+      .select(getScheduleSelect(scheduleMode, ''))
       .single()
 
     if (error) {
@@ -631,6 +692,8 @@ export async function updateClassSchedule(
 ): Promise<UpdateResponse<ClassSchedule>> {
   try {
     const supabase = await createClient()
+    const scheduleMode = await detectScheduleColumnMode(supabase)
+    const scheduleColumns = getScheduleColumns(scheduleMode)
 
     const updateData: any = {}
     if (formData.class_id) updateData.class_id = formData.class_id
@@ -638,8 +701,8 @@ export async function updateClassSchedule(
     if (formData.teacher_id) updateData.teacher_id = formData.teacher_id
     if (formData.room_id !== undefined) updateData.room_id = formData.room_id || null
     if (formData.day_of_week) updateData.day_of_week = formData.day_of_week
-    if (formData.start_time) updateData.start_time = formData.start_time
-    if (formData.end_time) updateData.end_time = formData.end_time
+    if (formData.start_time) updateData[scheduleColumns.start] = formData.start_time
+    if (formData.end_time) updateData[scheduleColumns.end] = formData.end_time
     if (formData.academic_year_id !== undefined) updateData.academic_year_id = formData.academic_year_id || null
     if (formData.semester !== undefined) updateData.semester = formData.semester || null
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
@@ -649,7 +712,7 @@ export async function updateClassSchedule(
       .from('class_schedules')
       .update(updateData)
       .eq('id', id)
-      .select()
+      .select(getScheduleSelect(scheduleMode, ''))
       .single()
 
     if (error) {
@@ -724,6 +787,8 @@ export async function fetchClassRosterView(classId: string): Promise<{
 }> {
   try {
     const supabase = await createClient()
+    const scheduleMode = await detectScheduleColumnMode(supabase)
+    const scheduleColumns = getScheduleColumns(scheduleMode)
 
     // Fetch class info
     const { data: classData, error: classError } = await supabase
@@ -744,28 +809,31 @@ export async function fetchClassRosterView(classId: string): Promise<{
     // Fetch enrolled students
     const { data: enrollmentsData, error: enrollmentsError } = await supabase
       .from('enrollments')
-      .select('student_id, student:profiles!enrollments_student_id_fkey(*)')
+      .select('id, student_id, status, student:profiles!enrollments_student_id_fkey(*)')
       .eq('class_id', classId)
       .eq('status', 'ACTIVE')
       .order('created_at', { ascending: true })
 
     if (enrollmentsError) throw enrollmentsError
 
-    const students = enrollmentsData?.map((e: any) => e.student) || []
+    const students = enrollmentsData?.map((e: any) => ({
+      ...e.student,
+      enrollment_id: e.id,
+      enrollment_status: e.status,
+    })) || []
 
     // Fetch schedules
     const { data: schedulesData, error: schedulesError } = await supabase
       .from('class_schedules')
-      .select(`
-        *,
+      .select(getScheduleSelect(scheduleMode, `
         subject:subjects(*),
         teacher:profiles!class_schedules_teacher_id_fkey(*),
         room:rooms(*)
-      `)
+      `))
       .eq('class_id', classId)
       .eq('is_active', true)
       .order('day_of_week')
-      .order('start_time')
+      .order(scheduleColumns.start)
 
     if (schedulesError) throw schedulesError
 
@@ -834,6 +902,8 @@ export async function checkScheduleAvailability(
 }> {
   try {
     const supabase = await createClient()
+    const scheduleMode = await detectScheduleColumnMode(supabase)
+    const scheduleColumns = getScheduleColumns(scheduleMode)
 
     // Get all teachers
     const { data: teachers } = await supabase
@@ -844,12 +914,12 @@ export async function checkScheduleAvailability(
     // Get all rooms
     const { data: rooms } = await supabase.from('rooms').select('id, name').eq('is_active', true)
 
-    // Get existing schedules for this day/time
+    // Get existing schedules for this day/time (check for overlapping time ranges)
     const { data: existingSchedules } = await supabase
       .from('class_schedules')
       .select('teacher_id, room_id')
       .eq('day_of_week', dayOfWeek)
-      .or(`start_time.lte.${endTime}&end_time.gte.${startTime}`)
+      .or(`and(${scheduleColumns.start}.lte.${endTime},${scheduleColumns.end}.gte.${startTime})`)
 
     // Build sets of unavailable teachers and rooms
     const unavailableTeacherIds = new Set(

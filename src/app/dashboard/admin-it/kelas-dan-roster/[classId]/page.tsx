@@ -1,15 +1,26 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Users, Calendar, BookOpen, GraduationCap, MapPin, Clock, Loader2, Plus, Trash2 } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, BookOpen, GraduationCap, MapPin, Clock, Loader2, Plus, Trash2, Edit } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { fetchClassRosterView, enrollStudent, withdrawStudent } from '../actions'
+import { fetchClassRosterView } from '../actions'
 import type { ClassSchedule } from '@/types/class-roster'
 import { getOccupancyBadge } from '@/types/class-roster'
+import { EmptyTableState } from '@/components/ui'
 import dynamic from 'next/dynamic'
 
 // Dynamically import modals to avoid SSR issues
 const AddStudentModal = dynamic(() => import('@/components/dashboard/add-student-modal'), {
+  ssr: false,
+  loading: () => <div className="p-4 text-center">Loading...</div>
+})
+
+const EditClassInfoModal = dynamic(() => import('@/components/dashboard/edit-class-info-modal'), {
+  ssr: false,
+  loading: () => <div className="p-4 text-center">Loading...</div>
+})
+
+const AddScheduleModal = dynamic(() => import('@/components/dashboard/add-schedule-modal'), {
   ssr: false,
   loading: () => <div className="p-4 text-center">Loading...</div>
 })
@@ -22,6 +33,11 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   const [error, setError] = useState('')
   const [rosterData, setRosterData] = useState<any>(null)
   const [showAddStudentModal, setShowAddStudentModal] = useState(false)
+  const [showEditClassInfoModal, setShowEditClassInfoModal] = useState(false)
+  const [showAddScheduleModal, setShowAddScheduleModal] = useState(false)
+  const [withdrawTarget, setWithdrawTarget] = useState<{ id?: string; studentId: string; name: string } | null>(null)
+  const [withdrawing, setWithdrawing] = useState(false)
+  const [actionMessage, setActionMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
 
   const fetchRoster = async () => {
     if (!classId) return
@@ -55,52 +71,120 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
     }
   }, [classId, resolved])
 
+  useEffect(() => {
+    if (!actionMessage) return
+    const timer = setTimeout(() => setActionMessage(null), 3000)
+    return () => clearTimeout(timer)
+  }, [actionMessage])
+
   // Early return untuk loading params
   if (!resolved) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-[#FAFAFA]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-3 text-slate-600">Memuat...</span>
+        <span className="ml-3 text-slate-600 font-medium">Memuat...</span>
       </div>
     )
   }
 
   const handleEnrollStudent = async (studentId: string) => {
     try {
-      const result = await enrollStudent(classId, studentId, rosterData?.class_info?.academic_year_id)
-      if (result.success) {
-        // Show success message
-        alert('Siswa berhasil ditambahkan ke kelas')
+      const res = await fetch('/api/enrollments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          studentId,
+          classId,
+          academicYearId: rosterData?.class_info?.academic_year_id || null,
+        }),
+      })
+
+      const json = await res.json().catch(() => null)
+
+      if (!json || typeof json.success === 'undefined') {
+        throw new Error(`HTTP error: ${res.status}`)
+      }
+
+      if (json.success) {
+        setActionMessage({ type: 'success', text: 'Siswa berhasil ditambahkan ke kelas' })
         fetchRoster()
       } else {
-        alert(result.error || 'Gagal menambahkan siswa')
+        setActionMessage({ type: 'error', text: json.error || 'Gagal menambahkan siswa' })
       }
     } catch (err: any) {
-      alert(err.message || 'Gagal menambahkan siswa')
+      setActionMessage({ type: 'error', text: err.message || 'Gagal menambahkan siswa' })
     }
   }
 
-  const handleWithdrawStudent = async (enrollmentId: string) => {
-    if (!confirm('Apakah Anda yakin ingin mengeluarkan siswa ini dari kelas?')) return
+  const handleWithdrawStudent = (enrollmentId: string | undefined, studentId: string, studentName: string) => {
+    if (!studentId) {
+      setActionMessage({ type: 'error', text: 'Student ID tidak ditemukan. Silakan refresh halaman.' })
+      return
+    }
+    setWithdrawTarget({ id: enrollmentId, studentId, name: studentName })
+  }
 
+  const confirmWithdrawStudent = async () => {
+    if (!withdrawTarget) return
+
+    setWithdrawing(true)
     try {
-      const result = await withdrawStudent(enrollmentId)
-      if (result.success) {
-        alert('Siswa berhasil dikeluarkan dari kelas')
+      const res = await fetch('/api/enrollments/withdraw', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          enrollmentId: withdrawTarget.id || null,
+          classId,
+          studentId: withdrawTarget.studentId,
+        }),
+      })
+      const json = await res.json().catch(() => null)
+
+      if (!json || typeof json.success === 'undefined') {
+        throw new Error(`HTTP error: ${res.status}`)
+      }
+
+      if (json.success) {
+        setActionMessage({ type: 'success', text: 'Siswa berhasil dikeluarkan dari kelas' })
         fetchRoster()
+        setWithdrawTarget(null)
       } else {
-        alert(result.error || 'Gagal mengeluarkan siswa')
+        setActionMessage({ type: 'error', text: json.error || 'Gagal mengeluarkan siswa' })
       }
     } catch (err: any) {
-      alert(err.message || 'Gagal mengeluarkan siswa')
+      setActionMessage({ type: 'error', text: err.message || 'Gagal mengeluarkan siswa' })
+    } finally {
+      setWithdrawing(false)
+    }
+  }
+
+  const handleUpdateClassInfo = async (data: { wali_kelas_id?: string | null; home_room_id?: string | null }) => {
+    try {
+      // Use server action instead of API endpoint
+      const { updateClass } = await import('../actions')
+      const result = await updateClass(classId, {
+        wali_kelas_id: data.wali_kelas_id ?? undefined,
+        home_room_id: data.home_room_id ?? undefined
+      })
+
+      if (result.success) {
+        setActionMessage({ type: 'success', text: 'Info kelas berhasil diperbarui' })
+        fetchRoster()
+      } else {
+        setActionMessage({ type: 'error', text: result.error || 'Gagal memperbarui info kelas' })
+        throw new Error(result.error)
+      }
+    } catch (err: any) {
+      setActionMessage({ type: 'error', text: err.message || 'Gagal memperbarui info kelas' })
+      throw err
     }
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-[#FAFAFA]">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-3 text-slate-600">Memuat data...</span>
+        <span className="ml-3 text-slate-600 font-medium">Memuat data...</span>
       </div>
     )
   }
@@ -145,7 +229,8 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   days.forEach(day => {
     scheduleGrid[day.value] = {}
     timeSlots.forEach(time => {
-      const schedule = schedules.find((s: any) => s.day_of_week === day.value && s.start_time === time)
+      // Extract HH:mm from start_time (database stores "07:00:00", we need "07:00")
+      const schedule = schedules.find((s: any) => s.day_of_week === day.value && s.start_time?.substring(0, 5) === time)
       scheduleGrid[day.value][time] = schedule || null
     })
   })
@@ -197,6 +282,18 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
         </div>
       </header>
 
+      {actionMessage && (
+        <div className="px-8 pt-4">
+          <div className={`rounded-lg px-4 py-3 text-sm font-medium ${
+            actionMessage.type === 'success'
+              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+              : 'bg-red-50 text-red-700 border border-red-200'
+          }`}>
+            {actionMessage.text}
+          </div>
+        </div>
+      )}
+
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full">
@@ -204,10 +301,20 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           <div className="w-2/5 border-r border-slate-200 bg-white overflow-y-auto">
             {/* Class Info */}
             <div className="p-6 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                Info Kelas
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  Info Kelas
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowEditClassInfoModal(true)}
+                  className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                  title="Edit info kelas"
+                >
+                  <Edit className="w-4 h-4" />
+                </button>
+              </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span className="text-slate-500">Wali Kelas:</span>
@@ -263,9 +370,13 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
               </h3>
               <div className="space-y-2">
                 {students.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
-                    Belum ada siswa di kelas ini
-                  </div>
+                  <EmptyTableState
+                    type="students"
+                    hasSearch={false}
+                    hasFilters={false}
+                    onAdd={() => setShowAddStudentModal(true)}
+                    addLabel="Tambah Siswa"
+                  />
                 ) : (
                   students.map((student: any) => (
                     <div
@@ -273,7 +384,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                       className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                           {student.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
@@ -283,7 +394,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                       </div>
                       <button
                         type="button"
-                        onClick={() => handleWithdrawStudent(student.enrollment_id)}
+                        onClick={() => handleWithdrawStudent(student.enrollment_id, student.id, student.full_name)}
                         className="opacity-0 group-hover:opacity-100 p-2 text-red-500 hover:bg-red-50 rounded-md transition-all"
                         title="Keluarkan siswa"
                       >
@@ -299,10 +410,20 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           {/* Right Column - Schedule Grid (60%) */}
           <div className="w-3/5 bg-white overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
-                Jadwal Mingguan
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  Jadwal Mingguan
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setShowAddScheduleModal(true)}
+                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
+                >
+                  <Plus className="w-4 h-4" />
+                  Tambah Jadwal
+                </button>
+              </div>
 
               {/* Schedule Grid */}
               <div className="border border-slate-200 rounded-lg overflow-hidden">
@@ -328,7 +449,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                           return (
                             <td key={day.value} className="px-2 py-2 align-top">
                               {schedule ? (
-                                <div className="bg-gradient-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-2 min-h-[70px] transition-all hover:shadow-md">
+                                <div className="bg-linear-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-2 min-h-[70px] transition-all hover:shadow-md">
                                   <p className="font-semibold text-slate-900 text-xs mb-1">{schedule.subject?.name}</p>
                                   <p className="text-xs text-slate-600 mb-2">{schedule.teacher?.full_name}</p>
                                   <div className="flex items-center gap-2">
@@ -363,7 +484,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                     key={teacher.id}
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                       {teacher.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
                     <span className="text-xs font-medium text-slate-900">{teacher.full_name}</span>
@@ -384,6 +505,64 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           classId={classId}
           academicYearId={class_info.academic_year_id}
         />
+      )}
+
+      {/* Edit Class Info Modal */}
+      {showEditClassInfoModal && (
+        <EditClassInfoModal
+          isOpen={showEditClassInfoModal}
+          onClose={() => setShowEditClassInfoModal(false)}
+          onSave={handleUpdateClassInfo}
+          classData={{
+            wali_kelas: class_info.wali_kelas,
+            home_room: class_info.home_room
+          }}
+        />
+      )}
+
+      {/* Add Schedule Modal */}
+      {showAddScheduleModal && (
+        <AddScheduleModal
+          isOpen={showAddScheduleModal}
+          onClose={() => setShowAddScheduleModal(false)}
+          onSuccess={() => {
+            fetchRoster()
+            setShowAddScheduleModal(false)
+          }}
+          classId={classId}
+          classAcademicYearId={class_info.academic_year_id}
+        />
+      )}
+
+      {withdrawTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
+            <div className="p-6 border-b border-slate-200">
+              <h3 className="text-lg font-bold text-slate-900">Keluarkan Siswa</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Apakah Anda yakin ingin mengeluarkan <span className="font-medium text-slate-900">{withdrawTarget.name}</span> dari kelas?
+              </p>
+            </div>
+            <div className="p-6 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setWithdrawTarget(null)}
+                disabled={withdrawing}
+                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                type="button"
+                onClick={confirmWithdrawStudent}
+                disabled={withdrawing}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              >
+                {withdrawing ? 'Memproses...' : 'Keluarkan'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   )

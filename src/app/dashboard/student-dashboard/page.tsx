@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useToastHelpers } from '@/components/ui/toaster';
+import { Button } from '@/components/ui';
 import {
   MapPin,
   ChevronRight,
@@ -13,6 +15,8 @@ import {
 
 export default function StudentDashboardPage() {
   const { t } = useLanguage();
+  const { success, error } = useToastHelpers();
+  const [loading, setLoading] = React.useState(false);
 
   // Data schedule hari ini
   const scheduleData = [
@@ -143,10 +147,26 @@ export default function StudentDashboardPage() {
                       <span className="text-sm text-blue-100">{t('student.room.buildingA302')} • 10:00 AM - 11:30 AM</span>
                     </div>
                   </div>
-                  <button className="bg-white text-primary px-4 py-2 rounded-xl shadow-sm flex items-center gap-2 text-sm font-medium hover:bg-blue-50 transition-colors cursor-pointer">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    loading={loading}
+                    onClick={async () => {
+                      setLoading(true);
+                      try {
+                        // Simulate API call
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        success('Joined class successfully', 'You have joined Advanced Mathematics class');
+                      } catch (err) {
+                        error('Failed to join class', 'Please try again later');
+                      } finally {
+                        setLoading(false);
+                      }
+                    }}
+                    rightIcon={<ChevronRight className="w-4 h-3" />}
+                  >
                     {t('student.db.joinRoom')}
-                    <ChevronRight className="w-4 h-3" />
-                  </button>
+                  </Button>
                 </div>
               </div>
 

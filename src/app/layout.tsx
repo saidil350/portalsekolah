@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Lexend } from "next/font/google";
 import { LanguageProvider } from "@/contexts/LanguageContext";
+import { SidebarProvider } from "@/contexts/SidebarContext";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { ToastProvider } from "@/components/ui/toaster";
+import { PageTransition, ViewTransition } from "@/components/ui/page-transition";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,9 +38,17 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${lexend.variable} font-sans antialiased`}
       >
         <ErrorBoundary>
-          <LanguageProvider>
-            {children}
-          </LanguageProvider>
+          <SidebarProvider>
+            <LanguageProvider>
+              <ToastProvider>
+                <ViewTransition mode="wait">
+                  <PageTransition>
+                    {children}
+                  </PageTransition>
+                </ViewTransition>
+              </ToastProvider>
+            </LanguageProvider>
+          </SidebarProvider>
         </ErrorBoundary>
       </body>
     </html>

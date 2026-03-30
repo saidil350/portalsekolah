@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useSidebarContext } from '@/contexts/SidebarContext';
 import {
   LayoutDashboard,
   FileBarChart2,
@@ -11,6 +12,7 @@ import {
   Wallet,
   Settings,
   LogOut,
+  ChevronLeft,
 } from 'lucide-react';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { logout } from '@/app/login/actions';
@@ -48,6 +50,7 @@ interface HeadmasterSidebarProps {
 export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { isSidebarOpen, toggleSidebar } = useSidebarContext();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
@@ -81,26 +84,34 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
   };
 
   return (
-    <aside className="w-[288px] shrink-0 flex flex-col bg-white border-r border-slate-200 h-full">
+    <aside
+      className={`
+        flex flex-col bg-white border-r border-slate-200 h-full
+        transition-all duration-300 ease-in-out
+        ${isSidebarOpen ? 'w-[288px]' : 'w-16'}
+      `}
+    >
       {/* Profile Header */}
-      <div className="px-6 pt-6 pb-5 border-b border-slate-100">
-        <div className="flex items-center gap-4">
-          <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-base font-bold ring-2 ring-primary ring-offset-2">
+      <div className={`pt-6 pb-5 border-b border-slate-100 ${isSidebarOpen ? 'px-6' : 'px-2'}`}>
+        <div className={`flex items-center gap-4 ${!isSidebarOpen ? 'justify-center' : ''}`}>
+          <div className="relative w-11 h-11 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-base font-bold ring-2 ring-primary ring-offset-2 shrink-0">
             {getInitials(displayName)}
           </div>
-          <div className="flex flex-col">
-            <h1 className="text-slate-900 text-base font-bold leading-tight">{displayName}</h1>
-            <p className="text-slate-500 text-xs font-medium mt-0.5">{roleLabel}</p>
-          </div>
+          {isSidebarOpen && (
+            <div className="flex flex-col">
+              <h1 className="text-slate-900 text-base font-bold leading-tight">{displayName}</h1>
+              <p className="text-slate-500 text-xs font-medium mt-0.5">{roleLabel}</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Navigation */}
-      <div className="flex-1 overflow-y-auto px-3 py-6">
+      <div className={`flex-1 overflow-y-auto py-6 ${isSidebarOpen ? 'px-3' : 'px-2'}`}>
         <nav className="flex flex-col gap-1">
           {navSections.map((section, sIdx) => (
             <React.Fragment key={sIdx}>
-              {section.labelKey && (
+              {section.labelKey && isSidebarOpen && (
                 <div className="px-4 pt-4 pb-2">
                   <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
                     {t(section.labelKey)}
@@ -114,17 +125,18 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-lg group transition-all duration-200 cursor-pointer ${
+                    className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
                       active
                         ? 'bg-primary/10 text-primary'
                         : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                    }`}
+                    } ${isSidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+                    title={!isSidebarOpen ? t(item.labelKey) : undefined}
                   >
                     <IconComponent
-                      className={`w-[18px] h-[18px] shrink-0 ${active ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600'}`}
+                      className={`w-5 h-5 shrink-0 ${active ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600'}`}
                       strokeWidth={active ? 2.2 : 1.8}
                     />
-                    <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{t(item.labelKey)}</span>
+                    {isSidebarOpen && <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{t(item.labelKey)}</span>}
                   </Link>
                 );
               })}
@@ -134,15 +146,24 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
       </div>
 
       {/* Language & Logout */}
-      <div className="px-4 py-4 border-t border-slate-100 flex flex-col gap-4">
-        <LanguageSwitcher />
+      <div className={`border-t border-slate-100 flex flex-col gap-4 ${isSidebarOpen ? 'px-4 py-4' : 'py-4 px-2'}`}>
+        {isSidebarOpen && <LanguageSwitcher />}
+        <button
+          onClick={toggleSidebar}
+          className={`flex items-center rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          title={isSidebarOpen ? 'Minimize' : 'Expand'}
+        >
+          <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />
+          {isSidebarOpen && <span className="text-sm font-medium">Minimize</span>}
+        </button>
         <button
           onClick={() => setShowLogoutConfirm(true)}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+          className={`flex items-center rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
           disabled={isLoggingOut}
+          title={isSidebarOpen ? undefined : t('headmaster.auth.logout')}
         >
-          <LogOut className="w-[18px] h-[18px] shrink-0" strokeWidth={1.8} />
-          <span className="text-sm font-medium">{t('headmaster.auth.logout')}</span>
+          <LogOut className="w-5 h-5 shrink-0" strokeWidth={1.8} />
+          {isSidebarOpen && <span className="text-sm font-medium">{t('headmaster.auth.logout')}</span>}
         </button>
       </div>
 

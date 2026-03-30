@@ -181,7 +181,7 @@ export interface ClassSchedule {
   room_id?: string | null;
 
   // Semester & TA
-  semester_id?: string | null;
+  semester?: number | null; // 1 or 2
   academic_year_id: string;
 
   // Waktu
@@ -203,7 +203,6 @@ export interface ClassSchedule {
   subject?: Subject | null;
   teacher?: User | null;
   room?: Room | null;
-  semester?: Semester | null;
   academic_year?: AcademicYear | null;
 
   // Computed fields
@@ -216,8 +215,7 @@ export interface ClassScheduleFormData {
   subject_id: string;
   teacher_id: string;
   room_id?: string;
-  semester?: string;
-  semester_id?: string;
+  semester?: number | null; // 1 or 2
   academic_year_id: string;
   day_of_week: DayOfWeek;
   start_time: string;
@@ -233,7 +231,7 @@ export interface ClassScheduleFilters {
   room_id?: string;
   day_of_week?: DayOfWeek;
   academic_year_id?: string;
-  semester?: string;
+  semester?: number;
   is_active?: boolean;
 }
 

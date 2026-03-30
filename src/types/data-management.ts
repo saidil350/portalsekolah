@@ -6,6 +6,98 @@
 import type { Room as BaseRoom, Subject as BaseSubject } from './shared';
 
 // =====================================================
+// TEACHER RANK TYPES
+// =====================================================
+
+export type TeacherRankCode = 'MAGANG' | 'PERTAMA' | 'MUDA' | 'MADYA' | 'UTAMA' | 'AHLI' | 'HONORER';
+
+export interface TeacherRank {
+  id: string;
+  code: TeacherRankCode;
+  name: string;
+  description?: string | null;
+  level_order: number;
+  badge_color: string;
+  icon?: string | null;
+  is_active: boolean;
+  created_at: string;
+}
+
+export interface TeacherRankConfig {
+  value: TeacherRankCode;
+  label: string;
+  color: string;
+  bgColor: string;
+  icon: string;
+  description: string;
+}
+
+// Teacher rank configurations
+export const TEACHER_RANK_CONFIGS: TeacherRankConfig[] = [
+  {
+    value: 'HONORER',
+    label: 'Guru Honorer',
+    color: 'text-orange-700',
+    bgColor: 'bg-orange-100',
+    icon: '',
+    description: 'Guru non-PNS / Guru Tetap Yayasan'
+  },
+  {
+    value: 'MAGANG',
+    label: 'Guru Magang',
+    color: 'text-gray-700',
+    bgColor: 'bg-gray-100',
+    icon: '',
+    description: 'Guru pemerantah'
+  },
+  {
+    value: 'PERTAMA',
+    label: 'Guru Pertama',
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+    icon: '',
+    description: 'Guru Grade 1 (Gol. III/a)'
+  },
+  {
+    value: 'MUDA',
+    label: 'Guru Muda',
+    color: 'text-green-700',
+    bgColor: 'bg-green-100',
+    icon: '',
+    description: 'Guru Grade 2 (Gol. III/b-d)'
+  },
+  {
+    value: 'MADYA',
+    label: 'Guru Madya',
+    color: 'text-purple-700',
+    bgColor: 'bg-purple-100',
+    icon: '',
+    description: 'Guru Grade 3 (Gol. IV/a-c)'
+  },
+  {
+    value: 'UTAMA',
+    label: 'Guru Utama',
+    color: 'text-amber-700',
+    bgColor: 'bg-amber-100',
+    icon: '⭐',
+    description: 'Guru Grade 4 (Gol. IV/d-e)'
+  },
+  {
+    value: 'AHLI',
+    label: 'Guru Ahli',
+    color: 'text-red-700',
+    bgColor: 'bg-red-100',
+    icon: '',
+    description: 'Guru Spesialis/Konsultan'
+  }
+];
+
+export function getTeacherRankConfig(rankCode: TeacherRankCode | undefined | null): TeacherRankConfig | null {
+  if (!rankCode) return null;
+  return TEACHER_RANK_CONFIGS.find(config => config.value === rankCode) || null;
+}
+
+// =====================================================
 // ROOM TYPES
 // =====================================================
 
@@ -36,6 +128,23 @@ export interface RoomFormData {
 
 export type SubjectType = 'MANDATORY' | 'ELECTIVE' | 'EXTRACURRICULAR';
 
+export interface SubjectTeacher {
+  id: string;
+  subject_id: string;
+  teacher_id: string;
+  teacher_rank_id?: string | null;
+  is_primary?: boolean; // Backwards compatibility, will be deprecated
+  created_at: string;
+  // Populated fields
+  teacher?: {
+    id: string;
+    full_name: string;
+    email?: string;
+    nip?: string;
+  };
+  teacher_rank?: TeacherRank;
+}
+
 export interface Subject extends BaseSubject {
   subject_type: SubjectType;
   credit_hours: number;
@@ -43,6 +152,8 @@ export interface Subject extends BaseSubject {
   academic_year_id?: string | null;
   prerequisites?: string[] | null;
   created_by?: string | null;
+  // Populated teachers for this subject
+  teachers?: SubjectTeacher[];
 }
 
 export interface SubjectFormData {
@@ -91,6 +202,32 @@ export interface UpdateResponse<T> {
 export interface DeleteResponse {
   success: boolean;
   error?: string;
+}
+
+// =====================================================
+// SUBJECT TEACHER TYPES
+// =====================================================
+
+export interface SubjectTeachersResponse {
+  success: boolean;
+  data?: SubjectTeacher[];
+  error?: string;
+}
+
+export interface AssignTeacherRequest {
+  subject_id: string;
+  teacher_id: string;
+  is_primary?: boolean;
+}
+
+export interface RemoveTeacherRequest {
+  subject_id: string;
+  teacher_id: string;
+}
+
+export interface SetPrimaryTeacherRequest {
+  subject_id: string;
+  teacher_id: string;
 }
 
 // =====================================================
