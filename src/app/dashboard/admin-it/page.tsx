@@ -114,7 +114,7 @@ export default function AdminDashboardPage() {
                       </div>
                       <div className="absolute inset-[16.67%_0]">
                         <div className="absolute inset-[-0.68%_-0.21%]">
-                          <Image alt="" className="object-fill" fill src="/9b489b12e8e33984adef788343e4e9eed316cc9e.svg" />
+                          <Image alt="" className="object-fill" fill src="/9b489b12e8e33984adef788343e4e9eed316cc9e.svg" loading="eager" />
                         </div>
                       </div>
                     </div>

@@ -18,39 +18,14 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   const router = useRouter()
   const [classId, setClassId] = useState<string>('')
   const [resolved, setResolved] = useState(false)
-
-  useEffect(() => {
-    params.then((p) => {
-      setClassId(p.classId)
-      setResolved(true)
-    })
-  }, [params])
-
-  useEffect(() => {
-    if (resolved && classId) {
-      fetchRoster()
-    }
-  }, [classId, resolved])
-
-  if (!resolved) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-3 text-slate-600">Memuat...</span>
-      </div>
-    )
-  }
-
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [rosterData, setRosterData] = useState<any>(null)
   const [showAddStudentModal, setShowAddStudentModal] = useState(false)
 
-  useEffect(() => {
-    fetchRoster()
-  }, [classId])
-
   const fetchRoster = async () => {
+    if (!classId) return
+
     setLoading(true)
     setError('')
     try {
@@ -65,6 +40,29 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
     } finally {
       setLoading(false)
     }
+  }
+
+  useEffect(() => {
+    params.then((p) => {
+      setClassId(p.classId)
+      setResolved(true)
+    })
+  }, [params])
+
+  useEffect(() => {
+    if (resolved && classId) {
+      fetchRoster()
+    }
+  }, [classId, resolved])
+
+  // Early return untuk loading params
+  if (!resolved) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <span className="ml-3 text-slate-600">Memuat...</span>
+      </div>
+    )
   }
 
   const handleEnrollStudent = async (studentId: string) => {

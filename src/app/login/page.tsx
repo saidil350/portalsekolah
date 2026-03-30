@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { GraduationCap, User, Lock, Eye, EyeOff, Info, ArrowRight, Loader2 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import { login } from "./actions";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const passwordRef = useRef<HTMLInputElement | null>(null);
 
   const handleSubmit = (formData: FormData) => {
     setErrorMsg(null);
@@ -24,7 +25,23 @@ export default function LoginPage() {
   const togglePassword = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const input = passwordRef.current;
+    const selectionStart = input?.selectionStart ?? null;
+    const selectionEnd = input?.selectionEnd ?? null;
     setShowPassword(prev => !prev);
+    if (input) {
+      // Restore caret/selection after type toggle to prevent jump to start.
+      requestAnimationFrame(() => {
+        input.focus();
+        if (selectionStart !== null && selectionEnd !== null) {
+          try {
+            input.setSelectionRange(selectionStart, selectionEnd);
+          } catch {
+            // Some browsers might not allow selection on password type.
+          }
+        }
+      });
+    }
   };
 
   return (
@@ -100,6 +117,7 @@ export default function LoginPage() {
                 name="password"
                 required
                 disabled={isPending}
+                ref={passwordRef}
                 className="block w-full rounded-xl border-0 bg-slate-50 py-3 pl-10 pr-10 text-slate-900 ring-1 ring-inset ring-slate-200 placeholder:text-slate-400 focus:bg-white focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 transition-all disabled:opacity-50"
                 placeholder="••••••••"
               />

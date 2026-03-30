@@ -155,3 +155,9 @@ summary,
 .cursor-pointer {
   cursor: pointer !important;
 }
+
+/* Hide native password reveal/clear icons (Edge/IE) to prevent duplicate eye icons */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
