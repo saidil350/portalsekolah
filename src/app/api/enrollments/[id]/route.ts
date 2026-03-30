@@ -7,10 +7,10 @@ const isCheckConstraintError = (error: any) =>
 
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const enrollmentId = params.id
+    const { id: enrollmentId } = await params
     if (!enrollmentId) {
       return Response.json(
         { success: false, error: 'enrollmentId wajib diisi' },
