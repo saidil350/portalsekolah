@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useCallback } from 'react'
-import { X, Loader2, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { X, Loader2, Clock, CheckCircle, XCircle, AlertCircle, BookOpen } from 'lucide-react'
 import { createClassSchedule, checkScheduleAvailability } from '@/app/dashboard/admin-it/kelas-dan-roster/actions'
 import type { ClassScheduleFormData } from '@/types/class-roster'
 import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
@@ -97,7 +97,7 @@ export default function AddScheduleModal({
         .eq('is_active', true)
         .order('name')
 
-      if (subjectsData) setSubjects(subjectsData as Subject[])
+      if (subjectsData) setSubjects(subjectsData as unknown as Subject[])
 
       // Fetch teachers (all active teachers initially)
       let teachersQuery = supabase
@@ -112,7 +112,7 @@ export default function AddScheduleModal({
 
       const { data: teachersData } = await teachersQuery
 
-      if (teachersData) setTeachers(teachersData as Teacher[])
+      if (teachersData) setTeachers(teachersData as unknown as Teacher[])
 
       // Fetch rooms
       const { data: roomsData } = await supabase
@@ -121,7 +121,7 @@ export default function AddScheduleModal({
         .eq('is_active', true)
         .order('name')
 
-      if (roomsData) setRooms(roomsData as Room[])
+      if (roomsData) setRooms(roomsData as unknown as Room[])
     } catch (err) {
       console.error('Error fetching dropdown data:', err)
     } finally {
@@ -150,10 +150,10 @@ export default function AddScheduleModal({
 
       if (subjectTeachersData && subjectTeachersData.length > 0) {
         // Update teachers list with only those assigned to this subject
-        const filteredTeachers = subjectTeachersData
-          .map(st => st.teacher)
-          .filter(Boolean) as Teacher[]
-
+        const filteredTeachers = (subjectTeachersData as any[])
+          .map(st => Array.isArray(st.teacher) ? st.teacher[0] : st.teacher)
+          .filter(Boolean) as unknown as Teacher[]
+ 
         setTeachers(filteredTeachers)
       } else {
         // If no teachers assigned to this subject, show all teachers
@@ -326,6 +326,7 @@ export default function AddScheduleModal({
           </div>
           <button
             onClick={handleClose}
+            title="Tutup"
             className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             disabled={submitting}
           >
@@ -403,14 +404,19 @@ export default function AddScheduleModal({
 
               {/* Subject */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                <label
+                  htmlFor="subject_id"
+                  className="block text-sm font-semibold text-slate-900 mb-2"
+                >
                   Mata Pelajaran <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="subject_id"
+                  id="subject_id"
                   value={formData.subject_id}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  title="Pilih Mata Pelajaran"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   required
                 >
                   <option value="">Pilih Mata Pelajaran</option>
@@ -483,14 +489,19 @@ export default function AddScheduleModal({
 
               {/* Room */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                <label
+                  htmlFor="room_id"
+                  className="block text-sm font-semibold text-slate-900 mb-2"
+                >
                   Ruangan <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="room_id"
+                  id="room_id"
                   value={formData.room_id}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  title="Pilih Ruangan"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   required
                 >
                   <option value="">Pilih Ruangan</option>

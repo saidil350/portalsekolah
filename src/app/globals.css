@@ -529,3 +529,9 @@ input[type="password"]::-ms-clear {
   }
 }
 
+/* Dynamic Positioning Utility to avoid inline styles for absolute positioning */
+.dynamic-point-position {
+  left: var(--pos-x, 0);
+  top: var(--pos-y, 0);
+}
+

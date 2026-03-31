@@ -26,5 +26,5 @@ export async function getCurrentAdmin(): Promise<User | null> {
     return null
   }
 
-  return profile as User
+  return profile as unknown as User
 }

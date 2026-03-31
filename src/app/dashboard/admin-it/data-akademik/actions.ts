@@ -57,7 +57,7 @@ export async function fetchAcademicYears(
 
     return {
       success: true,
-      data: (data as AcademicYear[]) || [],
+      data: (data as unknown as AcademicYear[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -295,7 +295,7 @@ export async function fetchClassLevels(
 
     return {
       success: true,
-      data: (data as ClassLevel[]) || [],
+      data: (data as unknown as ClassLevel[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -515,7 +515,7 @@ export async function fetchDepartments(
 
     return {
       success: true,
-      data: (data as Department[]) || [],
+      data: (data as unknown as Department[]) || [],
       total: count || 0
     }
   } catch (error: any) {

@@ -25,7 +25,8 @@
       "Bash(cd /d D:githubportalsekolah)",
       "Bash(npx supabase:*)",
       "Bash(npx dotenv-cli:*)",
-      "Bash(cd:*)"
+      "Bash(cd:*)",
+      "Bash(git show:*)"
     ],
     "deny": [],
     "ask": []

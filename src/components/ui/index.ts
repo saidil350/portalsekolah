@@ -48,7 +48,8 @@ export {
 export type { AlertProps, InlineAlertProps } from './alert'
 
 // Empty State
-export { EmptyState, EmptyStateCard, EmptyTableState } from './empty-table-state'
+export { EmptyState, EmptyStateCard } from './empty-state'
+export { EmptyTableState } from './empty-table-state'
 export type { EmptyStateProps, EmptyStateAction } from './empty-state'
 export type { EmptyTableStateProps } from './empty-table-state'
 
@@ -91,4 +92,4 @@ export type { CalendarProps, DatePickerProps, DateRangePickerProps, DateRangePic
 
 // Page Transitions
 export { PageTransition, StaggerChildren, ViewTransition, LayoutTransition } from './page-transition'
-export type { PageTransitionProps, StaggerChildrenProps, ViewTransitionProps }
+export type { PageTransitionProps, StaggerChildrenProps, ViewTransitionProps } from './page-transition'

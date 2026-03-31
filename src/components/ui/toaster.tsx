@@ -18,7 +18,7 @@ export interface Toast {
   duration?: number
 }
 
-interface ToastContextType {
+export interface ToastContextType {
   showToast: (toast: Omit<Toast, 'id'>) => void
   toasts: Toast[]
   removeToast: (id: string) => void
@@ -34,7 +34,7 @@ export function useToast() {
   return context
 }
 
-interface ToastProviderProps {
+export interface ToastProviderProps {
   children: React.ReactNode
   position?: 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left'
   maxToasts?: number
@@ -86,10 +86,10 @@ export function ToastProvider({
   }
 
   const icons = {
-    success: <CheckCircle className="w-5 h-5 flex-shrink-0" />,
-    error: <AlertCircle className="w-5 h-5 flex-shrink-0" />,
-    warning: <AlertTriangle className="w-5 h-5 flex-shrink-0" />,
-    info: <Info className="w-5 h-5 flex-shrink-0" />,
+    success: <CheckCircle className="w-5 h-5 shrink-0" />,
+    error: <AlertCircle className="w-5 h-5 shrink-0" />,
+    warning: <AlertTriangle className="w-5 h-5 shrink-0" />,
+    info: <Info className="w-5 h-5 shrink-0" />,
   }
 
   const colors = {
@@ -150,7 +150,7 @@ export function ToastProvider({
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="flex-shrink-0 text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                className="shrink-0 text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
                 aria-label="Close notification"
               >
                 <X className="w-4 h-4" />

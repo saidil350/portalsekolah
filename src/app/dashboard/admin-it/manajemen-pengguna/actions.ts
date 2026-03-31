@@ -55,7 +55,7 @@ export async function fetchUsers(
     if (error) throw error
 
     return {
-      users: (data as User[]) || [],
+      users: (data as unknown as User[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -173,7 +173,7 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
         ...profileData,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
-      } as User
+      } as unknown as User
     }
   } catch (error: any) {
     console.error('Error creating user:', error)
@@ -337,7 +337,7 @@ export async function updateUser(
 
     return {
       success: true,
-      user: profile as User
+      user: profile as unknown as User
     }
   } catch (error: any) {
     console.error('Error updating user:', error)

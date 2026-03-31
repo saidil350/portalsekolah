@@ -19,8 +19,8 @@ export const studentSchema = z.object({
     .regex(/^[0-9]+$/, 'NISN harus berupa angka')
     .optional()
     .or(z.literal('')),
-  gender: z.enum(['L', 'P'], {
-    errorMap: () => ({ message: 'Jenis kelamin harus dipilih' })
+  gender: z.enum(['L', 'P'] as const, {
+    message: 'Jenis kelamin harus dipilih',
   }),
   birth_date: z.string()
     .min(1, 'Tanggal lahir harus diisi')
@@ -39,7 +39,7 @@ export const studentSchema = z.object({
   class_id: z.string()
     .min(1, 'Kelas harus dipilih')
     .optional(),
-  status: z.enum(['active', 'inactive', 'graduated', 'transferred'])
+  status: z.enum(['active', 'inactive', 'graduated', 'transferred'] as const)
     .default('active'),
 })
 
@@ -49,8 +49,8 @@ export type StudentFormData = z.infer<typeof studentSchema>
 export const studentFilterSchema = z.object({
   search: z.string().optional(),
   class_id: z.string().optional(),
-  status: z.enum(['active', 'inactive', 'graduated', 'transferred']).optional(),
-  gender: z.enum(['L', 'P']).optional(),
+  status: z.enum(['active', 'inactive', 'graduated', 'transferred'] as const).optional(),
+  gender: z.enum(['L', 'P'] as const).optional(),
 })
 
 export type StudentFilterData = z.infer<typeof studentFilterSchema>

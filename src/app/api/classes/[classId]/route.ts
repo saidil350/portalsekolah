@@ -1,5 +1,6 @@
 import { createClient, createAdminClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { NextRequest } from 'next/server'
 
 type UpdateClassRequest = {
   wali_kelas_id?: string | null
@@ -7,11 +8,11 @@ type UpdateClassRequest = {
 }
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: Promise<{ classId: string }> }
+  request: NextRequest,
+  context: { params: Promise<{ classId: string }> }
 ) {
   try {
-    const { classId } = await params
+    const { classId } = await context.params
     const body = (await request.json().catch(() => ({}))) as UpdateClassRequest
 
     // Auth check

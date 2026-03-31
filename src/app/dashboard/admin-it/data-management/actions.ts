@@ -71,7 +71,7 @@ export async function fetchRooms(
 
     return {
       success: true,
-      data: (data as Room[]) || [],
+      data: (data as unknown as Room[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -138,7 +138,7 @@ export async function createRoom(
 
     return {
       success: true,
-      data: data as Room
+      data: data as unknown as Room
     }
   } catch (error: any) {
     console.error('Error creating room:', error)
@@ -197,7 +197,7 @@ export async function updateRoom(
 
     return {
       success: true,
-      data: data as Room
+      data: data as unknown as Room
     }
   } catch (error: any) {
     console.error('Error updating room:', error)
@@ -285,7 +285,7 @@ export async function fetchSubjects(
 
     return {
       success: true,
-      data: (data as Subject[]) || [],
+      data: (data as unknown as Subject[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -352,7 +352,7 @@ export async function createSubject(
 
     return {
       success: true,
-      data: data as Subject
+      data: data as unknown as Subject
     }
   } catch (error: any) {
     console.error('Error creating subject:', error)
@@ -411,7 +411,7 @@ export async function updateSubject(
 
     return {
       success: true,
-      data: data as Subject
+      data: data as unknown as Subject
     }
   } catch (error: any) {
     console.error('Error updating subject:', error)
@@ -490,8 +490,8 @@ export async function fetchSubjectDropdownData(): Promise<DropdownDataResponse> 
 
     return {
       success: true,
-      departments: (deptData as Department[]) || [],
-      academicYears: (yearData as AcademicYear[]) || []
+      departments: (deptData as unknown as Department[]) || [],
+      academicYears: (yearData as unknown as AcademicYear[]) || []
     }
   } catch (error: any) {
     console.error('Error fetching dropdown data:', error)
@@ -549,7 +549,7 @@ export async function fetchAcademicYears(
 
     return {
       success: true,
-      data: (data as AcademicYear[]) || [],
+      data: (data as unknown as AcademicYear[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -600,7 +600,7 @@ export async function createAcademicYear(formData: AcademicYearFormData): Promis
 
     return {
       success: true,
-      data: data as AcademicYear
+      data: data as unknown as AcademicYear
     }
   } catch (error: any) {
     console.error('Error creating academic year:', error)
@@ -635,7 +635,7 @@ export async function updateAcademicYear(id: string, formData: Partial<AcademicY
 
     return {
       success: true,
-      data: data as AcademicYear
+      data: data as unknown as AcademicYear
     }
   } catch (error: any) {
     console.error('Error updating academic year:', error)
@@ -711,7 +711,7 @@ export async function fetchSemesters(
 
     return {
       success: true,
-      data: (data as Semester[]) || [],
+      data: (data as unknown as Semester[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -758,7 +758,7 @@ export async function createSemester(formData: SemesterFormData): Promise<Create
 
     return {
       success: true,
-      data: data as Semester
+      data: data as unknown as Semester
     }
   } catch (error: any) {
     console.error('Error creating semester:', error)
@@ -793,7 +793,7 @@ export async function updateSemester(id: string, formData: Partial<SemesterFormD
 
     return {
       success: true,
-      data: data as Semester
+      data: data as unknown as Semester
     }
   } catch (error: any) {
     console.error('Error updating semester:', error)
@@ -862,7 +862,7 @@ export async function fetchClassLevels(
 
     return {
       success: true,
-      data: (data as ClassLevel[]) || [],
+      data: (data as unknown as ClassLevel[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -1012,7 +1012,7 @@ export async function fetchDepartments(
 
     return {
       success: true,
-      data: (data as Department[]) || [],
+      data: (data as unknown as Department[]) || [],
       total: count || 0
     }
   } catch (error: any) {
@@ -1154,7 +1154,7 @@ export async function fetchSubjectTeachers(subjectId: string): Promise<SubjectTe
     if (error) throw error
 
     // Sort by teacher rank level (highest first)
-    const sortedData = (data as SubjectTeacher[])
+    const sortedData = (data as unknown as SubjectTeacher[])
       .sort((a, b) => {
         const levelA = a.teacher_rank?.level_order || 0;
         const levelB = b.teacher_rank?.level_order || 0;

@@ -71,8 +71,8 @@ export default function KelasDanRosterPage() {
       const result = await fetchFilterDropdownData()
 
       if (result.success) {
-        setClassLevels(result.classLevels as ClassLevel[])
-        setDepartments(result.departments as Department[])
+        setClassLevels(result.classLevels as unknown as ClassLevel[])
+        setDepartments(result.departments as unknown as Department[])
       }
     } catch (err) {
       console.error('Error fetching dropdown data:', err)
@@ -135,7 +135,8 @@ export default function KelasDanRosterPage() {
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              className="pl-9 pr-8 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white appearance-none"
+              title="Filter berdasarkan tingkat kelas"
+              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Tingkat</option>
               {classLevels.map(level => (
@@ -152,7 +153,8 @@ export default function KelasDanRosterPage() {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="pl-9 pr-8 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm bg-white appearance-none"
+              title="Filter berdasarkan jurusan"
+              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Jurusan</option>
               {departments.map(dept => (

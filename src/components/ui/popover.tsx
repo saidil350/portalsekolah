@@ -20,7 +20,7 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 w-72 rounded-md border border-slate-200 bg-white p-4 shadow-md outline-none animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "z-50 w-72 rounded-md border-slate-200 bg-white p-4 shadow-md outline-none animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
       {...props}
@@ -70,7 +70,7 @@ export function DropdownMenu({ trigger, items, align = 'end', side = 'bottom' }:
               (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-text-primary"
             )}
           >
-            {item.icon && <span className="w-4 h-4 flex-shrink-0">{item.icon}</span>}
+            {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}
             <span className="flex-1 text-left">{item.label}</span>
           </button>
         ))}
@@ -88,12 +88,20 @@ export interface ContextMenuProps {
 export function ContextMenu({ items, children }: ContextMenuProps) {
   const [open, setOpen] = React.useState(false)
   const [position, setPosition] = React.useState({ x: 0, y: 0 })
+  const menuRef = React.useRef<HTMLDivElement>(null)
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault()
     setPosition({ x: e.clientX, y: e.clientY })
     setOpen(true)
   }
+
+  React.useLayoutEffect(() => {
+    if (menuRef.current && open) {
+      menuRef.current.style.setProperty("--pos-x", `${position.x}px`)
+      menuRef.current.style.setProperty("--pos-y", `${position.y}px`)
+    }
+  }, [open, position])
 
   return (
     <div onContextMenu={handleContextMenu}>
@@ -105,8 +113,8 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
             onClick={() => setOpen(false)}
           />
           <div
-            className="fixed z-50 min-w-[8rem] overflow-hidden rounded-md border border-slate-200 bg-white p-1 shadow-md animate-in fade-in-0 zoom-in-95"
-            style={{ left: position.x, top: position.y }}
+            ref={menuRef}
+            className="fixed z-50 min-w-[8rem] overflow-hidden rounded-md border-slate-200 bg-white p-1 shadow-md animate-in fade-in-0 zoom-in-95 dynamic-point-position"
           >
             {items.map((item, index) => (
               <button
@@ -124,7 +132,7 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
                   (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-text-primary"
                 )}
               >
-                {item.icon && <span className="w-4 h-4 flex-shrink-0">{item.icon}</span>}
+                {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}
                 <span className="flex-1 text-left">{item.label}</span>
               </button>
             ))}

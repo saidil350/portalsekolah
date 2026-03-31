@@ -86,7 +86,7 @@ export default function HeadmasterClassOverviewPage() {
         occupancy_rate: cls.capacity > 0 ? Math.round((cls.current_enrollment / cls.capacity) * 100) : 0,
       }))
 
-      setClasses(classesWithOccupancy as Class[])
+      setClasses(classesWithOccupancy as unknown as Class[])
 
       // Calculate statistics
       const totalStudents = classesWithOccupancy.reduce((sum, cls) => sum + cls.current_enrollment, 0)
@@ -127,7 +127,7 @@ export default function HeadmasterClassOverviewPage() {
         .eq('is_active', true)
         .order('level_order')
 
-      if (levelsData) setClassLevels(levelsData as ClassLevel[])
+      if (levelsData) setClassLevels(levelsData as unknown as ClassLevel[])
 
       // Fetch departments
       const { data: deptData } = await supabase
@@ -136,7 +136,7 @@ export default function HeadmasterClassOverviewPage() {
         .eq('is_active', true)
         .order('name')
 
-      if (deptData) setDepartments(deptData as Department[])
+      if (deptData) setDepartments(deptData as unknown as Department[])
     } catch (err) {
       console.error('Error fetching dropdown data:', err)
     }
@@ -184,7 +184,7 @@ export default function HeadmasterClassOverviewPage() {
       <div className="bg-white border-b border-slate-200 px-8 py-6 shrink-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Kelas */}
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
+          <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
             <div className="flex items-center justify-between mb-3">
               <GraduationCap className="w-8 h-8 text-blue-600" />
               <span className="text-xs font-medium text-blue-600 bg-blue-200 px-2 py-1 rounded-full">Total</span>
@@ -194,7 +194,7 @@ export default function HeadmasterClassOverviewPage() {
           </div>
 
           {/* Total Siswa */}
-          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
+          <div className="bg-linear-to-br from-green-50 to-green-100 rounded-xl p-6 border border-green-200">
             <div className="flex items-center justify-between mb-3">
               <Users className="w-8 h-8 text-green-600" />
               <span className="text-xs font-medium text-green-600 bg-green-200 px-2 py-1 rounded-full">Total</span>
@@ -204,7 +204,7 @@ export default function HeadmasterClassOverviewPage() {
           </div>
 
           {/* Total Guru */}
-          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+          <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
             <div className="flex items-center justify-between mb-3">
               <BookOpen className="w-8 h-8 text-purple-600" />
               <span className="text-xs font-medium text-purple-600 bg-purple-200 px-2 py-1 rounded-full">Total</span>
@@ -214,7 +214,7 @@ export default function HeadmasterClassOverviewPage() {
           </div>
 
           {/* Occupancy Rate */}
-          <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-6 border border-amber-200">
+          <div className="bg-linear-to-br from-amber-50 to-amber-100 rounded-xl p-6 border border-amber-200">
             <div className="flex items-center justify-between mb-3">
               <TrendingUp className="w-8 h-8 text-amber-600" />
               <span className="text-xs font-medium text-amber-600 bg-amber-200 px-2 py-1 rounded-full">Rata-rata</span>
@@ -245,6 +245,7 @@ export default function HeadmasterClassOverviewPage() {
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
+              title="Filter berdasarkan tingkat kelas"
               className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Tingkat</option>
@@ -263,6 +264,7 @@ export default function HeadmasterClassOverviewPage() {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
+              title="Filter berdasarkan jurusan"
               className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Jurusan</option>

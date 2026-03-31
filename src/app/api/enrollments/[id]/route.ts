@@ -1,4 +1,5 @@
 import { createAdminClient, createClient } from '@/utils/supabase/server'
+import { NextRequest } from 'next/server'
 
 const WITHDRAW_STATUS_CANDIDATES = ['WITHDRAWN', 'NONAKTIF', 'PINDAH']
 
@@ -6,11 +7,11 @@ const isCheckConstraintError = (error: any) =>
   (error?.message || '').toLowerCase().includes('check constraint')
 
 export async function DELETE(
-  _request: Request,
-  { params }: { params: Promise<{ id: string }> }
+  _request: NextRequest,
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id: enrollmentId } = await params
+    const { id: enrollmentId } = await context.params
     if (!enrollmentId) {
       return Response.json(
         { success: false, error: 'enrollmentId wajib diisi' },

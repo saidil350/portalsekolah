@@ -10,8 +10,8 @@ export const subjectSchema = z.object({
     .max(20, 'Kode mata pelajaran maksimal 20 karakter')
     .regex(/^[A-Z0-9_-]+$/, 'Kode hanya boleh huruf kapital, angka, underscore, dan tanda hubung')
     .toUpperCase(),
-  type: z.enum(['mandatory', 'elective'], {
-    errorMap: () => ({ message: 'Tipe mata pelajaran harus dipilih' })
+  type: z.enum(['mandatory', 'elective'] as const, {
+    message: 'Tipe mata pelajaran harus dipilih',
   }),
   department_id: z.string()
     .optional(),
@@ -23,7 +23,7 @@ export const subjectSchema = z.object({
     .max(500, 'Deskripsi maksimal 500 karakter')
     .optional()
     .or(z.literal('')),
-  status: z.enum(['active', 'inactive'])
+  status: z.enum(['active', 'inactive'] as const)
     .default('active'),
 })
 
@@ -33,7 +33,7 @@ export type SubjectFormData = z.infer<typeof subjectSchema>
 export const subjectTeacherSchema = z.object({
   subject_id: z.string().min(1, 'Mata pelajaran harus dipilih'),
   teacher_id: z.string().min(1, 'Guru harus dipilih'),
-  rank: z.enum(['primary', 'secondary']).default('secondary'),
+  rank: z.enum(['primary', 'secondary'] as const).default('secondary'),
   academic_year_id: z.string().min(1, 'Tahun ajaran harus dipilih'),
   semester_id: z.string().min(1, 'Semester harus dipilih'),
 })

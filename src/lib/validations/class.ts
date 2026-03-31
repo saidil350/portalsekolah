@@ -22,7 +22,7 @@ export const classSchema = z.object({
     .min(1, 'Kapasitas minimal 1')
     .max(100, 'Kapasitas maksimal 100')
     .default(40),
-  status: z.enum(['active', 'inactive'])
+  status: z.enum(['active', 'inactive'] as const)
     .default('active'),
 })
 
@@ -35,7 +35,7 @@ export const classFilterSchema = z.object({
   department_id: z.string().optional(),
   academic_year_id: z.string().optional(),
   semester_id: z.string().optional(),
-  status: z.enum(['active', 'inactive']).optional(),
+  status: z.enum(['active', 'inactive'] as const).optional(),
 })
 
 export type ClassFilterData = z.infer<typeof classFilterSchema>

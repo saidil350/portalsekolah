@@ -65,7 +65,10 @@ export function SimpleTooltip({
 }: TooltipProps) {
   return (
     <TooltipProvider delayDuration={delayDuration}>
-      <Tooltip delayDuration={delayDuration}>
+      <Tooltip
+        delayDuration={delayDuration}
+        disableHoverableContent={disableHoverableContent}
+      >
         <TooltipTrigger asChild>
           {children}
         </TooltipTrigger>
@@ -73,7 +76,6 @@ export function SimpleTooltip({
           variant={variant}
           side={side}
           align={align}
-          disableHoverableContent={disableHoverableContent}
         >
           {content}
         </TooltipContent>

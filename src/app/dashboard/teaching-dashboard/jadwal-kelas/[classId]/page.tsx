@@ -1,15 +1,15 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, use } from 'react'
 import { ArrowLeft, Calendar, Users, BookOpen, Clock, MapPin, Loader2, AlertCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import type { ClassRosterView, ClassSchedule } from '@/types/class-roster'
 import type { User, Subject } from '@/types'
 import { detectScheduleColumnMode, getScheduleColumns, getScheduleSelect } from '@/utils/supabase/schedule-columns'
 
-export default function TeacherClassDetailPage({ params }: { params: { classId: string } }) {
+export default function TeacherClassDetailPage({ params }: { params: Promise<{ classId: string }> }) {
   const router = useRouter()
-  const { classId } = params
+  const { classId } = use(params)
 
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -91,9 +91,9 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
       setRosterData({
         class_info: classData,
         students: students,
-        schedules: schedulesData || [],
-        teachers: (uniqueTeachers || []) as User[],
-        subjects: (uniqueSubjects || []) as Subject[],
+        schedules: (schedulesData as any) || [],
+        teachers: (uniqueTeachers || []) as unknown as User[],
+        subjects: (uniqueSubjects || []) as unknown as Subject[],
         statistics: statistics as any,
       })
     } catch (err: any) {
@@ -256,7 +256,7 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
                       key={student.id}
                       className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
                     >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                         {student.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                       </div>
                       <div>
@@ -303,7 +303,7 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
                           return (
                             <td key={day.value} className="px-2 py-2 align-top">
                               {schedule ? (
-                                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-2 min-h-[70px]">
+                                <div className="bg-linear-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-2 min-h-[70px]">
                                   <p className="font-semibold text-slate-900 text-xs mb-1">{schedule.subject?.name}</p>
                                   <p className="text-xs text-slate-600 mb-2">{schedule.teacher?.full_name}</p>
                                   <div className="flex items-center gap-2">
@@ -335,7 +335,7 @@ export default function TeacherClassDetailPage({ params }: { params: { classId: 
                     key={teacher.id}
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
                   >
-                    <div className="w-6 h-6 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                       {teacher.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
                     <span className="text-xs font-medium text-slate-900">{teacher.full_name}</span>

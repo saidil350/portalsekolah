@@ -106,7 +106,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
             ref={ref}
             disabled={disabled || loading}
-            aria-invalid={hasError}
+            aria-invalid={hasError ? "true" : "false"}
             aria-describedby={
               hasError ? errorId : helperText ? helperId : undefined
             }

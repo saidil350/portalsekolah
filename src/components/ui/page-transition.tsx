@@ -54,7 +54,7 @@ export function PageTransition({
       initial={config.initial}
       animate={config.animate}
       exit={config.exit}
-      transition={config.transition}
+      transition={config.transition as any}
       className={className}
     >
       {children}

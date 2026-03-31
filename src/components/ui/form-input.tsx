@@ -102,7 +102,7 @@ export function FormInput({
             className
           )}
           {...register(name)}
-          aria-invalid={hasError}
+          aria-invalid={hasError ? "true" : "false"}
           aria-describedby={
             hasError ? errorId : helperText ? helperId : undefined
           }
@@ -200,7 +200,7 @@ export function FormSelect({
           className
         )}
         {...register(name)}
-        aria-invalid={hasError}
+        aria-invalid={hasError ? "true" : "false"}
         aria-describedby={
           hasError ? errorId : helperText ? helperId : undefined
         }
@@ -268,7 +268,7 @@ export function FormCheckbox({
             hasError && "border-error-500"
           )}
           {...register(name)}
-          aria-invalid={hasError}
+          aria-invalid={hasError ? "true" : "false"}
           aria-describedby={
             hasError ? errorId : helperText ? helperId : undefined
           }
@@ -360,7 +360,7 @@ export function FormTextarea({
           className
         )}
         {...register(name)}
-        aria-invalid={hasError}
+        aria-invalid={hasError ? "true" : "false"}
         aria-describedby={
           hasError ? errorId : helperText ? helperId : undefined
         }

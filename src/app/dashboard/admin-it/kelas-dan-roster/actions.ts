@@ -91,7 +91,7 @@ export async function fetchClasses(
     if (error) throw error
 
     // Calculate occupancy rate for each class
-    const classesWithOccupancy = (data as Class[]).map((cls) => ({
+    const classesWithOccupancy = (data as unknown as Class[]).map((cls) => ({
       ...cls,
       occupancy_rate: cls.capacity > 0 ? Math.round((cls.current_enrollment / cls.capacity) * 100) : 0,
     }))
@@ -209,7 +209,7 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
 
     return {
       success: true,
-      data: data as Class,
+      data: data as unknown as Class,
     }
   } catch (error: any) {
     console.error('=== CREATE CLASS ERROR ===')
@@ -333,7 +333,7 @@ export async function fetchEnrollments(classId: string): Promise<EnrollmentRespo
 
     return {
       success: true,
-      data: data as Enrollment[],
+      data: data as unknown as Enrollment[],
       total: data?.length || 0,
     }
   } catch (error: any) {
@@ -386,7 +386,7 @@ export async function fetchAvailableStudents(
     const { data, error } = await query.limit(50)
     if (error) throw error
 
-    const available = (data as User[]).filter(
+    const available = (data as unknown as User[]).filter(
       (student) => !enrolledStudentIds.has(student.id)
     )
 
@@ -596,7 +596,7 @@ export async function fetchClassSchedules(
     if (error) throw error
 
     // Add computed fields
-    const schedulesWithExtras = (data as ClassSchedule[]).map((schedule) => ({
+    const schedulesWithExtras = (data as unknown as ClassSchedule[]).map((schedule) => ({
       ...schedule,
       day_name: getDayName(schedule.day_of_week),
       time_range: formatTimeRange(schedule.start_time, schedule.end_time),
@@ -672,7 +672,7 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
 
     return {
       success: true,
-      data: data as ClassSchedule,
+      data: data as unknown as ClassSchedule,
     }
   } catch (error: any) {
     console.error('Error creating class schedule:', error)
@@ -727,7 +727,7 @@ export async function updateClassSchedule(
 
     return {
       success: true,
-      data: data as ClassSchedule,
+      data: data as unknown as ClassSchedule,
     }
   } catch (error: any) {
     console.error('Error updating class schedule:', error)
@@ -865,10 +865,10 @@ export async function fetchClassRosterView(classId: string): Promise<{
     return {
       success: true,
       data: {
-        class_info: classData as Class,
-        students: students as User[],
-        schedules: schedulesData as ClassSchedule[],
-        teachers: uniqueTeachers as User[],
+        class_info: classData as unknown as Class,
+        students: students as unknown as User[],
+        schedules: schedulesData as unknown as ClassSchedule[],
+        teachers: uniqueTeachers as unknown as User[],
         subjects: uniqueSubjects,
         statistics,
       },

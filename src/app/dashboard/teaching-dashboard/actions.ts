@@ -26,7 +26,7 @@ export async function getCurrentTeacher(): Promise<User | null> {
     return null
   }
 
-  return profile as User
+  return profile as unknown as User
 }
 
 /**
@@ -48,7 +48,7 @@ export async function getStudentsForGrading(limit: number = 10): Promise<User[]>
     return []
   }
 
-  return (data || []) as User[]
+  return (data || []) as unknown as User[]
 }
 
 /**
