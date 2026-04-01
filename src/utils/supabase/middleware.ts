@@ -50,34 +50,35 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Redirect user yang sudah login dari halaman login ke dashboard sesuai role
-  if (isLoginPage && isAuthenticated) {
-    // Fetch user role dari database
-    let userRole = 'ADMIN_IT' // Default fallback
-
-    if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (profile?.role) {
-        userRole = profile.role
-      }
-    }
-
-    // Mapping role ke dashboard path
-    const roleDashboardMap: Record<string, string> = {
-      'ADMIN_IT': '/dashboard/admin-it',
-      'GURU': '/dashboard/teaching-dashboard',
-      'KEPALA_SEKOLAH': '/dashboard/headmaster-dashboard',
-      'SISWA': '/dashboard/student-dashboard'
-    }
-
-    // Redirect ke dashboard sesuai role
-    const dashboardPath = roleDashboardMap[userRole] || '/dashboard/admin-it'
-    return NextResponse.redirect(new URL(dashboardPath, request.url))
-  }
+  // COMMENTED OUT: Allow authenticated users to access login page if needed
+  // if (isLoginPage && isAuthenticated) {
+  //   // Fetch user role dari database
+  //   let userRole = 'ADMIN_IT' // Default fallback
+  //
+  //   if (user) {
+  //     const { data: profile } = await supabase
+  //       .from('profiles')
+  //       .select('role')
+  //       .eq('id', user.id)
+  //       .single()
+  //
+  //     if (profile?.role) {
+  //       userRole = profile.role
+  //     }
+  //   }
+  //
+  //   // Mapping role ke dashboard path
+  //   const roleDashboardMap: Record<string, string> = {
+  //     'ADMIN_IT': '/dashboard/admin-it',
+  //     'GURU': '/dashboard/teaching-dashboard',
+  //     'KEPALA_SEKOLAH': '/dashboard/headmaster-dashboard',
+  //     'SISWA': '/dashboard/student-dashboard'
+  //   }
+  //
+  //   // Redirect ke dashboard sesuai role
+  //   const dashboardPath = roleDashboardMap[userRole] || '/dashboard/admin-it'
+  //   return NextResponse.redirect(new URL(dashboardPath, request.url))
+  // }
 
   return supabaseResponse
 }

@@ -2,12 +2,19 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get system settings for school identity
  * Note: For now, return mock data. In production, this should be stored in a separate system_settings table
  */
 export async function getSystemSettings() {
+  // Authorization check - only ADMIN_IT can access system settings
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return null
+  }
+
   // TODO: Fetch from a system_settings table in production
   // For now, return mock data
   return {
@@ -23,6 +30,12 @@ export async function getSystemSettings() {
  * Update school identity
  */
 export async function updateSchoolIdentity(formData: FormData) {
+  // Authorization check - only ADMIN_IT can update school identity
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -52,6 +65,12 @@ export async function updateSchoolIdentity(formData: FormData) {
  * Toggle maintenance mode
  */
 export async function toggleMaintenanceMode(enabled: boolean) {
+  // Authorization check - only ADMIN_IT can toggle maintenance mode
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -72,6 +91,12 @@ export async function toggleMaintenanceMode(enabled: boolean) {
  * TODO: Implement actual database backup functionality
  */
 export async function createBackup() {
+  // Authorization check - only ADMIN_IT can create backups
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -98,6 +123,12 @@ export async function createBackup() {
  * TODO: Implement actual audit log export
  */
 export async function exportAuditLogs() {
+  // Authorization check - only ADMIN_IT can export audit logs
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -129,6 +160,12 @@ export async function exportAuditLogs() {
  * Get current admin profile
  */
 export async function getOwnProfile() {
+  // Authorization check - only ADMIN_IT can access this admin profile function
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return null
@@ -141,6 +178,12 @@ export async function getOwnProfile() {
  * Update current admin profile
  */
 export async function updateOwnProfile(formData: FormData) {
+  // Authorization check - only ADMIN_IT can update their profile in this admin context
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { success: false, error: 'Not authenticated' }

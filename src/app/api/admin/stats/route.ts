@@ -1,10 +1,20 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
+import { authorizeApi } from '@/lib/auth/authorization'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    // Authorization check - only ADMIN_IT can access stats
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return NextResponse.json(
+        { success: false, error: auth.error },
+        { status: auth.statusCode }
+      )
+    }
+
     const supabase = await createClient()
 
     // Get active academic year

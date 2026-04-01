@@ -11,6 +11,15 @@ interface DashboardStats {
   activeClasses: number;
 }
 
+interface StudentStats {
+  active: number;
+  graduated: number;
+  transferred: number;
+  dropout: number;
+  inactive: number;
+  total: number;
+}
+
 export default function AdminDashboardPage() {
   const { t } = useLanguage();
   const [stats, setStats] = useState<DashboardStats>({
@@ -18,16 +27,33 @@ export default function AdminDashboardPage() {
     totalTeachers: 0,
     activeClasses: 0,
   });
+  const [studentStats, setStudentStats] = useState<StudentStats>({
+    active: 0,
+    graduated: 0,
+    transferred: 0,
+    dropout: 0,
+    inactive: 0,
+    total: 0,
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchStats() {
       try {
+        // Fetch general stats
         const response = await fetch('/api/admin/stats');
         const result = await response.json();
 
         if (result.success) {
           setStats(result.data);
+        }
+
+        // Fetch student stats
+        const studentResponse = await fetch('/api/admin/student-stats');
+        const studentResult = await studentResponse.json();
+
+        if (studentResult.success) {
+          setStudentStats(studentResult.data);
         }
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -172,35 +198,73 @@ export default function AdminDashboardPage() {
               <div className="lg:col-span-1 flex flex-col gap-4">
                 <div className="bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-text-main text-lg font-bold">{t('admin.db.systemHealth')}</h3>
-                    <div className="w-[20px] h-[20px] relative shrink-0"><Image src="/04adc53c24608dff6c1916e299120e5e309f26f4.svg" alt="" fill className="object-contain" /></div>
+                    <h3 className="text-text-main text-lg font-bold">{t('admin.db.studentStatus')}</h3>
+                    <div className="w-[20px] h-[20px] relative shrink-0"><Image src="/d32572d68ab64ad7b6f07891b1d780934c7b715b.svg" alt="" fill className="object-contain" /></div>
                   </div>
                   <div className="space-y-4">
+                    {/* Active Students */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.serverLoad')}</span>
-                        <span className="font-medium">34%</span>
+                        <span className="text-text-sub">{t('admin.db.status.active')}</span>
+                        <span className="font-medium">{loading ? '...' : studentStats.active.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div className="bg-green-500 h-2 rounded-full w-[34%]"></div>
+                        <div
+                          className="bg-green-500 h-2 rounded-full"
+                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.active / studentStats.total) * 100 : 0}%` }}
+                        ></div>
                       </div>
                     </div>
+                    {/* Graduated Students */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.databaseStorage')}</span>
-                        <span className="font-medium">62%</span>
+                        <span className="text-text-sub">{t('admin.db.status.graduated')}</span>
+                        <span className="font-medium">{loading ? '...' : studentStats.graduated.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div className="bg-primary h-2 rounded-full w-[62%]"></div>
+                        <div
+                          className="bg-purple-500 h-2 rounded-full"
+                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.graduated / studentStats.total) * 100 : 0}%` }}
+                        ></div>
                       </div>
                     </div>
+                    {/* Transferred Students */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.apiLatency')}</span>
-                        <span className="font-medium">24ms</span>
+                        <span className="text-text-sub">{t('admin.db.status.transferred')}</span>
+                        <span className="font-medium">{loading ? '...' : studentStats.transferred.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div className="bg-blue-400 h-2 rounded-full w-[15%]"></div>
+                        <div
+                          className="bg-orange-400 h-2 rounded-full"
+                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.transferred / studentStats.total) * 100 : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    {/* Dropout Students */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-text-sub">{t('admin.db.status.dropout')}</span>
+                        <span className="font-medium">{loading ? '...' : studentStats.dropout.toLocaleString('id-ID')}</span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-2">
+                        <div
+                          className="bg-red-500 h-2 rounded-full"
+                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.dropout / studentStats.total) * 100 : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                    {/* Inactive Students */}
+                    <div>
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-text-sub">{t('admin.db.status.inactive')}</span>
+                        <span className="font-medium">{loading ? '...' : studentStats.inactive.toLocaleString('id-ID')}</span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-2">
+                        <div
+                          className="bg-gray-400 h-2 rounded-full"
+                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.inactive / studentStats.total) * 100 : 0}%` }}
+                        ></div>
                       </div>
                     </div>
                   </div>

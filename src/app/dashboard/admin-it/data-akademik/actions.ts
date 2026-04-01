@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 import type {
   AcademicYear,
   AcademicYearFormData,
@@ -75,6 +76,15 @@ export async function fetchAcademicYears(
 export async function createAcademicYear(
   formData: AcademicYearFormData
 ): Promise<CreateResponse<AcademicYear>> {
+  // Authorization check - only ADMIN_IT can create academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -86,11 +96,12 @@ export async function createAcademicYear(
       }
     }
 
-    // Check if name already exists
+    // Check if name already exists in the same organization
     const { data: existingYear } = await supabase
       .from('academic_years')
       .select('id')
       .eq('name', formData.name.trim())
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     if (existingYear) {
@@ -100,12 +111,13 @@ export async function createAcademicYear(
       }
     }
 
-    // If this is active, deactivate all other years
+    // If this is active, deactivate all other years in the same organization
     if (formData.is_active) {
       await supabase
         .from('academic_years')
         .update({ is_active: false })
         .eq('is_active', true)
+        .eq('organization_id', auth.user.organization_id)
     }
 
     const { data, error } = await supabase
@@ -115,7 +127,8 @@ export async function createAcademicYear(
         start_date: formData.start_date,
         end_date: formData.end_date,
         is_active: formData.is_active,
-        description: formData.description || null
+        description: formData.description || null,
+        organization_id: auth.user.organization_id // Add organization_id
       })
       .select()
       .single()
@@ -144,6 +157,15 @@ export async function updateAcademicYear(
   id: string,
   formData: Partial<AcademicYearFormData>
 ): Promise<UpdateResponse<AcademicYear>> {
+  // Authorization check - only ADMIN_IT can update academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -218,6 +240,15 @@ export async function updateAcademicYear(
  * Delete academic year
  */
 export async function deleteAcademicYear(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -313,14 +344,24 @@ export async function fetchClassLevels(
 export async function createClassLevel(
   formData: ClassLevelFormData
 ): Promise<CreateResponse<ClassLevel>> {
+  // Authorization check - only ADMIN_IT can create class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
-    // Check if name already exists
+    // Check if name already exists in the same organization
     const { data: existingName } = await supabase
       .from('class_levels')
       .select('id')
       .eq('name', formData.name.trim())
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     if (existingName) {
@@ -330,11 +371,12 @@ export async function createClassLevel(
       }
     }
 
-    // Check if code already exists
+    // Check if code already exists in the same organization
     const { data: existingCode } = await supabase
       .from('class_levels')
       .select('id')
       .eq('code', formData.code.trim())
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     if (existingCode) {
@@ -351,7 +393,8 @@ export async function createClassLevel(
         code: formData.code.trim(),
         level_order: formData.level_order,
         description: formData.description || null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        organization_id: auth.user.organization_id // Add organization_id
       })
       .select()
       .single()
@@ -380,6 +423,15 @@ export async function updateClassLevel(
   id: string,
   formData: Partial<ClassLevelFormData>
 ): Promise<UpdateResponse<ClassLevel>> {
+  // Authorization check - only ADMIN_IT can update class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -452,6 +504,15 @@ export async function updateClassLevel(
  * Delete class level
  */
 export async function deleteClassLevel(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -533,6 +594,15 @@ export async function fetchDepartments(
 export async function createDepartment(
   formData: DepartmentFormData
 ): Promise<CreateResponse<Department>> {
+  // Authorization check - only ADMIN_IT can create departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -600,6 +670,15 @@ export async function updateDepartment(
   id: string,
   formData: Partial<DepartmentFormData>
 ): Promise<UpdateResponse<Department>> {
+  // Authorization check - only ADMIN_IT can update departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -672,6 +751,15 @@ export async function updateDepartment(
  * Delete department
  */
 export async function deleteDepartment(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 

@@ -47,24 +47,36 @@ export async function login(formData: FormData) {
 
   // Update last_login setelah login berhasil dan fetch user role
   let userRole = 'ADMIN_IT' // Default fallback
+  let userId = authData.user?.id
 
-  if (authData.user) {
-    const { data: profile, error: updateError } = await supabase
+  if (userId) {
+    // Fetch role terlebih dahulu (SELECT selalu diizinkan oleh RLS untuk own profile)
+    const { data: profile, error: profileError } = await supabase
       .from('profiles')
-      .update({ last_login: new Date().toISOString() })
       .select('role')
-      .eq('id', authData.user.id)
+      .eq('id', userId)
       .single()
 
-    if (updateError) {
-      console.error('Gagal mengupdate last_login:', updateError)
+    if (profileError) {
+      console.error('[LOGIN] Gagal fetch profile:', profileError)
     }
 
     // Get user role untuk redirect ke dashboard yang sesuai
     if (profile?.role) {
       userRole = profile.role
     }
+
+    // Update last_login terpisah (tidak pakai .single() agar tidak error jika 0 rows)
+    const { error: updateError } = await supabase
+      .from('profiles')
+      .update({ last_login: new Date().toISOString() })
+      .eq('id', userId)
+
+    if (updateError) {
+      console.error('[LOGIN] Gagal mengupdate last_login:', updateError)
+    }
   }
+
 
   // Mapping role ke dashboard path
   const roleDashboardMap: Record<string, string> = {
@@ -76,7 +88,10 @@ export async function login(formData: FormData) {
 
   // Redirect ke dashboard sesuai role
   const dashboardPath = roleDashboardMap[userRole] || '/dashboard/admin-it'
-  redirect(dashboardPath)
+
+  // IMPORTANT: Kita return success dengan redirect URL
+  // dan gunakan router.push di client side untuk memastikan session tersimpan
+  return { success: true, redirect: dashboardPath }
 }
 
 export async function logout() {

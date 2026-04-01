@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 import type {
   Class,
   ClassFormData,
@@ -33,6 +34,17 @@ import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
 export async function fetchClasses(
   filters: ClassFilters = {}
 ): Promise<ClassResponse> {
+  // Authorization check - only ADMIN_IT can fetch classes
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error,
+      data: [],
+      total: 0,
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -114,6 +126,12 @@ export async function fetchClasses(
  * Create new class
  */
 export async function createClass(formData: ClassFormData): Promise<CreateResponse<Class>> {
+  // Authorization check - only ADMIN_IT can create classes
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   console.log('=== CREATE CLASS START ===')
   console.log('Form data received:', JSON.stringify(formData, null, 2))
 
@@ -231,6 +249,12 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
  * Update existing class
  */
 export async function updateClass(id: string, formData: Partial<ClassFormData>): Promise<UpdateResponse<Class>> {
+  // Authorization check - only ADMIN_IT can update classes
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -289,6 +313,12 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
  * Delete class
  */
 export async function deleteClass(id: string): Promise<{ success: boolean; error?: string }> {
+  // Authorization check - only ADMIN_IT can delete classes
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -316,6 +346,17 @@ export async function deleteClass(id: string): Promise<{ success: boolean; error
  * Fetch enrollments for a class
  */
 export async function fetchEnrollments(classId: string): Promise<EnrollmentResponse> {
+  // Authorization check - only ADMIN_IT can fetch enrollments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error,
+      data: [],
+      total: 0,
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -352,6 +393,12 @@ export async function fetchAvailableStudents(
   classId: string,
   search?: string
 ): Promise<{ success: boolean; data?: User[]; error?: string }> {
+  // Authorization check - only ADMIN_IT can fetch available students
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
     const hasIsActive = await detectProfilesHasIsActive(supabase)
@@ -405,6 +452,12 @@ export async function enrollStudent(
   studentId: string,
   academicYearId?: string
 ): Promise<CreateResponse<Enrollment>> {
+  // Authorization check - only ADMIN_IT can enroll students
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -469,6 +522,12 @@ export async function enrollStudent(
  * Withdraw student from class
  */
 export async function withdrawStudent(enrollmentId: string): Promise<{ success: boolean; error?: string }> {
+  // Authorization check - only ADMIN_IT can withdraw students
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -512,6 +571,17 @@ export async function bulkEnrollStudents(
   studentIds: string[],
   academicYearId?: string
 ): Promise<{ success: boolean; enrolled: number; failed: number; error?: string }> {
+  // Authorization check - only ADMIN_IT can bulk enroll students
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      enrolled: 0,
+      failed: studentIds.length,
+      error: auth.error
+    }
+  }
+
   try {
     let enrolled = 0
     let failed = 0
@@ -550,6 +620,16 @@ export async function bulkEnrollStudents(
 export async function fetchClassSchedules(
   filters: ClassScheduleFilters = {}
 ): Promise<ClassScheduleResponse> {
+  // Authorization check - only ADMIN_IT can fetch class schedules
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error,
+      data: [],
+    }
+  }
+
   try {
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
@@ -619,6 +699,12 @@ export async function fetchClassSchedules(
  * Create class schedule
  */
 export async function createClassSchedule(formData: ClassScheduleFormData): Promise<CreateResponse<ClassSchedule>> {
+  // Authorization check - only ADMIN_IT can create class schedules
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
@@ -690,6 +776,12 @@ export async function updateClassSchedule(
   id: string,
   formData: Partial<ClassScheduleFormData>
 ): Promise<UpdateResponse<ClassSchedule>> {
+  // Authorization check - only ADMIN_IT can update class schedules
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
@@ -744,6 +836,12 @@ export async function updateClassSchedule(
 export async function deleteClassSchedule(
   id: string
 ): Promise<{ success: boolean; error?: string; class_id?: string }> {
+  // Authorization check - only ADMIN_IT can delete class schedules
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -785,6 +883,15 @@ export async function fetchClassRosterView(classId: string): Promise<{
   data?: ClassRosterView;
   error?: string;
 }> {
+  // Authorization check - only ADMIN_IT can fetch class roster view
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
@@ -900,6 +1007,17 @@ export async function checkScheduleAvailability(
   available_rooms: Array<{ id: string; name: string; reason?: string }>
   error?: string
 }> {
+  // Authorization check - only ADMIN_IT can check schedule availability
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      available_teachers: [],
+      available_rooms: [],
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
@@ -966,6 +1084,20 @@ export async function checkScheduleAvailability(
  * Fetch dropdown data for create/edit class form
  */
 export async function fetchClassDropdownData() {
+  // Authorization check - only ADMIN_IT can fetch class dropdown data
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error,
+      classLevels: [],
+      departments: [],
+      rooms: [],
+      teachers: [],
+      academicYears: []
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1054,6 +1186,17 @@ function formatTimeRange(startTime: string, endTime: string): string {
  * This is a server action that can be called from client components
  */
 export async function fetchFilterDropdownData() {
+  // Authorization check - only ADMIN_IT can fetch filter dropdown data
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error,
+      classLevels: [],
+      departments: []
+    }
+  }
+
   try {
     const supabase = await createClient()
 

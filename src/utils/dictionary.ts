@@ -113,6 +113,7 @@ export const dictionary = {
     'admin.db.attendanceDesc': 'Rata-rata kehadiran harian selama 6 bulan terakhir',
     'admin.db.comparedToLastSem': 'dibanding semester lalu',
     'admin.db.systemHealth': 'Kesehatan Sistem',
+    'admin.db.studentStatus': 'Status Siswa',
     'admin.db.serverLoad': 'Beban Server',
     'admin.db.databaseStorage': 'Penyimpanan Database',
     'admin.db.apiLatency': 'Latensi API',
@@ -127,6 +128,11 @@ export const dictionary = {
     'admin.db.table.action': 'Aksi',
     'admin.db.status.arrears': 'Menunggak',
     'admin.db.status.pending': 'Tertunda',
+    'admin.db.status.active': 'Aktif',
+    'admin.db.status.graduated': 'Lulus',
+    'admin.db.status.transferred': 'Pindah',
+    'admin.db.status.dropout': 'Keluar',
+    'admin.db.status.inactive': 'Tidak Aktif',
 
     // Note: months are defined later in the file
 
@@ -1089,6 +1095,7 @@ export const dictionary = {
     'admin.db.attendanceDesc': 'Average daily attendance over the last 6 months',
     'admin.db.comparedToLastSem': 'compared to last semester',
     'admin.db.systemHealth': 'System Health',
+    'admin.db.studentStatus': 'Student Status',
     'admin.db.serverLoad': 'Server Load',
     'admin.db.databaseStorage': 'Database Storage',
     'admin.db.apiLatency': 'API Latency',
@@ -1103,6 +1110,11 @@ export const dictionary = {
     'admin.db.table.action': 'Action',
     'admin.db.status.arrears': 'In Arrears',
     'admin.db.status.pending': 'Pending',
+    'admin.db.status.active': 'Active',
+    'admin.db.status.graduated': 'Graduated',
+    'admin.db.status.transferred': 'Transferred',
+    'admin.db.status.dropout': 'Dropout',
+    'admin.db.status.inactive': 'Inactive',
 
     // Days & Months
     'month.jan': 'January', 'month.feb': 'February', 'month.mar': 'March', 'month.apr': 'April', 'month.may': 'May', 'month.jun': 'June',

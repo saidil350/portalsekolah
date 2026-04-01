@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { GraduationCap, User, Lock, Eye, EyeOff, Info, ArrowRight, Loader2 } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { login } from "./actions";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -18,6 +20,9 @@ export default function LoginPage() {
       const result = await login(formData);
       if (result?.error) {
         setErrorMsg(result.error);
+      } else if (result?.success && result?.redirect) {
+        // Use router.push for client-side redirect after session is established
+        router.push(result.redirect);
       }
     });
   };

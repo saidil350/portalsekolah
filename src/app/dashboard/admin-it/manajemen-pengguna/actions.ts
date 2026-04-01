@@ -3,6 +3,8 @@
 import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/server-admin'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
+import { validateNIP, validateNISN } from '@/lib/validations/user-validation'
 import type {
   User,
   UserFormData,
@@ -15,17 +17,49 @@ import type {
 } from '@/types/user'
 
 /**
+ * Helper: Ambil organization_id dari Admin IT yang sedang login
+ * @returns organization_id string
+ * @throws Error jika tidak ada organization
+ */
+async function getAdminOrganizationId(): Promise<string> {
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    throw new Error(auth.error)
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    throw new Error('Admin IT tidak terhubung ke organisasi manapun. Silakan hubungi administrator.')
+  }
+
+  return organizationId
+}
+
+/**
  * Fetch users with filters and pagination
+ * Hanya menampilkan user dari organization yang sama dengan Admin IT
  */
 export async function fetchUsers(
   filters: UserFilters & { page?: number; limit?: number }
 ): Promise<UsersResponse> {
+  // Authorization check - only ADMIN_IT can fetch users
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    throw new Error(auth.error)
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    throw new Error('Admin IT tidak terhubung ke organisasi manapun.')
+  }
+
   try {
     const supabase = await createClient()
 
     let query = supabase
       .from('profiles')
       .select('*', { count: 'exact' })
+      .eq('organization_id', organizationId) // ✅ Filter by organization
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
@@ -66,16 +100,41 @@ export async function fetchUsers(
 
 /**
  * Create new user
+ * User baru akan otomatis masuk ke organization yang sama dengan Admin IT
  */
 export async function createUser(formData: UserFormData): Promise<CreateUserResponse> {
+  // Authorization check - only ADMIN_IT can create users
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    return {
+      success: false,
+      error: 'Admin IT tidak terhubung ke organisasi manapun.'
+    }
+  }
+
   try {
     const supabase = await createClient()
     const adminSupabase = await createAdminClient() // Admin client untuk operasi auth
 
-    // Validation based on role
+    // ============================================
+    // VALIDASI ROLE-SPECIFIC DENGAN FORMAT CHECK
+    // ============================================
     if (formData.role === 'GURU' || formData.role === 'KEPALA_SEKOLAH') {
       if (!formData.nip || formData.nip.trim() === '') {
         throw new Error('NIP wajib diisi untuk Guru dan Kepala Sekolah')
+      }
+      // Validasi format NIP (18 digit)
+      const nipValidation = validateNIP(formData.nip)
+      if (!nipValidation.valid) {
+        throw new Error(nipValidation.message)
       }
     }
 
@@ -83,9 +142,18 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
       if (!formData.nisn || formData.nisn.trim() === '') {
         throw new Error('NISN wajib diisi untuk Siswa')
       }
+      // Validasi format NISN (10 digit)
+      const nisnValidation = validateNISN(formData.nisn)
+      if (!nisnValidation.valid) {
+        throw new Error(nisnValidation.message)
+      }
     }
 
-    // Check if email already exists
+    // ============================================
+    // CEK DUPLIKAT (PER-ORGANIZATION)
+    // ============================================
+
+    // Check if email already exists (global, email harus unik di seluruh sistem)
     const { data: existingUser } = await supabase
       .from('profiles')
       .select('id')
@@ -96,33 +164,37 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
       throw new Error('Email sudah terdaftar')
     }
 
-    // Check if NIP already exists (for GURU/STAF)
+    // Check if NIP already exists (PER-ORGANIZATION)
     if (formData.nip && formData.nip.trim() !== '') {
       const { data: existingNIP } = await supabase
         .from('profiles')
         .select('id')
         .eq('nip', formData.nip.trim())
+        .eq('organization_id', organizationId) // ✅ Per-organization
         .single()
 
       if (existingNIP) {
-        throw new Error('NIP sudah terdaftar')
+        throw new Error('NIP sudah terdaftar di organisasi ini')
       }
     }
 
-    // Check if NISN already exists (for SISWA)
+    // Check if NISN already exists (PER-ORGANIZATION)
     if (formData.nisn && formData.nisn.trim() !== '') {
       const { data: existingNISN } = await supabase
         .from('profiles')
         .select('id')
         .eq('nisn', formData.nisn.trim())
+        .eq('organization_id', organizationId) // ✅ Per-organization
         .single()
 
       if (existingNISN) {
-        throw new Error('NISN sudah terdaftar')
+        throw new Error('NISN sudah terdaftar di organisasi ini')
       }
     }
 
-    // Create auth user menggunakan ADMIN client
+    // ============================================
+    // CREATE AUTH USER
+    // ============================================
     const { data: authData, error: authError } = await adminSupabase.auth.admin.createUser({
       email: formData.email,
       password: formData.password || 'Password123!',
@@ -135,12 +207,15 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
 
     if (authError) throw authError
 
-    // Create profile
-    const profileData: any = {
+    // ============================================
+    // CREATE PROFILE DENGAN ORGANIZATION_ID
+    // ============================================
+    const profileData: Record<string, unknown> = {
       id: authData.user.id,
       email: formData.email,
       full_name: formData.full_name,
       role: formData.role,
+      organization_id: organizationId, // ✅ Organization yang sama dengan Admin IT
       status: formData.status || 'ACTIVE'
     }
 
@@ -186,16 +261,48 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
 
 /**
  * Update existing user
+ * Hanya bisa update user di organization yang sama
  */
 export async function updateUser(
   id: string,
   formData: Partial<UserFormData>
 ): Promise<UpdateUserResponse> {
+  // Authorization check - only ADMIN_IT can update users
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    return { success: false, error: 'Admin IT tidak terhubung ke organisasi manapun.' }
+  }
+
   try {
     const supabase = await createClient()
-    const adminSupabase = await createAdminClient() // Admin client untuk operasi auth
+    const adminSupabase = await createAdminClient()
 
-    // Get current user for security checks
+    // ============================================
+    // VALIDASI: Target user harus di organization yang sama
+    // ============================================
+    const { data: targetUser } = await supabase
+      .from('profiles')
+      .select('id, role, organization_id')
+      .eq('id', id)
+      .eq('organization_id', organizationId) // ✅ Harus di org yang sama
+      .single()
+
+    if (!targetUser) {
+      return {
+        success: false,
+        error: 'Pengguna tidak ditemukan di organisasi Anda.'
+      }
+    }
+
+    // Get current user for additional security checks
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) {
@@ -213,35 +320,36 @@ export async function updateUser(
       }
     }
 
-    // Prevent changing own role to non-admin
+    // Prevent changing own role to non-admin (last admin check PER-ORGANIZATION)
     if (user.id === id && formData.role && formData.role !== 'ADMIN_IT') {
-      const { data: currentUserProfile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single()
-
-      if (currentUserProfile?.role === 'ADMIN_IT') {
+      if (targetUser.role === 'ADMIN_IT') {
         const { count, error: countError } = await supabase
           .from('profiles')
           .select('id', { count: 'exact', head: true })
           .eq('role', 'ADMIN_IT')
+          .eq('organization_id', organizationId) // ✅ Per-organization
 
         if (countError) throw countError
 
         if (count === null || count <= 1) {
           return {
             success: false,
-            error: 'Tidak dapat mengubah peran admin terakhir. Sistem harus memiliki minimal satu admin.'
+            error: 'Tidak dapat mengubah peran admin terakhir. Organisasi harus memiliki minimal satu admin.'
           }
         }
       }
     }
 
-    // Validation based on role
+    // ============================================
+    // VALIDASI FORMAT NIP/NISN
+    // ============================================
     if (formData.role === 'GURU' || formData.role === 'KEPALA_SEKOLAH') {
       if (!formData.nip || formData.nip.trim() === '') {
         throw new Error('NIP wajib diisi untuk Guru dan Kepala Sekolah')
+      }
+      const nipValidation = validateNIP(formData.nip)
+      if (!nipValidation.valid) {
+        throw new Error(nipValidation.message)
       }
     }
 
@@ -249,7 +357,15 @@ export async function updateUser(
       if (!formData.nisn || formData.nisn.trim() === '') {
         throw new Error('NISN wajib diisi untuk Siswa')
       }
+      const nisnValidation = validateNISN(formData.nisn)
+      if (!nisnValidation.valid) {
+        throw new Error(nisnValidation.message)
+      }
     }
+
+    // ============================================
+    // CEK DUPLIKAT (PER-ORGANIZATION)
+    // ============================================
 
     // Check if email already exists (excluding current user)
     if (formData.email) {
@@ -265,36 +381,40 @@ export async function updateUser(
       }
     }
 
-    // Check if NIP already exists (excluding current user)
+    // Check if NIP already exists (PER-ORGANIZATION, excluding current user)
     if (formData.nip && formData.nip.trim() !== '') {
       const { data: existingNIP } = await supabase
         .from('profiles')
         .select('id')
         .eq('nip', formData.nip.trim())
+        .eq('organization_id', organizationId) // ✅ Per-organization
         .neq('id', id)
         .single()
 
       if (existingNIP) {
-        throw new Error('NIP sudah terdaftar')
+        throw new Error('NIP sudah terdaftar di organisasi ini')
       }
     }
 
-    // Check if NISN already exists (excluding current user)
+    // Check if NISN already exists (PER-ORGANIZATION, excluding current user)
     if (formData.nisn && formData.nisn.trim() !== '') {
       const { data: existingNISN } = await supabase
         .from('profiles')
         .select('id')
         .eq('nisn', formData.nisn.trim())
+        .eq('organization_id', organizationId) // ✅ Per-organization
         .neq('id', id)
         .single()
 
       if (existingNISN) {
-        throw new Error('NISN sudah terdaftar')
+        throw new Error('NISN sudah terdaftar di organisasi ini')
       }
     }
 
-    // Prepare update data
-    const updateData: any = {}
+    // ============================================
+    // PREPARE UPDATE DATA
+    // ============================================
+    const updateData: Record<string, unknown> = {}
 
     if (formData.email) updateData.email = formData.email
     if (formData.full_name) updateData.full_name = formData.full_name
@@ -310,11 +430,14 @@ export async function updateUser(
       updateData.nisn = null
     }
 
-    // Update profile
+    // ============================================
+    // UPDATE PROFILE (dengan filter organization)
+    // ============================================
     const { data: profile, error: profileError } = await supabase
       .from('profiles')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', organizationId) // ✅ Filter by organization
       .select()
       .single()
 
@@ -350,11 +473,26 @@ export async function updateUser(
 
 /**
  * Delete user
+ * Hanya bisa hapus user di organization yang sama
  */
 export async function deleteUser(id: string): Promise<DeleteUserResponse> {
+  // Authorization check - only ADMIN_IT can delete users
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    return { success: false, error: 'Admin IT tidak terhubung ke organisasi manapun.' }
+  }
+
   try {
     const supabase = await createClient()
-    const adminSupabase = await createAdminClient() // Admin client untuk operasi auth
+    const adminSupabase = await createAdminClient()
 
     // CRITICAL: Get current user to prevent self-deletion
     const { data: { user } } = await supabase.auth.getUser()
@@ -366,26 +504,37 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
       }
     }
 
-
-    // Check if this is the last admin
+    // ============================================
+    // VALIDASI: Target user harus di organization yang sama
+    // ============================================
     const { data: targetUser } = await supabase
       .from('profiles')
-      .select('role')
+      .select('role, organization_id')
       .eq('id', id)
+      .eq('organization_id', organizationId) // ✅ Harus di org yang sama
       .single()
 
-    if (targetUser?.role === 'ADMIN_IT') {
+    if (!targetUser) {
+      return {
+        success: false,
+        error: 'Pengguna tidak ditemukan di organisasi Anda.'
+      }
+    }
+
+    // Check if this is the last admin (PER-ORGANIZATION)
+    if (targetUser.role === 'ADMIN_IT') {
       const { count, error: countError } = await supabase
         .from('profiles')
         .select('id', { count: 'exact', head: true })
         .eq('role', 'ADMIN_IT')
+        .eq('organization_id', organizationId) // ✅ Per-organization
 
       if (countError) throw countError
 
       if (count === null || count <= 1) {
         return {
           success: false,
-          error: 'Tidak dapat menghapus admin terakhir. Sistem harus memiliki minimal satu admin.'
+          error: 'Tidak dapat menghapus admin terakhir. Organisasi harus memiliki minimal satu admin.'
         }
       }
     }
@@ -398,6 +547,7 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
       .from('profiles')
       .delete()
       .eq('id', id)
+      .eq('organization_id', organizationId) // ✅ Filter by organization
 
     if (profileError) throw profileError
 
@@ -415,17 +565,32 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
 
 /**
  * Sync profiles with Supabase Auth
- * This syncs data from profiles table to auth.users
+ * Hanya sync user dari organization yang sama
  */
 export async function syncWithSupabase(): Promise<SyncResponse> {
+  // Authorization check - only ADMIN_IT can sync with Supabase
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
+  const organizationId = auth.user.organization_id
+  if (!organizationId) {
+    return { success: false, error: 'Admin IT tidak terhubung ke organisasi manapun.' }
+  }
+
   try {
     const supabase = await createClient()
-    const adminSupabase = await createAdminClient() // Admin client untuk operasi auth
+    const adminSupabase = await createAdminClient()
 
-    // Get all profiles
+    // Get profiles dari organization yang sama saja
     const { data: profiles, error } = await supabase
       .from('profiles')
       .select('*')
+      .eq('organization_id', organizationId) // ✅ Filter by organization
 
     if (error) throw error
 

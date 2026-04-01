@@ -114,7 +114,7 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
           />
           <div
             ref={menuRef}
-            className="fixed z-50 min-w-[8rem] overflow-hidden rounded-md border-slate-200 bg-white p-1 shadow-md animate-in fade-in-0 zoom-in-95 dynamic-point-position"
+            className="fixed z-50 min-w-32 overflow-hidden rounded-md border-slate-200 bg-white p-1 shadow-md animate-in fade-in-0 zoom-in-95 dynamic-point-position"
           >
             {items.map((item, index) => (
               <button

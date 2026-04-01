@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 import type {
   Room,
   RoomFormData,
@@ -35,6 +36,15 @@ import type {
 export async function fetchRooms(
   filters: DataManagementFilters & { page?: number; limit?: number }
 ): Promise<DataManagementResponse<Room>> {
+  // Authorization check - only ADMIN_IT can fetch rooms
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -89,6 +99,12 @@ export async function fetchRooms(
 export async function createRoom(
   formData: RoomFormData
 ): Promise<CreateResponse<Room>> {
+  // Authorization check - only ADMIN_IT can create rooms
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -156,6 +172,12 @@ export async function updateRoom(
   id: string,
   formData: Partial<RoomFormData>
 ): Promise<UpdateResponse<Room>> {
+  // Authorization check - only ADMIN_IT can update rooms
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -212,6 +234,12 @@ export async function updateRoom(
  * Delete room
  */
 export async function deleteRoom(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete rooms
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -244,6 +272,15 @@ export async function deleteRoom(id: string): Promise<DeleteResponse> {
 export async function fetchSubjects(
   filters: DataManagementFilters & { page?: number; limit?: number }
 ): Promise<DataManagementResponse<Subject>> {
+  // Authorization check - only ADMIN_IT can fetch subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -303,6 +340,12 @@ export async function fetchSubjects(
 export async function createSubject(
   formData: SubjectFormData
 ): Promise<CreateResponse<Subject>> {
+  // Authorization check - only ADMIN_IT can create subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -370,6 +413,12 @@ export async function updateSubject(
   id: string,
   formData: Partial<SubjectFormData>
 ): Promise<UpdateResponse<Subject>> {
+  // Authorization check - only ADMIN_IT can update subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -426,6 +475,12 @@ export async function updateSubject(
  * Delete subject
  */
 export async function deleteSubject(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -468,6 +523,15 @@ interface DropdownDataResponse {
  * Fetch dropdown data for subject modal (departments and academic years)
  */
 export async function fetchSubjectDropdownData(): Promise<DropdownDataResponse> {
+  // Authorization check - only ADMIN_IT can fetch dropdown data
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -521,6 +585,15 @@ export interface AcademicYearFormData {
 export async function fetchAcademicYears(
   filters: DataManagementFilters & { page?: number; limit?: number }
 ): Promise<DataManagementResponse<AcademicYear>> {
+  // Authorization check - only ADMIN_IT can fetch academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -562,6 +635,12 @@ export async function fetchAcademicYears(
 }
 
 export async function createAcademicYear(formData: AcademicYearFormData): Promise<CreateResponse<AcademicYear>> {
+  // Authorization check - only ADMIN_IT can create academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -612,6 +691,12 @@ export async function createAcademicYear(formData: AcademicYearFormData): Promis
 }
 
 export async function updateAcademicYear(id: string, formData: Partial<AcademicYearFormData>): Promise<UpdateResponse<AcademicYear>> {
+  // Authorization check - only ADMIN_IT can update academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -647,6 +732,12 @@ export async function updateAcademicYear(id: string, formData: Partial<AcademicY
 }
 
 export async function deleteAcademicYear(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete academic years
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -676,6 +767,15 @@ export async function deleteAcademicYear(id: string): Promise<DeleteResponse> {
 export async function fetchSemesters(
   filters: DataManagementFilters & { academic_year_id?: string; page?: number; limit?: number }
 ): Promise<DataManagementResponse<Semester>> {
+  // Authorization check - only ADMIN_IT can fetch semesters
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -724,6 +824,12 @@ export async function fetchSemesters(
 }
 
 export async function createSemester(formData: SemesterFormData): Promise<CreateResponse<Semester>> {
+  // Authorization check - only ADMIN_IT can create semesters
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -770,6 +876,12 @@ export async function createSemester(formData: SemesterFormData): Promise<Create
 }
 
 export async function updateSemester(id: string, formData: Partial<SemesterFormData>): Promise<UpdateResponse<Semester>> {
+  // Authorization check - only ADMIN_IT can update semesters
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -805,6 +917,12 @@ export async function updateSemester(id: string, formData: Partial<SemesterFormD
 }
 
 export async function deleteSemester(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete semesters
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -834,6 +952,15 @@ export async function deleteSemester(id: string): Promise<DeleteResponse> {
 export async function fetchClassLevels(
   filters: DataManagementFilters & { page?: number; limit?: number }
 ): Promise<DataManagementResponse<ClassLevel>> {
+  // Authorization check - only ADMIN_IT can fetch class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -875,6 +1002,12 @@ export async function fetchClassLevels(
 }
 
 export async function createClassLevel(formData: ClassLevelFormData): Promise<CreateResponse<ClassLevel>> {
+  // Authorization check - only ADMIN_IT can create class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -920,6 +1053,12 @@ export async function createClassLevel(formData: ClassLevelFormData): Promise<Cr
 }
 
 export async function updateClassLevel(id: string, formData: Partial<ClassLevelFormData>): Promise<UpdateResponse<ClassLevel>> {
+  // Authorization check - only ADMIN_IT can update class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -955,6 +1094,12 @@ export async function updateClassLevel(id: string, formData: Partial<ClassLevelF
 }
 
 export async function deleteClassLevel(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete class levels
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -984,6 +1129,15 @@ export async function deleteClassLevel(id: string): Promise<DeleteResponse> {
 export async function fetchDepartments(
   filters: DataManagementFilters & { page?: number; limit?: number }
 ): Promise<DataManagementResponse<Department>> {
+  // Authorization check - only ADMIN_IT can fetch departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1025,6 +1179,12 @@ export async function fetchDepartments(
 }
 
 export async function createDepartment(formData: DepartmentFormData): Promise<CreateResponse<Department>> {
+  // Authorization check - only ADMIN_IT can create departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1069,6 +1229,12 @@ export async function createDepartment(formData: DepartmentFormData): Promise<Cr
 }
 
 export async function updateDepartment(id: string, formData: Partial<DepartmentFormData>): Promise<UpdateResponse<Department>> {
+  // Authorization check - only ADMIN_IT can update departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1103,6 +1269,12 @@ export async function updateDepartment(id: string, formData: Partial<DepartmentF
 }
 
 export async function deleteDepartment(id: string): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can delete departments
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1133,6 +1305,15 @@ export async function deleteDepartment(id: string): Promise<DeleteResponse> {
  * Fetch all teachers assigned to a subject
  */
 export async function fetchSubjectTeachers(subjectId: string): Promise<SubjectTeachersResponse> {
+  // Authorization check - only ADMIN_IT can fetch subject teachers
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1178,6 +1359,15 @@ export async function fetchSubjectTeachers(subjectId: string): Promise<SubjectTe
  * Fetch all teachers (for dropdown)
  */
 export async function fetchTeachersForDropdown(): Promise<any> {
+  // Authorization check - only ADMIN_IT can fetch teachers dropdown
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1207,6 +1397,15 @@ export async function fetchTeachersForDropdown(): Promise<any> {
  * Fetch all teacher ranks
  */
 export async function fetchTeacherRanks(): Promise<any> {
+  // Authorization check - only ADMIN_IT can fetch teacher ranks
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return {
+      success: false,
+      error: auth.error
+    }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1239,6 +1438,12 @@ export async function assignTeacherToSubject(
   teacherId: string,
   teacherRankId: string | null = null
 ): Promise<CreateResponse<SubjectTeacher>> {
+  // Authorization check - only ADMIN_IT can assign teachers to subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1300,6 +1505,12 @@ export async function removeTeacherFromSubject(
   subjectId: string,
   teacherId: string
 ): Promise<DeleteResponse> {
+  // Authorization check - only ADMIN_IT can remove teachers from subjects
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
@@ -1331,6 +1542,12 @@ export async function updateTeacherRank(
   teacherId: string,
   teacherRankId: string
 ): Promise<UpdateResponse<SubjectTeacher>> {
+  // Authorization check - only ADMIN_IT can update teacher ranks
+  const auth = await authorizeAction(['ADMIN_IT'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   try {
     const supabase = await createClient()
 
