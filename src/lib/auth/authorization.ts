@@ -114,6 +114,9 @@ export async function authorizeApi(
       user: profile as AuthenticatedUser
     }
   } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+      throw error
+    }
     console.error('Authorization error:', error)
     return AuthError.serverError('Authorization check failed')
   }
@@ -175,6 +178,9 @@ export async function authorizeAction(
       user: profile as AuthenticatedUser
     }
   } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+      throw error
+    }
     console.error('Authorization error:', error)
     return AuthError.serverError('Authorization check failed')
   }
@@ -270,6 +276,9 @@ export async function authorizeDashboard(
       user: profile as AuthenticatedUser
     }
   } catch (error: any) {
+    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+      throw error
+    }
     console.error('[AUTH] Dashboard authorization - Exception:', error)
     return null
   }

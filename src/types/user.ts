@@ -96,9 +96,10 @@ export interface DeleteUserResponse {
 
 export interface SyncResponse {
   success: boolean;
-  synced: number;
-  errors: number;
-  total: number;
+  synced?: number;
+  errors?: number;
+  total?: number;
+  error?: string;
 }
 
 // Utility function to get initials from name

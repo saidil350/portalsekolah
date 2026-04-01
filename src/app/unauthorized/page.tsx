@@ -1,10 +1,10 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import Link from 'next/link'
 
-export default function UnauthorizedPage() {
+function UnauthorizedContent() {
   const searchParams = useSearchParams()
   const requiredRole = searchParams.get('role')
 
@@ -77,7 +77,7 @@ export default function UnauthorizedPage() {
 
           <p className="text-gray-600 mb-6">
             Anda tidak memiliki izin untuk mengakses halaman ini.
-            Jika Anda认为这是错误, silakan hubungi Administrator IT.
+            Jika Anda merasa ini adalah kesalahan, silakan hubungi Administrator IT.
           </p>
 
           <div className="space-y-3">
@@ -104,5 +104,17 @@ export default function UnauthorizedPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function UnauthorizedPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-background-light px-4">
+        <p>Memuat...</p>
+      </div>
+    }>
+      <UnauthorizedContent />
+    </Suspense>
   )
 }

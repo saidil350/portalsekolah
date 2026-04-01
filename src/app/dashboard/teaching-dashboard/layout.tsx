@@ -20,7 +20,7 @@ export default async function TeachingDashboardLayout({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background-light text-text-main font-display antialiased">
-      <TeachingSidebar teacher={user} />
+      <TeachingSidebar teacher={user as any} />
       {children}
     </div>
   );

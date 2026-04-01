@@ -172,7 +172,7 @@ export default function UserManagementPage() {
       const result = await syncWithSupabase()
       if (result.success) {
         const syncMsg = t('admin.userManagement.msg.syncSuccess')
-        const detailedMsg = `${syncMsg}: ${result.synced}/${result.total} pengguna disinkronkan${result.errors > 0 ? `, ${result.errors} gagal` : ''}`
+        const detailedMsg = `${syncMsg}: ${result.synced}/${result.total} pengguna disinkronkan${result.errors && result.errors > 0 ? `, ${result.errors} gagal` : ''}`
         showToast(detailedMsg, 'success')
         await loadUsers()
         setShowSyncConfirm(false)

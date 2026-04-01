@@ -20,7 +20,7 @@ export default async function AdminITLayout({
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background-light text-text-main font-display antialiased">
-      <AdminSidebar admin={user} />
+      <AdminSidebar admin={user as any} />
       {children}
     </div>
   );

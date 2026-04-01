@@ -642,7 +642,10 @@ export async function syncWithSupabase(): Promise<SyncResponse> {
     }
   } catch (error: any) {
     console.error('Error syncing with Supabase:', error)
-    throw new Error(error.message || 'Gagal sinkronisasi dengan Supabase')
+    return {
+      success: false,
+      error: error.message || 'Gagal sinkronisasi dengan Supabase'
+    }
   }
 }
 
