@@ -30,7 +30,9 @@
       "Bash(claude mcp:*)",
       "Bash(npm install:*)",
       "mcp__supabase__list_tables",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__list_projects",
+      "WebSearch"
     ],
     "deny": [],
     "ask": []

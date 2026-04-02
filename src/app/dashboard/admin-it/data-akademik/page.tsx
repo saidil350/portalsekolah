@@ -32,19 +32,19 @@ export default function DataAkademikPage() {
 
   // Years state
   const [years, setYears] = useState<AcademicYear[]>([])
-  const [yearsLoading, setYearsLoading] = useState(true)
+  const [yearsLoading, setYearsLoading] = useState(false)
   const [yearsPage, setYearsPage] = useState(1)
   const [yearsTotal, setYearsTotal] = useState(0)
 
   // Levels state
   const [levels, setLevels] = useState<ClassLevel[]>([])
-  const [levelsLoading, setLevelsLoading] = useState(true)
+  const [levelsLoading, setLevelsLoading] = useState(false)
   const [levelsPage, setLevelsPage] = useState(1)
   const [levelsTotal, setLevelsTotal] = useState(0)
 
   // Departments state
   const [departments, setDepartments] = useState<Department[]>([])
-  const [departmentsLoading, setDepartmentsLoading] = useState(true)
+  const [departmentsLoading, setDepartmentsLoading] = useState(false)
   const [departmentsPage, setDepartmentsPage] = useState(1)
   const [departmentsTotal, setDepartmentsTotal] = useState(0)
 
@@ -107,12 +107,16 @@ export default function DataAkademikPage() {
     }
   }, [])
 
-  // Initial load
+  // Initial load - only load active tab data
   useEffect(() => {
-    loadYears()
-    loadLevels()
-    loadDepartments()
-  }, [loadYears, loadLevels, loadDepartments])
+    if (activeTab === 'years') {
+      loadYears()
+    } else if (activeTab === 'levels') {
+      loadLevels()
+    } else if (activeTab === 'departments') {
+      loadDepartments()
+    }
+  }, [activeTab, loadYears, loadLevels, loadDepartments])
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type })

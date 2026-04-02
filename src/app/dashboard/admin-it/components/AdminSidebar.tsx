@@ -53,7 +53,8 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
 
   const isActive = (href: string) => {
     if (href === '/dashboard/admin-it') return pathname === '/dashboard/admin-it';
-    return pathname.startsWith(href);
+    // Exact match for better precision
+    return pathname === href || pathname.startsWith(href + '/');
   };
 
   // Use real admin data if available, otherwise use fallback
@@ -103,13 +104,17 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
+                className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer relative ${
                   active
                     ? 'bg-primary text-white shadow-[0px_4px_6px_-1px_rgba(19,127,236,0.2),0px_2px_4px_-2px_rgba(19,127,236,0.2)]'
                     : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
                 } ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
                 title={!isSidebarOpen ? t(item.labelKey) : undefined}
               >
+                {/* Active indicator - left border */}
+                {active && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+                )}
                 <div
                   className="flex items-center justify-center shrink-0 relative"
                   style={{ width: item.iconW, height: item.iconH } as React.CSSProperties}

@@ -73,14 +73,16 @@ export default function DataManagementPage() {
   const [subjectsTypeFilter, setSubjectsTypeFilter] = useState('');
   const [subjectsDeptFilter, setSubjectsDeptFilter] = useState('');
 
-  // Master Data state
+  // Master Data state - separate loading states
   const [masterDataSubTab, setMasterDataSubTab] = useState<MasterDataSubTab>('academic_years');
   const [academicYears, setAcademicYears] = useState<AcademicYear[]>([]);
   const [semesters, setSemesters] = useState<Semester[]>([]);
-  const [classLevels, setClassLevels] = useState<ClassLevel[]>([]);
-  const [departments, setDepartments] = useState<Department[]>([]);
   const [masterDataLoading, setMasterDataLoading] = useState(false);
   const [masterDataError, setMasterDataError] = useState('');
+
+  // Filter metadata - shared across tabs
+  const [classLevels, setClassLevels] = useState<ClassLevel[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
 
   // Modal state
   const [roomModal, setRoomModal] = useState({ isOpen: false, mode: 'create' as 'create' | 'edit', room: null as Room | null });
@@ -99,22 +101,29 @@ export default function DataManagementPage() {
   const roomsSearchRef = useRef<string>('');
   const subjectsSearchRef = useRef<string>('');
 
-  // Fetch initial metadata needed for filters
+  // Fetch initial metadata needed for filters (lazy load)
   useEffect(() => {
     const fetchMetadata = async () => {
       try {
-        const [levelsRes, deptsRes] = await Promise.all([
-          fetchClassLevels({ page: 1, limit: 100 }),
-          fetchDepartments({ page: 1, limit: 100 })
-        ]);
-        if (levelsRes.success && levelsRes.data) setClassLevels(levelsRes.data);
-        if (deptsRes.success && deptsRes.data) setDepartments(deptsRes.data);
+        // Only fetch metadata when needed
+        const needsClassLevels = activeTab === 'kelas_dan_roster' || activeTab === 'mata_pelajaran';
+        const needsDepartments = activeTab === 'kelas_dan_roster' || activeTab === 'mata_pelajaran';
+
+        if (needsClassLevels && classLevels.length === 0) {
+          const levelsRes = await fetchClassLevels({ page: 1, limit: 100 });
+          if (levelsRes.success && levelsRes.data) setClassLevels(levelsRes.data);
+        }
+
+        if (needsDepartments && departments.length === 0) {
+          const deptsRes = await fetchDepartments({ page: 1, limit: 100 });
+          if (deptsRes.success && deptsRes.data) setDepartments(deptsRes.data);
+        }
       } catch (err) {
         console.error('Error fetching filter metadata:', err);
       }
     };
     fetchMetadata();
-  }, []);
+  }, [activeTab]);
 
   // Fetch data based on active tab
   useEffect(() => {
