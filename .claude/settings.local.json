@@ -26,7 +26,11 @@
       "Bash(npx supabase:*)",
       "Bash(npx dotenv-cli:*)",
       "Bash(cd:*)",
-      "Bash(git show:*)"
+      "Bash(git show:*)",
+      "Bash(claude mcp:*)",
+      "Bash(npm install:*)",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__execute_sql"
     ],
     "deny": [],
     "ask": []
