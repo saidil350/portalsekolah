@@ -37,7 +37,16 @@ export async function requireAuth() {
   const supabase = await createClient()
   const { data: { user }, error } = await supabase.auth.getUser()
 
-  if (error || !user) {
+  if (error) {
+    console.error('Auth error:', error)
+    // If the error is related to refresh token, clear the session
+    if (error.message?.includes('refresh_token') || error.code === 'refresh_token_not_found') {
+      redirect('/login')
+    }
+    redirect('/login')
+  }
+
+  if (!user) {
     redirect('/login')
   }
 

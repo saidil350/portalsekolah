@@ -32,7 +32,8 @@
       "mcp__supabase__list_tables",
       "mcp__supabase__execute_sql",
       "mcp__supabase__list_projects",
-      "WebSearch"
+      "WebSearch",
+      "Bash(netstat -ano)"
     ],
     "deny": [],
     "ask": []
