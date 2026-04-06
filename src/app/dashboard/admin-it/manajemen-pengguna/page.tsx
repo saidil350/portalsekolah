@@ -26,6 +26,7 @@ import {
   syncWithSupabase,
   getCurrentUserId
 } from './actions'
+import { EmptyTableState } from '@/components/ui/empty-table-state'
 import type { User, UserFormData, PaginationOptions, UserFilters } from '@/types/user'
 import { ROLE_CONFIGS, STATUS_CONFIGS, getInitials, getRoleColor } from '@/types/user'
 
@@ -361,10 +362,14 @@ export default function UserManagementPage() {
                     </tr>
                   ) : users.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <p className="text-sm text-slate-500">{t('admin.userManagement.table.empty')}</p>
-                        </div>
+                      <td colSpan={6} className="py-8 px-4">
+                        <EmptyTableState
+                          type="users"
+                          hasFilters={!!filters.role || !!filters.status}
+                          hasSearch={!!searchDebounce}
+                          onAdd={() => setShowAddModal(true)}
+                          onClearFilters={clearFilters}
+                        />
                       </td>
                     </tr>
                   ) : (

@@ -23,6 +23,7 @@ import {
 } from './actions'
 import type { AcademicYear, ClassLevel, Department } from '@/types/academic'
 import { getAcademicStatusConfig as getStatusConfig, formatDateRange } from '@/types/academic'
+import { EmptyTableState } from '@/components/ui'
 
 type TabType = 'years' | 'subjects' | 'levels' | 'departments'
 
@@ -323,10 +324,17 @@ export default function DataAkademikPage() {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : years.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 border border-dashed border-slate-300 rounded-lg">
-                <Calendar className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <p>Belum ada data tahun akademik</p>
-              </div>
+              <EmptyTableState
+                type="generic"
+                title="Belum ada data tahun akademik"
+                description="Mulai dengan menambahkan tahun akademik pertama Anda."
+                onAdd={() => {
+                  setSelectedItem(null)
+                  setModalMode('create')
+                  setShowYearModal(true)
+                }}
+                addLabel="Tambah Tahun"
+              />
             ) : (
               <div className="w-full border border-slate-100 rounded-lg overflow-hidden">
                 <div className="w-full min-w-[600px]">
@@ -460,10 +468,17 @@ export default function DataAkademikPage() {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : levels.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 border border-dashed border-slate-300 rounded-lg">
-                <GraduationCap className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <p>Belum ada data tingkat kelas</p>
-              </div>
+              <EmptyTableState
+                type="generic"
+                title="Belum ada data tingkat kelas"
+                description="Tambahkan tingkat kelas (seperti X, XI, XII) untuk mengelola data siswa."
+                onAdd={() => {
+                  setSelectedItem(null)
+                  setModalMode('create')
+                  setShowLevelModal(true)
+                }}
+                addLabel="Tambah Tingkat"
+              />
             ) : (
               <div className="w-full border border-slate-100 rounded-lg overflow-hidden">
                 <div className="w-full min-w-[600px]">
@@ -599,10 +614,17 @@ export default function DataAkademikPage() {
                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
               </div>
             ) : departments.length === 0 ? (
-              <div className="text-center py-12 text-slate-500 border border-dashed border-slate-300 rounded-lg">
-                <Building2 className="w-12 h-12 mx-auto mb-4 text-slate-400" />
-                <p>Belum ada data jurusan</p>
-              </div>
+              <EmptyTableState
+                type="generic"
+                title="Belum ada data jurusan"
+                description="Tambahkan jurusan atau departemen untuk mengelompokkan kelas."
+                onAdd={() => {
+                  setSelectedItem(null)
+                  setModalMode('create')
+                  setShowDepartmentModal(true)
+                }}
+                addLabel="Tambah Jurusan"
+              />
             ) : (
               <div className="w-full border border-slate-100 rounded-lg overflow-hidden">
                 <div className="w-full min-w-[600px]">

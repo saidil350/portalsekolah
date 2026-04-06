@@ -925,6 +925,8 @@ export async function fetchClassRosterView(classId: string): Promise<{
 
     const students = enrollmentsData?.map((e: any) => ({
       ...e.student,
+      id: e.student?.id || e.student_id,
+      full_name: e.student?.full_name || null,
       enrollment_id: e.id,
       enrollment_status: e.status,
     })) || []

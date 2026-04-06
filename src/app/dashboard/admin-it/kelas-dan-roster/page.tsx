@@ -212,6 +212,11 @@ export default function KelasDanRosterPage() {
             hasFilters={!!search || !!levelFilter || !!departmentFilter}
             hasSearch={!!search}
             onAdd={handleCreateClass}
+            onClearFilters={() => {
+              setSearch('')
+              setLevelFilter('')
+              setDepartmentFilter('')
+            }}
             addLabel="Buat Kelas Pertama"
           />
         ) : (

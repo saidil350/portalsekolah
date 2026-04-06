@@ -906,6 +906,13 @@ export default function DataManagementPage() {
                               type="classes"
                               hasFilters={!!classesSearch || !!classesLevelFilter || !!classesDeptFilter}
                               hasSearch={!!classesSearch}
+                              onAdd={() => router.push('/dashboard/admin-it/kelas-dan-roster/create')}
+                              onClearFilters={() => {
+                                setClassesSearch('');
+                                setClassesLevelFilter('');
+                                setClassesDeptFilter('');
+                                setClassesPage(1);
+                              }}
                             />
                           ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -985,6 +992,12 @@ export default function DataManagementPage() {
                             hasFilters={!!roomsSearch || !!roomsTypeFilter || roomsActiveFilter !== undefined}
                             hasSearch={!!roomsSearch}
                             onAdd={() => setRoomModal({ isOpen: true, mode: 'create', room: null })}
+                            onClearFilters={() => {
+                              setRoomsSearch('');
+                              setRoomsTypeFilter('');
+                              setRoomsActiveFilter(undefined);
+                              setRoomsPage(1);
+                            }}
                             addLabel="Tambah Ruangan"
                           />
                         ) : (
@@ -1068,6 +1081,12 @@ export default function DataManagementPage() {
                             hasFilters={!!subjectsSearch || !!subjectsTypeFilter || !!subjectsDeptFilter}
                             hasSearch={!!subjectsSearch}
                             onAdd={() => setSubjectModal({ isOpen: true, mode: 'create', subject: null })}
+                            onClearFilters={() => {
+                              setSubjectsSearch('');
+                              setSubjectsTypeFilter('');
+                              setSubjectsDeptFilter('');
+                              setSubjectsPage(1);
+                            }}
                             addLabel="Tambah Mata Pelajaran"
                           />
                         ) : (
@@ -1392,10 +1411,12 @@ export default function DataManagementPage() {
                                   classLevels.length === 0 ? (
                                     <EmptyTableState
                                       type="generic"
+                                      title="Belum ada tingkat kelas"
+                                      description="Tambahkan tingkat kelas seperti X, XI, atau XII untuk organisasi data."
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setClassLevelModal({ isOpen: true, mode: 'create', classLevel: null })}
-                                      addLabel="Tambah Tingkat Kelas"
+                                      addLabel="Tambah Tingkat"
                                     />
                                   ) : (
                                     <table className="w-full text-left border-collapse">
@@ -1459,6 +1480,8 @@ export default function DataManagementPage() {
                                   departments.length === 0 ? (
                                     <EmptyTableState
                                       type="generic"
+                                      title="Belum ada data jurusan"
+                                      description="Tambahkan jurusan atau kompetensi keahlian yang ada di sekolah."
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setDepartmentModal({ isOpen: true, mode: 'create', department: null })}
