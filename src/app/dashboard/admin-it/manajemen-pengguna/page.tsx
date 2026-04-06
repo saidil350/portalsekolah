@@ -18,6 +18,7 @@ import UserModal from '@/components/dashboard/user-modal'
 import ConfirmDialog from '@/components/dashboard/confirm-dialog'
 import { useLanguage } from '@/contexts/LanguageContext'
 import { TranslationKey } from '@/utils/dictionary'
+import { motion, AnimatePresence } from 'framer-motion'
 import {
   fetchUsers,
   createUser,
@@ -27,6 +28,7 @@ import {
   getCurrentUserId
 } from './actions'
 import { EmptyTableState } from '@/components/ui/empty-table-state'
+import { TableSkeleton } from '@/components/ui/skeleton'
 import type { User, UserFormData, PaginationOptions, UserFilters } from '@/types/user'
 import { ROLE_CONFIGS, STATUS_CONFIGS, getInitials, getRoleColor } from '@/types/user'
 
@@ -237,10 +239,31 @@ export default function UserManagementPage() {
   const fromIndex = (pagination.page - 1) * pagination.limit + 1
   const toIndex = Math.min(pagination.page * pagination.limit, pagination.total)
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  }
+
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
       <div className="flex-1 overflow-y-auto p-8">
-        <div className="max-w-7xl mx-auto flex flex-col gap-6">
+        <motion.div 
+          className="max-w-7xl mx-auto flex flex-col gap-6"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
 
           {/* Toast Notification */}
           {toast && (
@@ -252,33 +275,37 @@ export default function UserManagementPage() {
           )}
 
           {/* Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex flex-col gap-1">
               <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('admin.userManagement.title')}</h2>
               <p className="text-slate-500 text-base">{t('admin.userManagement.description')}</p>
             </div>
             <div className="flex gap-3">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowSyncConfirm(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={actionLoading}
               >
                 <RefreshCcw className="w-4 h-4 text-slate-500" />
                 {t('admin.userManagement.btn.sync')}
-              </button>
-              <button
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setShowAddModal(true)}
                 className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={actionLoading}
               >
                 <UserPlus className="w-4 h-4" />
                 {t('admin.userManagement.btn.addUser')}
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Filters */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4 h-auto md:h-[72px] items-center">
+          <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4 h-auto md:h-[72px] items-center">
             <div className="flex-1 relative w-full">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Search className="w-4 h-4 text-slate-400" />
@@ -334,10 +361,10 @@ export default function UserManagementPage() {
                 {t('admin.userManagement.filter.clear')}
               </button>
             </div>
-          </div>
+          </motion.div>
 
           {/* Table */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
+          <motion.div variants={itemVariants} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
@@ -353,11 +380,8 @@ export default function UserManagementPage() {
                 <tbody className="divide-y divide-slate-50">
                   {loading ? (
                     <tr>
-                      <td colSpan={6} className="py-12 text-center">
-                        <div className="flex flex-col items-center gap-3">
-                          <Loader2 className="w-8 h-8 text-primary animate-spin" />
-                          <p className="text-sm text-slate-500">{t('admin.userManagement.table.loading')}</p>
-                        </div>
+                      <td colSpan={6} className="py-2 px-0">
+                        <TableSkeleton rows={5} columns={6} hasHeader={false} />
                       </td>
                     </tr>
                   ) : users.length === 0 ? (
@@ -373,14 +397,23 @@ export default function UserManagementPage() {
                       </td>
                     </tr>
                   ) : (
-                    users.map((user) => {
-                      const roleConfig = ROLE_CONFIGS.find(r => r.value === user.role)
-                      const statusConfig = STATUS_CONFIGS.find(s => s.value === user.status)
-                      const avatarInitials = getInitials(user.full_name)
-                      const avatarColorClass = getRoleColor(user.role)
+                    <AnimatePresence mode="popLayout">
+                      {users.map((user, index) => {
+                        const roleConfig = ROLE_CONFIGS.find(r => r.value === user.role)
+                        const statusConfig = STATUS_CONFIGS.find(s => s.value === user.status)
+                        const avatarInitials = getInitials(user.full_name)
+                        const avatarColorClass = getRoleColor(user.role)
 
-                      return (
-                        <tr key={user.id} className="hover:bg-slate-50/50 transition-colors group">
+                        return (
+                          <motion.tr 
+                            key={user.id}
+                            layout
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ delay: index * 0.05 }}
+                            className="hover:bg-slate-50/50 transition-colors group"
+                          >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
                               <div className={`w-10 h-10 rounded-full ${avatarColorClass} flex items-center justify-center shrink-0`}>
@@ -407,7 +440,9 @@ export default function UserManagementPage() {
                           <td className="py-3 px-4 text-sm text-slate-500 whitespace-nowrap">{formatLastLogin(user.last_login ?? null)}</td>
                           <td className="py-3 px-4 text-right">
                             <div className="flex items-center justify-end gap-1">
-                              <button
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 className="p-2 text-slate-400 hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
                                 title={t('admin.userManagement.action.edit')}
                                 onClick={() => {
@@ -416,8 +451,10 @@ export default function UserManagementPage() {
                                 }}
                               >
                                 <Edit className="w-4 h-4" />
-                              </button>
-                              <button
+                              </motion.button>
+                              <motion.button
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
                                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 title={t('admin.userManagement.action.delete')}
                                 onClick={() => {
@@ -427,12 +464,13 @@ export default function UserManagementPage() {
                                 disabled={actionLoading}
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </button>
+                              </motion.button>
                             </div>
                           </td>
-                        </tr>
+                        </motion.tr>
                       )
-                    })
+                    })}
+                    </AnimatePresence>
                   )}
                 </tbody>
               </table>
@@ -450,26 +488,30 @@ export default function UserManagementPage() {
                 )}
               </p>
               <div className="flex gap-2">
-                <button
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
                   disabled={pagination.page <= 1 || loading}
                   className="px-3 py-1.5 border border-slate-200 bg-white text-slate-600 text-xs font-medium rounded hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('admin.userManagement.pagination.prev')}
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
                   disabled={pagination.page >= totalPages || loading}
                   className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 text-xs font-medium rounded transition-colors focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('admin.userManagement.pagination.next')}
-                </button>
+                </motion.button>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Alert Banner */}
-          <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4 min-h-[80px]">
+          <motion.div variants={itemVariants} className="bg-blue-50 border border-blue-100 rounded-xl p-4 flex gap-4 min-h-[80px]">
             <div className="mt-0.5 shrink-0">
               <Info className="w-5 h-5 text-blue-600" />
             </div>
@@ -479,9 +521,9 @@ export default function UserManagementPage() {
                 {t('admin.userManagement.banner.authIntegration.desc')}
               </p>
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </div>
 
       {/* User Modals */}

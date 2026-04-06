@@ -3,6 +3,32 @@
 import { createAdminClient, createClient } from '@/utils/supabase/server'
 import { type User } from '@/types/user'
 
+async function attachOrganizationName(
+  profile: User,
+  organizationId: string,
+  useAdminFallback = false
+): Promise<User> {
+  if (profile.organization_name) {
+    return profile
+  }
+
+  const client = useAdminFallback ? await createAdminClient() : await createClient()
+  const { data: org, error } = await client
+    .from('organizations')
+    .select('name')
+    .eq('id', organizationId)
+    .single()
+
+  if (error || !org?.name) {
+    return profile
+  }
+
+  return {
+    ...profile,
+    organization_name: org.name,
+  }
+}
+
 /**
  * Get current authenticated admin with full profile data
  */
@@ -22,7 +48,11 @@ export async function getCurrentAdmin(): Promise<User | null> {
     .single()
 
   if (!error && profile) {
-    return profile as unknown as User
+    const enrichedProfile = profile as unknown as User
+    if (enrichedProfile.organization_id) {
+      return attachOrganizationName(enrichedProfile, enrichedProfile.organization_id)
+    }
+    return enrichedProfile
   }
 
   console.warn('[ADMIN] Primary admin profile lookup failed, retrying with admin client:', {
@@ -43,5 +73,10 @@ export async function getCurrentAdmin(): Promise<User | null> {
     return null
   }
 
-  return fallbackProfile as unknown as User
+  const enrichedFallback = fallbackProfile as unknown as User
+  if (enrichedFallback.organization_id) {
+    return attachOrganizationName(enrichedFallback, enrichedFallback.organization_id, true)
+  }
+
+  return enrichedFallback
 }

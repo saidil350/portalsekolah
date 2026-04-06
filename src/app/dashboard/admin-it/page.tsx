@@ -6,6 +6,10 @@ import { MoreVertical, ArrowUpRight, TrendingUp, Users, UserCheck, School, Dolla
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Skeleton, MetricSkeleton, TableSkeleton } from '@/components/ui/skeleton';
+import RoleGreetingCard from '@/components/dashboard/RoleGreetingCard';
+import { getCurrentAdmin } from './actions';
+import { type User } from '@/types/user';
+
 
 interface DashboardStats {
   totalStudents: number;
@@ -59,22 +63,25 @@ export default function AdminDashboardPage() {
   });
   
   const [loading, setLoading] = useState(true);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
 
   useEffect(() => {
     async function fetchAllStats() {
       setLoading(true);
       try {
-        const [statsRes, studentRes, financialRes, attendanceRes] = await Promise.all([
+        const [statsRes, studentRes, financialRes, attendanceRes, profileData] = await Promise.all([
           fetch('/api/admin/stats').then(res => res.json()),
           fetch('/api/admin/student-stats').then(res => res.json()),
           fetch('/api/admin/financial-stats').then(res => res.json()),
           fetch('/api/admin/attendance-stats').then(res => res.json()),
+          getCurrentAdmin()
         ]);
 
         if (statsRes.success) setStats(statsRes.data);
         if (studentRes.success) setStudentStats(studentRes.data);
         if (financialRes.success) setFinancialStats(financialRes.data);
         if (attendanceRes.success) setAttendanceStats(attendanceRes.data);
+        if (profileData) setUserProfile(profileData);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
       } finally {
@@ -205,22 +212,17 @@ export default function AdminDashboardPage() {
         >
           
           {/* Header Section */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div>
-              <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('admin.db.title')}</h2>
-              <p className="text-text-sub mt-1">{t('admin.db.subtitle')}</p>
-            </div>
-            <div className="flex gap-3">
-              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
-                <Calendar className="w-4 h-4 text-slate-500" />
-                {t('admin.db.exportReport')}
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer">
-                <ArrowUpRight className="w-4 h-4" />
-                {t('admin.db.newAnnouncement')}
-              </button>
-            </div>
-          </div>
+          {/* Header Section with RoleGreetingCard */}
+          {loading ? (
+            <div className="h-24 w-full bg-slate-100 animate-pulse rounded-2xl mb-8" />
+          ) : (
+            <RoleGreetingCard 
+              userName={userProfile?.full_name || "Administrator"} 
+              role={userProfile?.role || "ADMIN_IT"} 
+              schoolName={userProfile?.organization_name || "Nama Sekolah / Instansi"}
+            />
+          )}
+
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
