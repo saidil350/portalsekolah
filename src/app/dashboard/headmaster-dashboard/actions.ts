@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { type User } from '@/types/user'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current authenticated headmaster with full profile data
  */
 export async function getCurrentHeadmaster(): Promise<User | null> {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,6 +39,14 @@ export async function getCurrentHeadmaster(): Promise<User | null> {
  * Get statistics for headmaster dashboard
  */
 export async function getHeadmasterStats() {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return {
+      totalStudents: 0,
+      totalTeachers: 0,
+    }
+  }
+
   const supabase = await createClient()
 
   // Get total students

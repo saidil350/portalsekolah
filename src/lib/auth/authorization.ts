@@ -1,5 +1,4 @@
-import { createClient } from '@/utils/supabase/server'
-import { redirect } from 'next/navigation'
+import { createAdminClient, createClient } from '@/utils/supabase/server'
 
 /**
  * User role types
@@ -15,7 +14,7 @@ export interface AuthenticatedUser {
   role: UserRole
   full_name: string
   organization_id: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 /**
@@ -24,6 +23,48 @@ export interface AuthenticatedUser {
 export type AuthResult =
   | { success: true; user: AuthenticatedUser }
   | { success: false; error: string; statusCode: number }
+
+function isDynamicServerUsageError(error: unknown): boolean {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    (
+      ('digest' in error && error.digest === 'DYNAMIC_SERVER_USAGE') ||
+      ('message' in error &&
+        typeof error.message === 'string' &&
+        error.message.includes('Dynamic server usage'))
+    )
+  )
+}
+
+async function getProfileForAuthorization(userId: string) {
+  const supabase = await createClient()
+
+  const primaryResult = await supabase
+    .from('profiles')
+    .select('id, email, role, full_name, organization_id')
+    .eq('id', userId)
+    .single()
+
+  if (!primaryResult.error && primaryResult.data) {
+    return primaryResult
+  }
+
+  console.warn('[AUTH] Primary profile lookup failed, retrying with admin client:', {
+    userId,
+    error: primaryResult.error?.message,
+    code: primaryResult.error?.code,
+  })
+
+  const adminClient = await createAdminClient()
+  const fallbackResult = await adminClient
+    .from('profiles')
+    .select('id, email, role, full_name, organization_id')
+    .eq('id', userId)
+    .single()
+
+  return fallbackResult
+}
 
 /**
  * Standardized error responses
@@ -83,6 +124,7 @@ export async function authorizeApi(
   allowedRoles: UserRole[]
 ): Promise<AuthResult> {
   try {
+    void request
     const supabase = await createClient()
 
     // Step 1: Check authentication
@@ -93,11 +135,7 @@ export async function authorizeApi(
     }
 
     // Step 2: Fetch user profile with role
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, role, full_name, organization_id')
-      .eq('id', user.id)
-      .single()
+    const { data: profile, error: profileError } = await getProfileForAuthorization(user.id)
 
     if (profileError || !profile) {
       console.error('Error fetching user profile:', profileError)
@@ -113,8 +151,8 @@ export async function authorizeApi(
       success: true,
       user: profile as AuthenticatedUser
     }
-  } catch (error: any) {
-    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+  } catch (error: unknown) {
+    if (isDynamicServerUsageError(error)) {
       throw error
     }
     console.error('Authorization error:', error)
@@ -157,11 +195,7 @@ export async function authorizeAction(
     }
 
     // Step 2: Fetch user profile with role
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, role, full_name, organization_id')
-      .eq('id', user.id)
-      .single()
+    const { data: profile, error: profileError } = await getProfileForAuthorization(user.id)
 
     if (profileError || !profile) {
       console.error('Error fetching user profile:', profileError)
@@ -177,8 +211,8 @@ export async function authorizeAction(
       success: true,
       user: profile as AuthenticatedUser
     }
-  } catch (error: any) {
-    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+  } catch (error: unknown) {
+    if (isDynamicServerUsageError(error)) {
       throw error
     }
     console.error('Authorization error:', error)
@@ -233,11 +267,7 @@ export async function authorizeDashboard(
     })
 
     // Step 2: Fetch user profile with role
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('id, email, role, full_name, organization_id')
-      .eq('id', user.id)
-      .single()
+    const { data: profile, error: profileError } = await getProfileForAuthorization(user.id)
 
     if (profileError || !profile) {
       console.error('[AUTH] Dashboard authorization - Error fetching user profile:', {
@@ -275,8 +305,8 @@ export async function authorizeDashboard(
     return {
       user: profile as AuthenticatedUser
     }
-  } catch (error: any) {
-    if (error?.digest === 'DYNAMIC_SERVER_USAGE' || error?.message?.includes('Dynamic server usage')) {
+  } catch (error: unknown) {
+    if (isDynamicServerUsageError(error)) {
       throw error
     }
     console.error('[AUTH] Dashboard authorization - Exception:', error)

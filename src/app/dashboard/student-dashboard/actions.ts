@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { type User } from '@/types/user'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current authenticated student with full profile data
  */
 export async function getCurrentStudent(): Promise<User | null> {
+  const auth = await authorizeAction(['SISWA'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()

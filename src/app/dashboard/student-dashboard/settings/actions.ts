@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current student profile data
  */
 export async function getStudentProfile() {
+  const auth = await authorizeAction(['SISWA'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,6 +39,11 @@ export async function getStudentProfile() {
  * Update student profile information
  */
 export async function updateStudentProfile(formData: FormData) {
+  const auth = await authorizeAction(['SISWA'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -123,6 +134,11 @@ export async function updateStudentProfile(formData: FormData) {
  * Change student password
  */
 export async function changeStudentPassword(formData: FormData) {
+  const auth = await authorizeAction(['SISWA'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -180,6 +196,11 @@ export async function changeStudentPassword(formData: FormData) {
  * Update notification preferences
  */
 export async function updateNotificationPreferences(email: boolean, sms: boolean, push: boolean) {
+  const auth = await authorizeAction(['SISWA'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()

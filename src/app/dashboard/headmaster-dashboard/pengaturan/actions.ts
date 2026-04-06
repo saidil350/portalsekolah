@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current headmaster profile data
  */
 export async function getHeadmasterProfile() {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,6 +39,11 @@ export async function getHeadmasterProfile() {
  * Update headmaster profile information
  */
 export async function updateHeadmasterProfile(formData: FormData) {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -119,6 +130,11 @@ export async function updateHeadmasterProfile(formData: FormData) {
  * TODO: Implement actual file upload to Supabase Storage
  */
 export async function uploadSignature(formData: FormData) {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -142,6 +158,11 @@ export async function uploadSignature(formData: FormData) {
  * Change headmaster password
  */
 export async function changeHeadmasterPassword(formData: FormData) {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -199,6 +220,11 @@ export async function changeHeadmasterPassword(formData: FormData) {
  * Update notification preferences
  */
 export async function updateNotificationPreferences(email: boolean, reports: boolean) {
+  const auth = await authorizeAction(['KEPALA_SEKOLAH'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()

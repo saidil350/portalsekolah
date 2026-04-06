@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { MoreVertical } from 'lucide-react';
+import { MoreVertical, ArrowUpRight, TrendingUp, Users, UserCheck, School, DollarSign, Calendar } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Skeleton, MetricSkeleton, TableSkeleton } from '@/components/ui/skeleton';
 
 interface DashboardStats {
   totalStudents: number;
@@ -18,6 +20,17 @@ interface StudentStats {
   dropout: number;
   inactive: number;
   total: number;
+}
+
+interface FinancialStats {
+  unpaidCount: number;
+  recentInvoices: any[];
+}
+
+interface AttendanceStats {
+  trend: { month: string; percentage: number }[];
+  overall: number;
+  lastSemesterComparison: string;
 }
 
 export default function AdminDashboardPage() {
@@ -35,256 +48,425 @@ export default function AdminDashboardPage() {
     inactive: 0,
     total: 0,
   });
+  const [financialStats, setFinancialStats] = useState<FinancialStats>({
+    unpaidCount: 0,
+    recentInvoices: [],
+  });
+  const [attendanceStats, setAttendanceStats] = useState<AttendanceStats>({
+    trend: [],
+    overall: 0,
+    lastSemesterComparison: '0%',
+  });
+  
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchStats() {
+    async function fetchAllStats() {
+      setLoading(true);
       try {
-        // Fetch general stats
-        const response = await fetch('/api/admin/stats');
-        const result = await response.json();
+        const [statsRes, studentRes, financialRes, attendanceRes] = await Promise.all([
+          fetch('/api/admin/stats').then(res => res.json()),
+          fetch('/api/admin/student-stats').then(res => res.json()),
+          fetch('/api/admin/financial-stats').then(res => res.json()),
+          fetch('/api/admin/attendance-stats').then(res => res.json()),
+        ]);
 
-        if (result.success) {
-          setStats(result.data);
-        }
-
-        // Fetch student stats
-        const studentResponse = await fetch('/api/admin/student-stats');
-        const studentResult = await studentResponse.json();
-
-        if (studentResult.success) {
-          setStudentStats(studentResult.data);
-        }
+        if (statsRes.success) setStats(statsRes.data);
+        if (studentRes.success) setStudentStats(studentRes.data);
+        if (financialRes.success) setFinancialStats(financialRes.data);
+        if (attendanceRes.success) setAttendanceStats(attendanceRes.data);
       } catch (error) {
-        console.error('Error fetching stats:', error);
+        console.error('Error fetching dashboard data:', error);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchStats();
+    fetchAllStats();
   }, []);
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 }
+  };
+
+  // Helper to render the custom animated chart
+  const renderAttendanceChart = () => {
+    if (loading || attendanceStats.trend.length === 0) {
+      return <div className="h-48 w-full bg-slate-50 animate-pulse rounded-lg" />;
+    }
+
+    const data = attendanceStats.trend;
+    const width = 600;
+    const height = 200;
+    const padding = 40;
+    
+    // Points calculation
+    const points = data.map((d, i) => ({
+      x: (i * (width - padding * 2)) / (data.length - 1) + padding,
+      y: (height - padding) - (d.percentage / 100) * (height - padding * 2)
+    }));
+
+    const pathData = `M ${points[0].x} ${points[0].y} ` + 
+      points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
+
+    const fillPathData = `${pathData} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+
+    return (
+      <div className="relative w-full h-full pt-4">
+        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
+          {/* Grid lines */}
+          {[0, 25, 50, 75, 100].map(p => (
+            <line 
+              key={p} 
+              x1={padding} 
+              y1={(height - padding) - (p / 100) * (height - padding * 2)} 
+              x2={width - padding} 
+              y2={(height - padding) - (p / 100) * (height - padding * 2)} 
+              stroke="#e2e8f0" 
+              strokeDasharray="4 4" 
+            />
+          ))}
+          
+          {/* Gradient area */}
+          <motion.path
+            d={fillPathData}
+            fill="url(#chartGradient)"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 0.2 }}
+            transition={{ duration: 1 }}
+          />
+          <defs>
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3b82f6" />
+              <stop offset="100%" stopColor="transparent" />
+            </linearGradient>
+          </defs>
+
+          {/* Main line */}
+          <motion.path
+            d={pathData}
+            fill="none"
+            stroke="#3b82f6"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            initial={{ pathLength: 0 }}
+            animate={{ pathLength: 1 }}
+            transition={{ duration: 1.5, ease: "easeInOut" }}
+          />
+
+          {/* Data points */}
+          {points.map((p, i) => (
+            <motion.circle
+              key={i}
+              cx={p.x}
+              cy={p.y}
+              r="4"
+              fill="white"
+              stroke="#3b82f6"
+              strokeWidth="2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 1 + i * 0.1 }}
+              whileHover={{ r: 6, strokeWidth: 3 }}
+            />
+          ))}
+        </svg>
+        
+        {/* X-Axis Labels */}
+        <div className="flex justify-between mt-2 px-6">
+          {data.map((d, i) => (
+            <span key={i} className="text-xs font-medium text-text-sub">{d.month}</span>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
   return (
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
-        <div className="flex-1 overflow-y-auto p-8">
-          <div className="max-w-7xl mx-auto flex flex-col gap-8">
-            
-            {/* Header Section */}
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div>
-                <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('admin.db.title')}</h2>
-                <p className="text-text-sub mt-1">{t('admin.db.subtitle')}</p>
-              </div>
-              <div className="flex gap-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
-                  <div className="w-[18.33px] h-[13.25px] flex items-center justify-center shrink-0 relative"><Image src="/1970539152c8180625f4a72f568ae51eeec70b7c.svg" alt="" fill className="object-contain pointer-events-none" /></div>
-                  {t('admin.db.exportReport')}
-                </button>
-                <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer">
-                  <div className="w-[11.6px] h-[11.6px] flex items-center justify-center shrink-0 relative"><Image src="/995b6a2f4aca9f4d80693e4dca226b851d6fca51.svg" alt="" fill className="object-contain pointer-events-none" /></div>
-                  {t('admin.db.newAnnouncement')}
-                </button>
-              </div>
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+      <div className="flex-1 overflow-y-auto p-8">
+        <motion.div 
+          className="max-w-7xl mx-auto flex flex-col gap-8"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          
+          {/* Header Section */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('admin.db.title')}</h2>
+              <p className="text-text-sub mt-1">{t('admin.db.subtitle')}</p>
             </div>
-
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* Card 1 */}
-              <div className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div className="w-[38px] h-[34px] relative shrink-0"><Image src="/d32572d68ab64ad7b6f07891b1d780934c7b715b.svg" alt="" fill className="object-contain" /></div>
-                  <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
-                    <div className="w-[15.6px] h-[7px] relative shrink-0"><Image src="/f93d432540a1ad7a9f84b150eca379bf108dbcf4.svg" alt="" fill className="object-contain" /></div> +5%
-                  </span>
-                </div>
-                <div>
-                  <p className="text-text-sub text-sm font-medium">{t('admin.db.totalStudents')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">
-                    {loading ? '...' : stats.totalStudents.toLocaleString('id-ID')}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Card 2 */}
-              <div className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div className="w-[32px] h-[32px] relative shrink-0"><Image src="/dbb984409e768d210175b26d825d1ae8d9ae80b2.svg" alt="" fill className="object-contain" /></div>
-                  <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
-                    <div className="w-[15.6px] h-[7px] relative shrink-0"><Image src="/69c940ad962291caede3dffa0124d09ce979bc8b.svg" alt="" fill className="object-contain" /></div> +2%
-                  </span>
-                </div>
-                <div>
-                  <p className="text-text-sub text-sm font-medium">{t('admin.db.totalTeachers')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">
-                    {loading ? '...' : stats.totalTeachers.toLocaleString('id-ID')}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Card 3 */}
-              <div className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div className="w-[34px] h-[34px] relative shrink-0"><Image src="/f54583cb146cc04a1122debc4a0b3016eb9cfc00.svg" alt="" fill className="object-contain" /></div>
-                  <span className="flex items-center text-xs font-semibold text-slate-500 bg-slate-100 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
-                    <div className="w-[12.1px] h-[1.1px] relative shrink-0"><Image src="/6bfab2e4139260a55a51c6029ff1c602b1928005.svg" alt="" fill className="object-contain" /></div> 0%
-                  </span>
-                </div>
-                <div>
-                  <p className="text-text-sub text-sm font-medium">{t('admin.db.activeClasses')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">
-                    {loading ? '...' : stats.activeClasses.toLocaleString('id-ID')}
-                  </h3>
-                </div>
-              </div>
-
-              {/* Card 4 */}
-              <div className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 flex flex-col gap-4">
-                <div className="flex justify-between items-start">
-                  <div className="w-[34px] h-[35px] relative shrink-0"><Image src="/dbb984409e768d210175b26d825d1ae8d9ae80b2.svg" alt="" fill className="object-contain" /></div>
-                  <span className="flex items-center text-xs font-semibold text-blue-600 bg-blue-50 pl-[8px] pr-[8px] py-[4px] rounded-full gap-1">
-                    <div className="w-[15.6px] h-[7px] relative shrink-0"><Image src="/f93d432540a1ad7a9f84b150eca379bf108dbcf4.svg" alt="" fill className="object-contain" /></div> +8
-                  </span>
-                </div>
-                <div>
-                  <p className="text-text-sub text-sm font-medium">{t('admin.db.unpaidBills')}</p>
-                  <h3 className="text-text-main text-3xl font-bold mt-1">156</h3>
-                </div>
-              </div>
+            <div className="flex gap-3">
+              <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
+                <Calendar className="w-4 h-4 text-slate-500" />
+                {t('admin.db.exportReport')}
+              </button>
+              <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer">
+                <ArrowUpRight className="w-4 h-4" />
+                {t('admin.db.newAnnouncement')}
+              </button>
             </div>
+          </div>
 
-            {/* Chart Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              <div className="lg:col-span-2 bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm">
-                <div className="flex flex-col gap-6">
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1 - Total Students */}
+            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+              {loading ? (
+                <MetricSkeleton hasTrend={false} />
+              ) : (
+                <div className="flex flex-col gap-4">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-text-main text-lg font-bold">{t('admin.db.attendanceTrend')}</h3>
-                      <p className="text-text-sub text-sm">{t('admin.db.attendanceDesc')}</p>
+                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <Users className="w-6 h-6" />
                     </div>
-                    <div className="flex flex-col items-end">
-                      <span className="text-2xl font-bold text-text-main">92%</span>
-                      <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
-                        <div className="w-[9.3px] h-[9.3px] relative shrink-0 flex items-center justify-center"><Image src="/69c940ad962291caede3dffa0124d09ce979bc8b.svg" alt="" fill className="object-contain" /></div>
-                        2.4% {t('admin.db.comparedToLastSem')}
-                      </span>
-                    </div>
+                    <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full gap-1">
+                      <TrendingUp className="w-3 h-3" /> +5%
+                    </span>
                   </div>
-                  <div className="w-full h-64 relative flex flex-col justify-end pb-6 overflow-hidden">
-                    <div className="absolute inset-0">
-                      <div className="absolute inset-[16.67%_0_0_0]">
-                        <Image alt="" className="object-fill" fill src="/20b3315e06ffb96395579d2228ac54cd3c5bac42.svg" />
-                      </div>
-                      <div className="absolute inset-[16.67%_0]">
-                        <div className="absolute inset-[-0.68%_-0.21%]">
-                          <Image alt="" className="object-fill" fill src="/9b489b12e8e33984adef788343e4e9eed316cc9e.svg" loading="eager" />
-                        </div>
-                      </div>
-                    </div>
-                    {/* Labels */}
-                    <div className="flex justify-between mt-2 px-2">
-                      <span className="text-xs font-medium text-text-sub">{t('month.jan')}</span>
-                      <span className="text-xs font-medium text-text-sub">{t('month.feb')}</span>
-                      <span className="text-xs font-medium text-text-sub">{t('month.mar')}</span>
-                      <span className="text-xs font-medium text-text-sub">{t('month.apr')}</span>
-                      <span className="text-xs font-medium text-text-sub">{t('month.may')}</span>
-                      <span className="text-xs font-medium text-text-sub">{t('month.jun')}</span>
-                    </div>
+                  <div>
+                    <p className="text-text-sub text-sm font-medium">{t('admin.db.totalStudents')}</p>
+                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                      {stats.totalStudents.toLocaleString('id-ID')}
+                    </h3>
                   </div>
                 </div>
-              </div>
+              )}
+            </motion.div>
 
-              {/* Quick Actions / Mini Widget */}
-              <div className="lg:col-span-1 flex flex-col gap-4">
-                <div className="bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-text-main text-lg font-bold">{t('admin.db.studentStatus')}</h3>
-                    <div className="w-[20px] h-[20px] relative shrink-0"><Image src="/d32572d68ab64ad7b6f07891b1d780934c7b715b.svg" alt="" fill className="object-contain" /></div>
+            {/* Card 2 - Total Teachers */}
+            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+              {loading ? (
+                <MetricSkeleton hasTrend={false} />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <UserCheck className="w-6 h-6" />
+                    </div>
+                    <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full gap-1">
+                      <TrendingUp className="w-3 h-3" /> +2%
+                    </span>
                   </div>
+                  <div>
+                    <p className="text-text-sub text-sm font-medium">{t('admin.db.totalTeachers')}</p>
+                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                      {stats.totalTeachers.toLocaleString('id-ID')}
+                    </h3>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Card 3 - Active Classes */}
+            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+              {loading ? (
+                <MetricSkeleton hasTrend={false} />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                      <School className="w-6 h-6" />
+                    </div>
+                    <span className="flex items-center text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full gap-1">
+                      0%
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-text-sub text-sm font-medium">{t('admin.db.activeClasses')}</p>
+                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                      {stats.activeClasses.toLocaleString('id-ID')}
+                    </h3>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+
+            {/* Card 4 - Unpaid Bills */}
+            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+              {loading ? (
+                <MetricSkeleton hasTrend={false} />
+              ) : (
+                <div className="flex flex-col gap-4">
+                  <div className="flex justify-between items-start">
+                    <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                      <DollarSign className="w-6 h-6" />
+                    </div>
+                    <span className="flex items-center text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full gap-1">
+                      <TrendingUp className="w-3 h-3" /> +{Math.floor(financialStats.unpaidCount / 10)}
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-text-sub text-sm font-medium">{t('admin.db.unpaidBills')}</p>
+                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                      {financialStats.unpaidCount.toLocaleString('id-ID')}
+                    </h3>
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </div>
+
+          {/* Chart & Status Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <motion.div variants={itemVariants} className="lg:col-span-2 bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm">
+              <div className="flex flex-col gap-6">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-text-main text-lg font-bold">{t('admin.db.attendanceTrend')}</h3>
+                    <p className="text-text-sub text-sm">{t('admin.db.attendanceDesc')}</p>
+                  </div>
+                  <div className="flex flex-col items-end">
+                    <span className="text-2xl font-bold text-text-main">
+                      {loading ? '...' : `${attendanceStats.overall}%`}
+                    </span>
+                    <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
+                      <ArrowUpRight className="w-3 h-3" />
+                      {attendanceStats.lastSemesterComparison} {t('admin.db.comparedToLastSem')}
+                    </span>
+                  </div>
+                </div>
+                
+                {/* Custom Interactive Chart */}
+                <div className="h-64 w-full">
+                  {renderAttendanceChart()}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Student Status Widget */}
+            <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-4">
+              <div className="bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-text-main text-lg font-bold">{t('admin.db.studentStatus')}</h3>
+                  <Users className="w-5 h-5 text-slate-400" />
+                </div>
+                
+                {loading ? (
+                  <div className="space-y-6">
+                    {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} variant="text" />)}
+                  </div>
+                ) : (
                   <div className="space-y-4">
-                    {/* Active Students */}
+                    {/* Active */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-text-sub">{t('admin.db.status.active')}</span>
-                        <span className="font-medium">{loading ? '...' : studentStats.active.toLocaleString('id-ID')}</span>
+                        <span className="font-medium">{studentStats.active.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div
+                        <motion.div
                           className="bg-green-500 h-2 rounded-full"
-                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.active / studentStats.total) * 100 : 0}%` }}
-                        ></div>
+                          initial={{ width: 0 }}
+                          animate={{ width: `${studentStats.total > 0 ? (studentStats.active / studentStats.total) * 100 : 0}%` }}
+                          transition={{ duration: 1 }}
+                        />
                       </div>
                     </div>
-                    {/* Graduated Students */}
+                    {/* Graduated */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-text-sub">{t('admin.db.status.graduated')}</span>
-                        <span className="font-medium">{loading ? '...' : studentStats.graduated.toLocaleString('id-ID')}</span>
+                        <span className="font-medium">{studentStats.graduated.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div
+                        <motion.div
                           className="bg-purple-500 h-2 rounded-full"
-                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.graduated / studentStats.total) * 100 : 0}%` }}
-                        ></div>
+                          initial={{ width: 0 }}
+                          animate={{ width: `${studentStats.total > 0 ? (studentStats.graduated / studentStats.total) * 100 : 0}%` }}
+                          transition={{ duration: 1, delay: 0.1 }}
+                        />
                       </div>
                     </div>
-                    {/* Transferred Students */}
+                    {/* Transferred */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-text-sub">{t('admin.db.status.transferred')}</span>
-                        <span className="font-medium">{loading ? '...' : studentStats.transferred.toLocaleString('id-ID')}</span>
+                        <span className="font-medium">{studentStats.transferred.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div
+                        <motion.div
                           className="bg-orange-400 h-2 rounded-full"
-                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.transferred / studentStats.total) * 100 : 0}%` }}
-                        ></div>
+                          initial={{ width: 0 }}
+                          animate={{ width: `${studentStats.total > 0 ? (studentStats.transferred / studentStats.total) * 100 : 0}%` }}
+                          transition={{ duration: 1, delay: 0.2 }}
+                        />
                       </div>
                     </div>
-                    {/* Dropout Students */}
+                    {/* Dropout */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-text-sub">{t('admin.db.status.dropout')}</span>
-                        <span className="font-medium">{loading ? '...' : studentStats.dropout.toLocaleString('id-ID')}</span>
+                        <span className="font-medium">{studentStats.dropout.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div
+                        <motion.div
                           className="bg-red-500 h-2 rounded-full"
-                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.dropout / studentStats.total) * 100 : 0}%` }}
-                        ></div>
+                          initial={{ width: 0 }}
+                          animate={{ width: `${studentStats.total > 0 ? (studentStats.dropout / studentStats.total) * 100 : 0}%` }}
+                          transition={{ duration: 1, delay: 0.3 }}
+                        />
                       </div>
                     </div>
-                    {/* Inactive Students */}
+                    {/* Inactive */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
                         <span className="text-text-sub">{t('admin.db.status.inactive')}</span>
-                        <span className="font-medium">{loading ? '...' : studentStats.inactive.toLocaleString('id-ID')}</span>
+                        <span className="font-medium">{studentStats.inactive.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
-                        <div
+                        <motion.div
                           className="bg-gray-400 h-2 rounded-full"
-                          style={{ width: loading ? '0%' : `${studentStats.total > 0 ? (studentStats.inactive / studentStats.total) * 100 : 0}%` }}
-                        ></div>
+                          initial={{ width: 0 }}
+                          animate={{ width: `${studentStats.total > 0 ? (studentStats.inactive / studentStats.total) * 100 : 0}%` }}
+                          transition={{ duration: 1, delay: 0.4 }}
+                        />
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            </div>
+            </motion.div>
+          </div>
 
-            {/* Outstanding Fees Table Section */}
-            <div className="bg-surface-light rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-slate-100 flex justify-between items-center">
-                <div>
-                  <h3 className="text-text-main text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
-                  <p className="text-text-sub text-sm">{t('admin.db.outstandingFeesDesc')}</p>
-                </div>
-                <a className="text-primary text-sm font-medium hover:underline flex items-center gap-1" href="#">
-                  {t('admin.db.viewAll')}
-                  <div className="w-[10.6px] h-[10.6px] relative shrink-0"><Image src="/ff37da3219cd99683eac5123c2b2031eeb522923.svg" alt="" fill className="object-contain" /></div>
-                </a>
+          {/* Outstanding Fees Table Section */}
+          <motion.div variants={itemVariants} className="bg-surface-light rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <div>
+                <h3 className="text-text-main text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
+                <p className="text-text-sub text-sm">{t('admin.db.outstandingFeesDesc')}</p>
               </div>
-              <div className="overflow-x-auto">
+              <a className="text-primary text-sm font-medium hover:underline flex items-center gap-1" href="#/financials">
+                {t('admin.db.viewAll')}
+                <ArrowUpRight className="w-3 h-3" />
+              </a>
+            </div>
+            
+            <div className="overflow-x-auto">
+              {loading ? (
+                <TableSkeleton rows={3} columns={6} />
+              ) : financialStats.recentInvoices.length === 0 ? (
+                <div className="p-12 text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 text-slate-400 mb-4">
+                    <DollarSign className="w-8 h-8" />
+                  </div>
+                  <p className="text-text-sub font-medium">Tidak ada tunggakan biaya saat ini.</p>
+                </div>
+              ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50/50 text-text-sub text-xs uppercase tracking-wider font-semibold border-b border-slate-100">
@@ -297,90 +479,58 @@ export default function AdminDashboardPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
-                    <tr className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">
-                            AS
-                          </div>
-                          <div>
-                            <p className="font-medium text-text-main text-sm">{t('admin.name.ahmad')}</p>
-                            <p className="text-text-sub text-xs">NISN: 0045678901</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xa')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.feb2026')}</td>
-                      <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 450.000</td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          {t('admin.db.status.arrears')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">
-                            SP
-                          </div>
-                          <div>
-                            <p className="font-medium text-text-main text-sm">{t('admin.name.siti')}</p>
-                            <p className="text-text-sub text-xs">NISN: 0056789012</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xib')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.mar2026')}</td>
-                      <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 450.000</td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                          {t('admin.db.status.pending')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
-                    <tr className="hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs font-bold">
-                            BR
-                          </div>
-                          <div>
-                            <p className="font-medium text-text-main text-sm">{t('admin.name.budi')}</p>
-                            <p className="text-text-sub text-xs">NISN: 0067890123</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.class.xiic')}</td>
-                      <td className="px-6 py-4 text-sm text-text-sub">{t('admin.month.jan2026')}</td>
-                      <td className="px-6 py-4 font-medium text-text-main text-sm">Rp 500.000</td>
-                      <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          {t('admin.db.status.arrears')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 text-right">
-                        <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
-                          <MoreVertical className="h-4 w-4" />
-                        </button>
-                      </td>
-                    </tr>
+                    <AnimatePresence>
+                      {financialStats.recentInvoices.map((inv, index) => (
+                        <motion.tr 
+                          key={inv.id}
+                          layout
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: index * 0.05 }}
+                          className="hover:bg-slate-50/50 transition-colors"
+                        >
+                          <td className="px-6 py-4">
+                            <div className="flex items-center gap-3">
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                                index % 3 === 0 ? 'bg-purple-100 text-purple-600' : 
+                                index % 3 === 1 ? 'bg-blue-100 text-blue-600' : 
+                                'bg-orange-100 text-orange-600'
+                              }`}>
+                                {inv.studentName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-medium text-text-main text-sm">{inv.studentName}</p>
+                                <p className="text-text-sub text-xs">NISN: {inv.nisn}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="px-6 py-4 text-sm text-text-sub">{inv.className}</td>
+                          <td className="px-6 py-4 text-sm text-text-sub">{inv.month}</td>
+                          <td className="px-6 py-4 font-medium text-text-main text-sm">
+                            {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(inv.amount)}
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              inv.status === 'ARREARS' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {inv.status === 'ARREARS' ? t('admin.db.status.arrears') : t('admin.db.status.pending')}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 text-right">
+                            <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
+                              <MoreVertical className="h-4 w-4" />
+                            </button>
+                          </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
                   </tbody>
                 </table>
-              </div>
-            </div>            
-          </div>
-        </div>
-      </main>
+              )}
+            </div>
+          </motion.div>            
+        </motion.div>
+      </div>
+    </main>
   );
 }

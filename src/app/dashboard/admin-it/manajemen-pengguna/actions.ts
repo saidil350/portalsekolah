@@ -17,25 +17,6 @@ import type {
 } from '@/types/user'
 
 /**
- * Helper: Ambil organization_id dari Admin IT yang sedang login
- * @returns organization_id string
- * @throws Error jika tidak ada organization
- */
-async function getAdminOrganizationId(): Promise<string> {
-  const auth = await authorizeAction(['ADMIN_IT'])
-  if (!auth.success) {
-    throw new Error(auth.error)
-  }
-
-  const organizationId = auth.user.organization_id
-  if (!organizationId) {
-    throw new Error('Admin IT tidak terhubung ke organisasi manapun. Silakan hubungi administrator.')
-  }
-
-  return organizationId
-}
-
-/**
  * Fetch users with filters and pagination
  * Hanya menampilkan user dari organization yang sama dengan Admin IT
  */
@@ -54,9 +35,9 @@ export async function fetchUsers(
   }
 
   try {
-    const supabase = await createClient()
+    const adminSupabase = await createAdminClient()
 
-    let query = supabase
+    let query = adminSupabase
       .from('profiles')
       .select('*', { count: 'exact' })
       .eq('organization_id', organizationId) // ✅ Filter by organization
@@ -121,7 +102,6 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
   }
 
   try {
-    const supabase = await createClient()
     const adminSupabase = await createAdminClient() // Admin client untuk operasi auth
 
     // ============================================
@@ -154,7 +134,7 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
     // ============================================
 
     // Check if email already exists (global, email harus unik di seluruh sistem)
-    const { data: existingUser } = await supabase
+    const { data: existingUser } = await adminSupabase
       .from('profiles')
       .select('id')
       .eq('email', formData.email)
@@ -166,7 +146,7 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
 
     // Check if NIP already exists (PER-ORGANIZATION)
     if (formData.nip && formData.nip.trim() !== '') {
-      const { data: existingNIP } = await supabase
+      const { data: existingNIP } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('nip', formData.nip.trim())
@@ -180,7 +160,7 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
 
     // Check if NISN already exists (PER-ORGANIZATION)
     if (formData.nisn && formData.nisn.trim() !== '') {
-      const { data: existingNISN } = await supabase
+      const { data: existingNISN } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('nisn', formData.nisn.trim())
@@ -229,7 +209,7 @@ export async function createUser(formData: UserFormData): Promise<CreateUserResp
       profileData.nisn = formData.nisn.trim()
     }
 
-    const { error: profileError } = await supabase
+    const { error: profileError } = await adminSupabase
       .from('profiles')
       .upsert(profileData, { onConflict: 'id' })
 
@@ -288,7 +268,7 @@ export async function updateUser(
     // ============================================
     // VALIDASI: Target user harus di organization yang sama
     // ============================================
-    const { data: targetUser } = await supabase
+    const { data: targetUser } = await adminSupabase
       .from('profiles')
       .select('id, role, organization_id')
       .eq('id', id)
@@ -323,7 +303,7 @@ export async function updateUser(
     // Prevent changing own role to non-admin (last admin check PER-ORGANIZATION)
     if (user.id === id && formData.role && formData.role !== 'ADMIN_IT') {
       if (targetUser.role === 'ADMIN_IT') {
-        const { count, error: countError } = await supabase
+        const { count, error: countError } = await adminSupabase
           .from('profiles')
           .select('id', { count: 'exact', head: true })
           .eq('role', 'ADMIN_IT')
@@ -369,7 +349,7 @@ export async function updateUser(
 
     // Check if email already exists (excluding current user)
     if (formData.email) {
-      const { data: existingEmail } = await supabase
+      const { data: existingEmail } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('email', formData.email)
@@ -383,7 +363,7 @@ export async function updateUser(
 
     // Check if NIP already exists (PER-ORGANIZATION, excluding current user)
     if (formData.nip && formData.nip.trim() !== '') {
-      const { data: existingNIP } = await supabase
+      const { data: existingNIP } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('nip', formData.nip.trim())
@@ -398,7 +378,7 @@ export async function updateUser(
 
     // Check if NISN already exists (PER-ORGANIZATION, excluding current user)
     if (formData.nisn && formData.nisn.trim() !== '') {
-      const { data: existingNISN } = await supabase
+      const { data: existingNISN } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('nisn', formData.nisn.trim())
@@ -433,7 +413,7 @@ export async function updateUser(
     // ============================================
     // UPDATE PROFILE (dengan filter organization)
     // ============================================
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile, error: profileError } = await adminSupabase
       .from('profiles')
       .update(updateData)
       .eq('id', id)
@@ -507,7 +487,7 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
     // ============================================
     // VALIDASI: Target user harus di organization yang sama
     // ============================================
-    const { data: targetUser } = await supabase
+    const { data: targetUser } = await adminSupabase
       .from('profiles')
       .select('role, organization_id')
       .eq('id', id)
@@ -523,7 +503,7 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
 
     // Check if this is the last admin (PER-ORGANIZATION)
     if (targetUser.role === 'ADMIN_IT') {
-      const { count, error: countError } = await supabase
+      const { count, error: countError } = await adminSupabase
         .from('profiles')
         .select('id', { count: 'exact', head: true })
         .eq('role', 'ADMIN_IT')
@@ -543,7 +523,7 @@ export async function deleteUser(id: string): Promise<DeleteUserResponse> {
     await adminSupabase.auth.admin.deleteUser(id)
 
     // Delete profile (will cascade to auth user due to ON DELETE CASCADE)
-    const { error: profileError } = await supabase
+    const { error: profileError } = await adminSupabase
       .from('profiles')
       .delete()
       .eq('id', id)
@@ -583,11 +563,10 @@ export async function syncWithSupabase(): Promise<SyncResponse> {
   }
 
   try {
-    const supabase = await createClient()
     const adminSupabase = await createAdminClient()
 
     // Get profiles dari organization yang sama saja
-    const { data: profiles, error } = await supabase
+    const { data: profiles, error } = await adminSupabase
       .from('profiles')
       .select('*')
       .eq('organization_id', organizationId) // ✅ Filter by organization

@@ -385,10 +385,10 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-                          {student.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                          {(student.full_name || 'Siswa').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-900">{student.full_name}</p>
+                          <p className="text-sm font-medium text-slate-900">{student.full_name || 'Siswa'}</p>
                           <p className="text-xs text-slate-500">{student.nisn || '-'}</p>
                         </div>
                       </div>
@@ -485,9 +485,9 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                     className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
                   >
                     <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
-                      {teacher.full_name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
+                      {(teacher.full_name || 'Guru').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <span className="text-xs font-medium text-slate-900">{teacher.full_name}</span>
+                    <span className="text-xs font-medium text-slate-900">{teacher.full_name || 'Guru'}</span>
                   </div>
                 ))}
               </div>

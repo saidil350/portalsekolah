@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { type User } from '@/types/user'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current authenticated user with full profile data
  */
 export async function getCurrentTeacher(): Promise<User | null> {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,6 +39,11 @@ export async function getCurrentTeacher(): Promise<User | null> {
  * Get list of students for grading
  */
 export async function getStudentsForGrading(limit: number = 10): Promise<User[]> {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return []
+  }
+
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -55,6 +66,14 @@ export async function getStudentsForGrading(limit: number = 10): Promise<User[]>
  * Get statistics for teaching dashboard
  */
 export async function getTeachingStats() {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return {
+      totalStudents: 0,
+      pendingReviews: 0,
+    }
+  }
+
   const supabase = await createClient()
 
   // Get total students

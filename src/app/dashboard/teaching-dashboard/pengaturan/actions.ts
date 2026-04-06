@@ -2,11 +2,17 @@
 
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { authorizeAction } from '@/lib/auth/authorization'
 
 /**
  * Get current teacher profile data
  */
 export async function getTeacherProfile() {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return null
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -33,6 +39,11 @@ export async function getTeacherProfile() {
  * Update teacher profile information
  */
 export async function updateTeacherProfile(formData: FormData) {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -124,6 +135,11 @@ export async function updateTeacherProfile(formData: FormData) {
  * Change teacher password
  */
 export async function changeTeacherPassword(formData: FormData) {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
@@ -187,6 +203,11 @@ export async function updateNotificationPreferences(
   attendance_alerts: boolean,
   system_updates: boolean
 ) {
+  const auth = await authorizeAction(['GURU'])
+  if (!auth.success) {
+    return { success: false, error: auth.error }
+  }
+
   const supabase = await createClient()
 
   const { data: { user } } = await supabase.auth.getUser()
