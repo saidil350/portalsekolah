@@ -172,10 +172,10 @@ export default function AdminDashboardPage() {
               key={i}
               cx={p.x}
               cy={p.y}
-              r="4"
+              r={4}
               fill="white"
               stroke="#3b82f6"
-              strokeWidth="2"
+              strokeWidth={2}
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 1 + i * 0.1 }}

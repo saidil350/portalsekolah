@@ -52,10 +52,6 @@ export async function GET(request: Request) {
           full_name,
           role,
           registration_number
-        ),
-        class:classes!student_invoices_academic_year_id_fkey (
-          id,
-          name
         )
       `)
       .in('status', ['PENDING', 'ARREARS'])
