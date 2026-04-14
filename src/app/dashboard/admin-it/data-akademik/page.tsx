@@ -480,73 +480,76 @@ export default function DataAkademikPage() {
                 addLabel="Tambah Tingkat"
               />
             ) : (
-              <div className="w-full border border-slate-100 rounded-lg overflow-hidden">
-                <div className="w-full min-w-[600px]">
-                  {/* Header */}
-                  <div className="bg-slate-50 grid grid-cols-[2fr_1fr_1fr_1fr] border-b border-slate-200">
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Nama</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Kode</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Status</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center justify-end">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Aksi</span>
-                    </div>
-                  </div>
-
-                  {/* Rows */}
-                  {levels.map((level) => {
-                    const statusConfig = getStatusConfig(level.is_active)
-                    return (
-                      <div key={level.id} className="grid grid-cols-[2fr_1fr_1fr_1fr] border-b border-slate-100 hover:bg-slate-50 transition-colors group">
-                        <div className="px-6 py-[22px] flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center shrink-0">
-                            <GraduationCap className="w-4 h-4 text-purple-500" />
-                          </div>
-                          <div>
-                            <span className="text-slate-900 text-base font-semibold">{level.name}</span>
-                            <p className="text-slate-500 text-xs">{level.description}</p>
-                          </div>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center">
-                          <span className="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded">{level.code}</span>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center">
-                          <span className={`px-2 py-0.5 ${statusConfig.bgColor} ${statusConfig.color} text-[11px] font-medium rounded-full flex items-center gap-1.5`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor}`} />
-                            {statusConfig.label}
-                          </span>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => {
-                              setSelectedItem(level)
-                              setModalMode('edit')
-                              setShowLevelModal(true)
-                            }}
-                            className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedItem(level)
-                              setShowDeleteConfirm(true)
-                            }}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
+              <div className="w-full border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                      <tr className="bg-slate-50 text-[10px] uppercase tracking-wider font-bold text-slate-500 border-b border-slate-200">
+                        <th className="px-6 py-4">Nama</th>
+                        <th className="px-6 py-4">Kode</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {levels.map((level) => {
+                        const statusConfig = getStatusConfig(level.is_active)
+                        return (
+                          <tr key={level.id} className="group hover:bg-slate-50 transition-all cursor-pointer">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100">
+                                  <GraduationCap className="w-4 h-4 text-purple-500" />
+                                </div>
+                                <div>
+                                  <span className="text-sm font-bold text-slate-900">{level.name}</span>
+                                  <p className="text-xs text-slate-500">{level.description}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded">{level.code}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${statusConfig.dotColor}`} />
+                                <span className={`text-xs font-bold ${statusConfig.color} uppercase`}>
+                                  {statusConfig.label}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedItem(level)
+                                    setModalMode('edit')
+                                    setShowLevelModal(true)
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedItem(level)
+                                    setShowDeleteConfirm(true)
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -626,73 +629,76 @@ export default function DataAkademikPage() {
                 addLabel="Tambah Jurusan"
               />
             ) : (
-              <div className="w-full border border-slate-100 rounded-lg overflow-hidden">
-                <div className="w-full min-w-[600px]">
-                  {/* Header */}
-                  <div className="bg-slate-50 grid grid-cols-[2fr_1fr_1fr_1fr] border-b border-slate-200">
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Nama</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Kode</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Status</span>
-                    </div>
-                    <div className="px-6 py-4 flex items-center justify-end">
-                      <span className="text-slate-500 text-xs font-bold uppercase tracking-[0.6px]">Aksi</span>
-                    </div>
-                  </div>
-
-                  {/* Rows */}
-                  {departments.map((dept) => {
-                    const statusConfig = getStatusConfig(dept.is_active)
-                    return (
-                      <div key={dept.id} className="grid grid-cols-[2fr_1fr_1fr_1fr] border-b border-slate-100 hover:bg-slate-50 transition-colors group">
-                        <div className="px-6 py-[22px] flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                            <Building2 className="w-4 h-4 text-emerald-500" />
-                          </div>
-                          <div>
-                            <span className="text-slate-900 text-base font-semibold">{dept.name}</span>
-                            <p className="text-slate-500 text-xs">{dept.description}</p>
-                          </div>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center">
-                          <span className="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded">{dept.code}</span>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center">
-                          <span className={`px-2 py-0.5 ${statusConfig.bgColor} ${statusConfig.color} text-[11px] font-medium rounded-full flex items-center gap-1.5`}>
-                            <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dotColor}`} />
-                            {statusConfig.label}
-                          </span>
-                        </div>
-                        <div className="px-6 py-[22px] flex items-center justify-end gap-1">
-                          <button
-                            onClick={() => {
-                              setSelectedItem(dept)
-                              setModalMode('edit')
-                              setShowDepartmentModal(true)
-                            }}
-                            className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded transition-colors"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => {
-                              setSelectedItem(dept)
-                              setShowDeleteConfirm(true)
-                            }}
-                            className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                            title="Delete"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    )
-                  })}
+              <div className="w-full border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                <div className="overflow-x-auto w-full">
+                  <table className="w-full text-left border-collapse min-w-[600px]">
+                    <thead>
+                      <tr className="bg-slate-50 text-[10px] uppercase tracking-wider font-bold text-slate-500 border-b border-slate-200">
+                        <th className="px-6 py-4">Nama</th>
+                        <th className="px-6 py-4">Kode</th>
+                        <th className="px-6 py-4">Status</th>
+                        <th className="px-6 py-4 text-right">Aksi</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {departments.map((dept) => {
+                        const statusConfig = getStatusConfig(dept.is_active)
+                        return (
+                          <tr key={dept.id} className="group hover:bg-slate-50 transition-all cursor-pointer">
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100">
+                                  <Building2 className="w-4 h-4 text-emerald-500" />
+                                </div>
+                                <div>
+                                  <span className="text-sm font-bold text-slate-900">{dept.name}</span>
+                                  <p className="text-xs text-slate-500">{dept.description}</p>
+                                </div>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <span className="px-2 py-1 bg-slate-100 text-slate-700 text-xs font-bold rounded">{dept.code}</span>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className="flex items-center gap-2">
+                                <div className={`w-2 h-2 rounded-full ${statusConfig.dotColor}`} />
+                                <span className={`text-xs font-bold ${statusConfig.color} uppercase`}>
+                                  {statusConfig.label}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedItem(dept)
+                                    setModalMode('edit')
+                                    setShowDepartmentModal(true)
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                                  title="Edit"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setSelectedItem(dept)
+                                    setShowDeleteConfirm(true)
+                                  }}
+                                  className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                  title="Delete"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             )}
@@ -778,105 +784,105 @@ export default function DataAkademikPage() {
 
       {/* Content Area */}
       <div className="flex-1 overflow-y-auto p-8 relative">
-        <div className="max-w-[1280px] flex flex-col gap-6 mx-auto w-full">
+        <div className="max-w-[1280px] flex flex-col gap-6 mx-auto w-full pb-8">
 
-          {/* Main Card Area */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)] overflow-hidden flex flex-col w-full">
+          {/* Top Summary Cards (Bento Boxes) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+            {/* Card 1 */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                  <Calendar className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-2xl font-black mt-3">{yearsTotal}</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Tahun Akademik</p>
+            </div>
 
+            {/* Card 2 */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-purple-50 text-purple-600 rounded-lg">
+                  <GraduationCap className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-2xl font-black mt-3">{levelsTotal}</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Tingkat Kelas</p>
+            </div>
+
+            {/* Card 3 */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                  <Building2 className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-2xl font-black mt-3">{departmentsTotal}</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Jurusan</p>
+            </div>
+
+            {/* Card 4 */}
+            <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="p-2 bg-orange-50 text-orange-600 rounded-lg">
+                  <BookOpen className="w-6 h-6" />
+                </div>
+              </div>
+              <p className="text-2xl font-black mt-3">0</p>
+              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Mata Pelajaran</p>
+            </div>
+          </div>
+
+          {/* Main Content Area */}
+          <div className="flex flex-col gap-4 w-full">
             {/* Tab Navigation */}
-            <div className="border-b border-slate-100 px-6 flex items-center h-[56px] overflow-x-auto hide-scrollbar">
+            <div className="flex items-center border-b border-slate-200 overflow-x-auto hide-scrollbar pb-px">
               <button
                 onClick={() => setActiveTab('years')}
-                className={`px-4 h-full flex items-center text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-3 flex items-center text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
                   activeTab === 'years'
-                    ? 'text-primary border-b-2 border-primary font-semibold'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-primary border-primary font-semibold'
+                    : 'text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-300'
                 }`}
               >
                 {t('admin.academic.tab.years')}
               </button>
               <button
                 onClick={() => setActiveTab('subjects')}
-                className={`px-4 h-full flex items-center text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-3 flex items-center text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
                   activeTab === 'subjects'
-                    ? 'text-primary border-b-2 border-primary font-semibold'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-primary border-primary font-semibold'
+                    : 'text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-300'
                 }`}
               >
                 {t('admin.academic.tab.subjects')}
               </button>
               <button
                 onClick={() => setActiveTab('levels')}
-                className={`px-4 h-full flex items-center text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-3 flex items-center text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
                   activeTab === 'levels'
-                    ? 'text-primary border-b-2 border-primary font-semibold'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-primary border-primary font-semibold'
+                    : 'text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-300'
                 }`}
               >
                 {t('admin.academic.tab.levels')}
               </button>
               <button
                 onClick={() => setActiveTab('departments')}
-                className={`px-4 h-full flex items-center text-sm font-medium transition-colors whitespace-nowrap ${
+                className={`px-4 py-3 flex items-center text-sm font-medium transition-colors whitespace-nowrap border-b-2 -mb-px ${
                   activeTab === 'departments'
-                    ? 'text-primary border-b-2 border-primary font-semibold'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-primary border-primary font-semibold'
+                    : 'text-slate-500 border-transparent hover:text-slate-900 hover:border-slate-300'
                 }`}
               >
                 {t('admin.academic.tab.departments')}
               </button>
             </div>
 
-            {/* Tab Content */}
-            <div className="p-6 flex flex-col w-full">
-              {renderTabContent()}
-            </div>
-
-          </div>
-
-          {/* Bottom Summary Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full pb-8">
-            {/* Card 1 */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
-              <div className="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 shrink-0">
-                <Calendar className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-slate-500 text-xs font-medium">Total Tahun Akademik</span>
-                <span className="text-slate-900 text-lg font-bold leading-tight mt-0.5">{yearsTotal}</span>
-              </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
-              <div className="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-500 shrink-0">
-                <GraduationCap className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-slate-500 text-xs font-medium">Total Tingkat Kelas</span>
-                <span className="text-slate-900 text-lg font-bold leading-tight mt-0.5">{levelsTotal}</span>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
-              <div className="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-500 shrink-0">
-                <Building2 className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-slate-500 text-xs font-medium">Total Jurusan</span>
-                <span className="text-slate-900 text-lg font-bold leading-tight mt-0.5">{departmentsTotal}</span>
-              </div>
-            </div>
-
-            {/* Card 4 */}
-            <div className="bg-white border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]">
-              <div className="w-10 h-10 rounded-lg bg-orange-50 flex items-center justify-center text-orange-500 shrink-0">
-                <BookOpen className="w-5 h-5" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-slate-500 text-xs font-medium">Total Mata Pelajaran</span>
-                <span className="text-slate-900 text-lg font-bold leading-tight mt-0.5">0</span>
+            {/* Tab Content Container */}
+            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col w-full">
+              <div className="p-6 flex flex-col w-full">
+                {renderTabContent()}
               </div>
             </div>
           </div>

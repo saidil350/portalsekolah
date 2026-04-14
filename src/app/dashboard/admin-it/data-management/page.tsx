@@ -725,34 +725,6 @@ export default function DataManagementPage() {
             <h2 className="text-slate-900 text-[22px] font-bold tracking-tight mb-1">Manajemen Data Master</h2>
             <p className="text-slate-500 text-[13px] font-medium">Kelola data kelas, ruangan, dan mata pelajaran</p>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              onClick={exportToCSV}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-all active:scale-[0.97]"
-            >
-              <DownloadCloud className="w-4 h-4" />
-              Ekspor Data
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (activeTab === 'kelas_dan_roster') router.push('/dashboard/admin-it/kelas-dan-roster/create');
-                else if (activeTab === 'ruangan') setRoomModal({ isOpen: true, mode: 'create', room: null });
-                else if (activeTab === 'mata_pelajaran') setSubjectModal({ isOpen: true, mode: 'create', subject: null });
-                else if (activeTab === 'master_data') {
-                  if (masterDataSubTab === 'academic_years') setAcademicYearModal({ isOpen: true, mode: 'create', academicYear: null });
-                  else if (masterDataSubTab === 'semesters') setSemesterModal({ isOpen: true, mode: 'create', semester: null });
-                  else if (masterDataSubTab === 'class_levels') setClassLevelModal({ isOpen: true, mode: 'create', classLevel: null });
-                  else if (masterDataSubTab === 'departments') setDepartmentModal({ isOpen: true, mode: 'create', department: null });
-                }
-              }}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-semibold shadow-[0px_2px_4px_rgba(19,127,236,0.2)] hover:bg-primary-dark transition-all active:scale-[0.97]"
-            >
-              <Plus className="w-4 h-4" strokeWidth={3} />
-              Tambah Baru
-            </button>
-          </div>
         </div>
 
         {/* Tabs */}
@@ -875,6 +847,25 @@ export default function DataManagementPage() {
                     <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (activeTab === 'kelas_dan_roster') router.push('/dashboard/admin-it/kelas-dan-roster/create');
+                    else if (activeTab === 'ruangan') setRoomModal({ isOpen: true, mode: 'create', room: null });
+                    else if (activeTab === 'mata_pelajaran') setSubjectModal({ isOpen: true, mode: 'create', subject: null });
+                    else if (activeTab === 'master_data') {
+                      if (masterDataSubTab === 'academic_years') setAcademicYearModal({ isOpen: true, mode: 'create', academicYear: null });
+                      else if (masterDataSubTab === 'semesters') setSemesterModal({ isOpen: true, mode: 'create', semester: null });
+                      else if (masterDataSubTab === 'class_levels') setClassLevelModal({ isOpen: true, mode: 'create', classLevel: null });
+                      else if (masterDataSubTab === 'departments') setDepartmentModal({ isOpen: true, mode: 'create', department: null });
+                    }
+                  }}
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg font-semibold shadow-[0px_2px_4px_rgba(19,127,236,0.1)] hover:bg-primary/90 transition-all active:scale-[0.97] whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4" strokeWidth={3} />
+                  Tambah Baru
+                </button>
               </div>
             </div>
 

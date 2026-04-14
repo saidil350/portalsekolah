@@ -67,7 +67,7 @@ const RoleGreetingCard: React.FC<RoleGreetingCardProps> = ({
       
       {/* Name and Identity Details */}
       <div className="flex flex-col md:flex-row md:items-end gap-2 md:gap-4 mt-2">
-        <h1 className="text-3xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
           {userName} <span className="inline-block animate-bounce-slow">👋</span>
         </h1>
         
