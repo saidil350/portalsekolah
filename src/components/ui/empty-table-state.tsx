@@ -120,39 +120,39 @@ export function EmptyTableState({
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 15 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: "easeOut" }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
-        "flex flex-col items-center justify-center py-16 px-6 bg-slate-50/40 rounded-2xl border-2 border-dashed border-slate-200/60", 
+        "flex flex-col items-center justify-center py-20 px-8 bg-linear-to-br from-slate-50/80 to-blue-50/40 rounded-3xl border-2 border-dashed border-slate-200/80 shadow-inner", 
         className
       )}
     >
-      <div className="relative mb-6">
-        <div className="w-20 h-20 rounded-2xl bg-white shadow-sm border border-slate-100 flex items-center justify-center text-slate-400 rotate-3 transition-transform hover:rotate-0">
-          {isFiltering ? <FileSearch className="w-10 h-10 text-primary/40" /> : config.icon}
+      <div className="relative mb-8">
+        <div className="w-24 h-24 rounded-3xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300">
+          {isFiltering ? <FileSearch className="w-12 h-12" /> : config.icon}
         </div>
-        <div className="absolute -bottom-2 -right-2 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary border-2 border-white">
-          {isFiltering ? <Search className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+        <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center text-white border-4 border-white">
+          {isFiltering ? <Search className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
       </div>
 
-      <h3 className="text-xl font-bold text-slate-800 mb-2 text-center tracking-tight">
+      <h3 className="text-2xl font-black text-slate-800 mb-3 text-center tracking-tight">
         {displayTitle}
       </h3>
 
-      <p className="text-sm text-slate-500 text-center max-w-sm mb-8 leading-relaxed">
+      <p className="text-base text-slate-500 text-center max-w-sm mb-10 leading-relaxed font-medium">
         {displayDescription}
       </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-3">
+      <div className="flex flex-wrap items-center justify-center gap-4">
         {showClearFilters && (
           <Button
             variant="secondary"
-            size="md"
+            size="lg"
             onClick={onClearFilters}
-            className="bg-white hover:bg-slate-50 border-slate-200 text-slate-700 font-semibold"
-            leftIcon={<X className="w-4 h-4" />}
+            className="bg-white hover:bg-slate-50 border-slate-200 text-slate-700 font-bold px-8 rounded-xl"
+            leftIcon={<X className="w-5 h-5" />}
           >
             Hapus Filter
           </Button>
@@ -161,10 +161,10 @@ export function EmptyTableState({
         {showAddButton && (
           <Button
             variant="primary"
-            size="md"
+            size="lg"
             onClick={onAdd}
-            className="shadow-md shadow-primary/20 font-semibold"
-            leftIcon={<Plus className="w-4 h-4" />}
+            className="font-bold px-10 rounded-xl hover:scale-105 active:scale-95 transition-all bg-primary"
+            leftIcon={<Plus className="w-5 h-5" />}
           >
             {displayAddLabel}
           </Button>

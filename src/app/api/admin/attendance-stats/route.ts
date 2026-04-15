@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import { NextResponse } from 'next/server'
 import { authorizeApi } from '@/lib/auth/authorization'
 import { format, subMonths, startOfMonth, endOfMonth } from 'date-fns'
+import { id } from 'date-fns/locale'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,7 +45,7 @@ export async function GET(request: Request) {
       const percentage = total > 0 ? Math.round((present / total) * 100) : 85 + Math.floor(Math.random() * 10)
       
       trend.push({
-        month: format(monthDate, 'MMM'),
+        month: format(monthDate, 'MMM', { locale: id }),
         percentage
       })
     }

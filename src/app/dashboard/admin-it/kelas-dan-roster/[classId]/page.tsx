@@ -80,7 +80,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   // Early return untuk loading params
   if (!resolved) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-full bg-[#FAFAFA]">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-linear-to-br from-slate-50 to-blue-50/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <span className="ml-3 text-slate-600 font-medium">Memuat...</span>
       </div>
@@ -182,7 +182,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center h-full bg-[#FAFAFA]">
+      <div className="flex-1 flex flex-col items-center justify-center h-full bg-linear-to-br from-slate-50 to-blue-50/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
         <span className="ml-3 text-slate-600 font-medium">Memuat data...</span>
       </div>
@@ -236,46 +236,46 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
   })
 
   return (
-    <main className="flex-1 flex flex-col h-full bg-[#FAFAFA]">
+    <main className="flex-1 flex flex-col h-full bg-linear-to-br from-slate-50/50 via-white to-blue-50/20">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-6 shrink-0">
+      <header className="bg-white/80 backdrop-blur-md border-b border-slate-200/60 px-8 py-6 shrink-0 sticky top-0 z-10 shadow-sm">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 mb-4">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+            className="flex items-center gap-1 text-sm text-slate-500 hover:text-primary transition-colors group"
           >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Kembali</span>
+            <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+            <span className="font-medium">Kembali</span>
           </button>
         </div>
 
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-slate-900">
+              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
                 {class_info.name}
               </h1>
-              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-bold ${badge.bgColor} ${badge.color}`}>
+              <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${badge.bgColor} ${badge.color}`}>
                 {badge.icon} {badge.label}
               </span>
             </div>
-            <p className="text-slate-500 text-sm">
-              {class_info.code}
-              {class_info.class_level && ` • ${class_info.class_level.name}`}
-              {class_info.department && ` • ${class_info.department.name}`}
-              {class_info.academic_year && ` • ${class_info.academic_year.name}`}
-            </p>
+            <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
+              <span className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">{class_info.code}</span>
+              {class_info.class_level && <span>• {class_info.class_level.name}</span>}
+              {class_info.department && <span>• {class_info.department.name}</span>}
+              {class_info.academic_year && <span className="text-primary/80 font-semibold">• {class_info.academic_year.name}</span>}
+            </div>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               type="button"
               onClick={() => setShowAddStudentModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg font-medium hover:bg-primary-dark transition-all shadow-sm shadow-primary/30"
+              className="flex items-center gap-2 px-5 py-2.5 bg-primary text-white rounded-xl font-bold hover:bg-primary-600 hover:scale-[1.02] active:scale-[0.98] transition-all"
             >
-              <Plus className="w-4 h-4" />
+              <Plus className="w-5 h-5" />
               Tambah Siswa
             </button>
           </div>
@@ -408,17 +408,20 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           </div>
 
           {/* Right Column - Schedule Grid (60%) */}
-          <div className="w-3/5 bg-white overflow-y-auto">
-            <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Jadwal Mingguan
-                </h3>
+          <div className="w-3/5 bg-white/40 backdrop-blur-sm overflow-y-auto">
+            <div className="p-8">
+              <div className="flex items-center justify-between mb-6">
+                <div className="space-y-1">
+                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-primary" />
+                    Jadwal Mingguan
+                  </h3>
+                  <p className="text-xs text-slate-500 font-medium">Atur dan pantau jadwal pelajaran kelas</p>
+                </div>
                 <button
                   type="button"
                   onClick={() => setShowAddScheduleModal(true)}
-                  className="flex items-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-bold hover:bg-blue-700 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Tambah Jadwal
@@ -426,41 +429,42 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
               </div>
 
               {/* Schedule Grid */}
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
-                <table className="w-full text-sm">
+              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
+                <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="w-20 px-3 py-3 text-left font-semibold text-slate-600 text-xs">Jam</th>
+                    <tr className="bg-slate-50/80 border-b border-slate-200">
+                      <th className="w-20 px-4 py-4 text-left font-bold text-slate-600 text-[10px] uppercase tracking-wider cursor-default">Jam</th>
                       {days.map(day => (
-                        <th key={day.value} className="px-3 py-3 text-center font-semibold text-slate-600 text-xs">
+                        <th key={day.value} className="px-4 py-4 text-center font-bold text-slate-700 text-[11px] uppercase tracking-wider cursor-default">
                           {day.label}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-slate-100">
                     {timeSlots.map((time, timeIdx) => (
-                      <tr key={time} className="border-b border-slate-100 last:border-b-0">
-                        <td className="px-3 py-2 text-slate-500 text-xs align-top whitespace-nowrap">
+                      <tr key={time} className="hover:bg-slate-50/30 transition-colors">
+                        <td className="px-4 py-4 text-slate-400 text-xs font-bold align-top whitespace-nowrap bg-slate-50/20">
                           {time}
                         </td>
                         {days.map(day => {
                           const schedule = scheduleGrid[day.value]?.[time]
                           return (
-                            <td key={day.value} className="px-2 py-2 align-top">
+                            <td key={day.value} className="px-2 py-2 align-top h-24">
                               {schedule ? (
-                                <div className="bg-linear-to-br from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-2 min-h-[70px] transition-all hover:shadow-md">
-                                  <p className="font-semibold text-slate-900 text-xs mb-1">{schedule.subject?.name}</p>
-                                  <p className="text-xs text-slate-600 mb-2">{schedule.teacher?.full_name}</p>
-                                  <div className="flex items-center gap-2">
-                                    <span className="flex items-center gap-1 text-xs text-slate-500">
-                                      <MapPin className="w-3 h-3" />
+                                <div className="h-full bg-linear-to-br from-blue-50 to-indigo-50/50 border border-blue-100 rounded-xl p-3 transition-all hover:shadow-lg hover:shadow-blue-200/40 hover:-translate-y-0.5 group cursor-pointer ring-1 ring-blue-500/0 hover:ring-blue-500/30">
+                                  <p className="font-bold text-slate-900 text-xs mb-1 group-hover:text-primary transition-colors">{schedule.subject?.name}</p>
+                                  <p className="text-[10px] text-slate-500 font-medium mb-2 truncate">{schedule.teacher?.full_name}</p>
+                                  <div className="mt-auto pt-2 border-t border-blue-100/50 flex items-center justify-between">
+                                    <span className="flex items-center gap-1 text-[10px] text-slate-400 font-bold">
+                                      <MapPin className="w-3 h-3 text-primary/50" />
                                       {schedule.room?.code || '-'}
                                     </span>
+                                    <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse opacity-0 group-hover:opacity-100" />
                                   </div>
                                 </div>
                               ) : (
-                                <div className="min-h-[70px] rounded-lg border border-dashed border-slate-200 bg-slate-50/30" />
+                                <div className="h-full rounded-xl border-2 border-dashed border-slate-100 bg-slate-50/10 hover:bg-slate-50/50 transition-colors" />
                               )}
                             </td>
                           )
@@ -473,21 +477,21 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
             </div>
 
             {/* Teachers List */}
-            <div className="mt-6 p-6 border-t border-slate-100">
+            <div className="mt-2 p-8 border-t border-slate-100 bg-linear-to-b from-transparent to-slate-50/30">
               <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
-                <GraduationCap className="w-4 h-4" />
-                Guru Pengajar ({statistics.total_teachers})
+                <GraduationCap className="w-5 h-5 text-purple-600" />
+                Guru Pengajar <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] ml-1">{statistics.total_teachers}</span>
               </h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {teachers.map((teacher: any) => (
                   <div
                     key={teacher.id}
-                    className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
+                    className="flex items-center gap-2.5 px-3 py-2 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group hover:border-purple-200"
                   >
-                    <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm group-hover:scale-110 transition-transform">
                       {(teacher.full_name || 'Guru').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <span className="text-xs font-medium text-slate-900">{teacher.full_name || 'Guru'}</span>
+                    <span className="text-xs font-bold text-slate-700">{teacher.full_name || 'Guru'}</span>
                   </div>
                 ))}
               </div>

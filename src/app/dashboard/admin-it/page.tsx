@@ -116,90 +116,133 @@ export default function AdminDashboardPage() {
     const data = attendanceStats.trend;
     const width = 600;
     const height = 200;
-    const padding = 40;
-    
-    // Points calculation
-    const points = data.map((d, i) => ({
-      x: (i * (width - padding * 2)) / (data.length - 1) + padding,
-      y: (height - padding) - (d.percentage / 100) * (height - padding * 2)
-    }));
+    const paddingX = 48;
+    const paddingTop = 16;
+    const paddingBottom = 36; // room for month labels
 
-    const pathData = `M ${points[0].x} ${points[0].y} ` + 
+    // Y-axis range: dari min-5 ke max+5, supaya garis tidak nempel di atas/bawah
+    const percentages = data.map(d => d.percentage);
+    const minVal = Math.max(0, Math.min(...percentages) - 8);
+    const maxVal = Math.min(100, Math.max(...percentages) + 8);
+    const range = maxVal - minVal || 1;
+
+    const toX = (i: number) =>
+      paddingX + (i * (width - paddingX * 2)) / (data.length - 1);
+    const toY = (val: number) =>
+      paddingTop + ((maxVal - val) / range) * (height - paddingTop - paddingBottom);
+
+    const points = data.map((d, i) => ({ x: toX(i), y: toY(d.percentage) }));
+
+    const pathData =
+      `M ${points[0].x} ${points[0].y} ` +
       points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
 
-    const fillPathData = `${pathData} L ${points[points.length - 1].x} ${height} L ${points[0].x} ${height} Z`;
+    const fillPathData =
+      `${pathData} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
+
+    // Y-axis guide lines at nice intervals
+    const guideLines = [];
+    const step = range > 12 ? 5 : 2;
+    for (let v = Math.ceil(minVal / step) * step; v <= maxVal; v += step) {
+      guideLines.push(v);
+    }
 
     return (
-      <div className="relative w-full h-full pt-4">
+      <div className="relative w-full h-full">
         <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
-          {/* Grid lines */}
-          {[0, 25, 50, 75, 100].map(p => (
-            <line 
-              key={p} 
-              x1={padding} 
-              y1={(height - padding) - (p / 100) * (height - padding * 2)} 
-              x2={width - padding} 
-              y2={(height - padding) - (p / 100) * (height - padding * 2)} 
-              stroke="#e2e8f0" 
-              strokeDasharray="4 4" 
-            />
-          ))}
-          
-          {/* Gradient area */}
+          <defs>
+            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.18" />
+              <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.01" />
+            </linearGradient>
+          </defs>
+
+          {/* Grid lines + Y labels */}
+          {guideLines.map(v => {
+            const y = toY(v);
+            return (
+              <g key={v}>
+                <line
+                  x1={paddingX} y1={y}
+                  x2={width - paddingX} y2={y}
+                  stroke="#e2e8f0" strokeDasharray="4 3" strokeWidth="1"
+                />
+                <text
+                  x={paddingX - 6} y={y + 4}
+                  textAnchor="end"
+                  fontSize="10"
+                  fill="#94a3b8"
+                  fontWeight="600"
+                >
+                  {v}%
+                </text>
+              </g>
+            );
+          })}
+
+          {/* Gradient fill */}
           <motion.path
             d={fillPathData}
             fill="url(#chartGradient)"
             initial={{ opacity: 0 }}
-            animate={{ opacity: 0.2 }}
-            transition={{ duration: 1 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
           />
-          <defs>
-            <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#3b82f6" />
-              <stop offset="100%" stopColor="transparent" />
-            </linearGradient>
-          </defs>
 
           {/* Main line */}
           <motion.path
             d={pathData}
             fill="none"
             stroke="#3b82f6"
-            strokeWidth="3"
+            strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"
             initial={{ pathLength: 0 }}
             animate={{ pathLength: 1 }}
-            transition={{ duration: 1.5, ease: "easeInOut" }}
+            transition={{ duration: 1.4, ease: 'easeInOut' }}
           />
 
           {/* Data points */}
           {points.map((p, i) => (
             <motion.circle
               key={i}
-              cx={p.x}
-              cy={p.y}
+              cx={p.x} cy={p.y}
               r={4}
               fill="white"
               stroke="#3b82f6"
               strokeWidth={2}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 1 + i * 0.1 }}
-              whileHover={{ r: 6, strokeWidth: 3 }}
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 1 + i * 0.08 }}
             />
           ))}
-        </svg>
-        
-        {/* X-Axis Labels */}
-        <div className="flex justify-between mt-2 px-6">
+
+          {/* X-axis month labels — di dalam SVG supaya presisi sejajar */}
           {data.map((d, i) => (
-            <span key={i} className="text-xs font-medium text-text-sub">{d.month}</span>
+            <text
+              key={i}
+              x={toX(i)}
+              y={height - 6}
+              textAnchor="middle"
+              fontSize="11"
+              fill="#64748b"
+              fontWeight="600"
+            >
+              {d.month}
+            </text>
           ))}
-        </div>
+
+          {/* X-axis baseline */}
+          <line
+            x1={paddingX} y1={height - paddingBottom}
+            x2={width - paddingX} y2={height - paddingBottom}
+            stroke="#e2e8f0" strokeWidth="1"
+          />
+        </svg>
       </div>
     );
   };
+
 
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">

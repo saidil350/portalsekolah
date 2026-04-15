@@ -9,11 +9,15 @@ import { Button, Input, EmptyTableState } from '@/components/ui';
 import {
   fetchRooms, createRoom, updateRoom, deleteRoom,
   fetchSubjects, createSubject, updateSubject, deleteSubject,
-  fetchAcademicYears, createAcademicYear, updateAcademicYear, deleteAcademicYear,
   fetchSemesters, createSemester, updateSemester, deleteSemester,
+  fetchSubjectDropdownData, fetchSubjectTeachers, fetchTeachersForDropdown,
+  fetchTeacherRanks, updateTeacherRank
+} from './actions';
+import {
+  fetchAcademicYears, createAcademicYear, updateAcademicYear, deleteAcademicYear,
   fetchClassLevels, createClassLevel, updateClassLevel, deleteClassLevel,
   fetchDepartments, createDepartment, updateDepartment, deleteDepartment
-} from './actions';
+} from '@/app/dashboard/admin-it/data-akademik/actions';
 import { fetchClasses } from '@/app/dashboard/admin-it/kelas-dan-roster/actions';
 import { getOccupancyBadge } from '@/types/class-roster';
 import { getRoomTypeConfig, getSubjectTypeConfig, getStatusConfig, type Room, type Subject, type RoomFormData, type SubjectFormData } from '@/types/data-management';
@@ -293,9 +297,14 @@ export default function DataManagementPage() {
         if (result.success && result.data) setAcademicYears(result.data);
         else setMasterDataError(result.error || 'Gagal memuat data tahun ajaran');
       } else if (masterDataSubTab === 'semesters') {
-        const result = await fetchSemesters({ page: 1, limit: 50 });
-        if (result.success && result.data) setSemesters(result.data);
-        else setMasterDataError(result.error || 'Gagal memuat data semester');
+        // Fetch semesters AND academic years in parallel (academicYears needed for modal dropdown & table display)
+        const [semResult, ayResult] = await Promise.all([
+          fetchSemesters({ page: 1, limit: 50 }),
+          academicYears.length === 0 ? fetchAcademicYears({ page: 1, limit: 100 }) : Promise.resolve({ success: true as const, data: academicYears })
+        ]);
+        if (semResult.success && semResult.data) setSemesters(semResult.data);
+        else setMasterDataError(semResult.error || 'Gagal memuat data semester');
+        if (ayResult.success && ayResult.data) setAcademicYears(ayResult.data);
       } else if (masterDataSubTab === 'class_levels') {
         const result = await fetchClassLevels({ page: 1, limit: 50 });
         if (result.success && result.data) setClassLevels(result.data);
@@ -641,9 +650,9 @@ export default function DataManagementPage() {
       });
     } else if (activeTab === 'mata_pelajaran') {
       filename = `data-mata-pelajaran-${new Date().toISOString().split('T')[0]}.csv`;
-      csv = 'Nama,Kode,Tipe,SKS,Status\n';
+      csv = 'Nama,Kode,Tipe,Status\n';
       subjects.forEach(subject => {
-        csv += `"${subject.name}","${subject.code}","${getSubjectTypeConfig(subject.subject_type).label}","${subject.credit_hours}","${subject.is_active ? 'Aktif' : 'Nonaktif'}"\n`;
+        csv += `"${subject.name}","${subject.code}","${getSubjectTypeConfig(subject.subject_type).label}","${subject.is_active ? 'Aktif' : 'Nonaktif'}"\n`;
       });
     }
 
@@ -1087,7 +1096,6 @@ export default function DataManagementPage() {
                                 <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
                                 <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
                                 <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GURU PENGAJAR</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">SKS</th>
                                 <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
                                 <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
                               </tr>
@@ -1160,9 +1168,7 @@ export default function DataManagementPage() {
                                         )}
                                       </div>
                                     </td>
-                                    <td className="px-6 py-4">
-                                      <span className="text-slate-600 text-sm font-medium">{subject.credit_hours} SKS</span>
-                                    </td>
+
                                     <td className="px-6 py-4">
                                       <div className="flex items-center gap-2">
                                         <div className={`w-[6px] h-[6px] rounded-full ${statusConfig.dotColor}`} />

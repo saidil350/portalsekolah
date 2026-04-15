@@ -66,10 +66,14 @@ export const dictionary = {
     'admin.nav.userManagement': 'Manajemen Pengguna',
     'admin.nav.rolesPermissions': 'Kelola Data',
     'admin.nav.academicData': 'Data Akademik',
+    'admin.nav.monitoringData': 'Monitoring Data',
+    'admin.monitoring.title': 'Monitoring Data',
+    'admin.monitoring.tab.studentData': 'Data Siswa',
+    'admin.monitoring.tab.teacherData': 'Data Guru',
     'admin.nav.finance': 'Keuangan',
     'admin.nav.systemSettings': 'Pengaturan Sistem',
     'admin.auth.logout': 'Keluar dari Sistem',
-    'admin.superAdmin': 'Super Administrator',
+    'admin.superAdmin': 'Admin IT',
     'admin.administrator': 'Administrator',
 
     // Student Dashboard Overview
@@ -1048,10 +1052,14 @@ export const dictionary = {
     'admin.nav.userManagement': 'User Management',
     'admin.nav.rolesPermissions': 'Manage Data',
     'admin.nav.academicData': 'Academic Data',
+    'admin.nav.monitoringData': 'Monitoring Data',
+    'admin.monitoring.title': 'Data Monitoring',
+    'admin.monitoring.tab.studentData': 'Student Data',
+    'admin.monitoring.tab.teacherData': 'Teacher Data',
     'admin.nav.finance': 'Finance',
     'admin.nav.systemSettings': 'System Settings',
     'admin.auth.logout': 'Logout System',
-    'admin.superAdmin': 'Super Administrator',
+    'admin.superAdmin': 'Admin IT',
     'admin.administrator': 'Administrator',
 
     // Student Dashboard Overview

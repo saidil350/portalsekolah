@@ -118,11 +118,6 @@ export default function SubjectModal({
       return
     }
 
-    if (formData.credit_hours < 1 || formData.credit_hours > 6) {
-      setError('Beban SKS harus antara 1-6')
-      return
-    }
-
     setLoading(true)
     try {
       await onSubmit(formData)
@@ -161,6 +156,7 @@ export default function SubjectModal({
             onClick={onClose}
             className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             disabled={loading}
+            title="Tutup"
           >
             <X className="w-5 h-5 text-slate-500" />
           </button>
@@ -220,6 +216,8 @@ export default function SubjectModal({
                   name="subject_type"
                   value={formData.subject_type}
                   onChange={handleChange}
+                  aria-label="Tipe Mata Pelajaran"
+                  title="Tipe Mata Pelajaran"
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
                   required
                   disabled={loading}
@@ -234,29 +232,14 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Beban SKS <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="number"
-                  name="credit_hours"
-                  value={formData.credit_hours}
-                  onChange={handleChange}
-                  min="1"
-                  max="6"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
-                  required
-                  disabled={loading}
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Jurusan
                 </label>
                 <select
                   name="department_id"
                   value={formData.department_id}
                   onChange={handleChange}
+                  aria-label="Jurusan"
+                  title="Jurusan"
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
                   disabled={loading}
                 >
@@ -277,6 +260,8 @@ export default function SubjectModal({
                   name="academic_year_id"
                   value={formData.academic_year_id}
                   onChange={handleChange}
+                  aria-label="Tahun Akademik"
+                  title="Tahun Akademik"
                   className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
                   disabled={loading}
                 >

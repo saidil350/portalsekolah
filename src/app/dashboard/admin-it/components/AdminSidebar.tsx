@@ -25,7 +25,7 @@ const navItems: NavItem[] = [
   { href: '/dashboard/admin-it', labelKey: 'admin.nav.dashboard', iconSrc: '/f89c311fb2446e3aad6f4c04d8d9ad03e5b4f19a.svg', iconW: '16.5px', iconH: '16.5px' },
   { href: '/dashboard/admin-it/manajemen-pengguna', labelKey: 'admin.nav.userManagement', iconSrc: '/29535fe9c9821195057bdb4adf25e17d6eb94c95.svg', iconW: '20px', iconH: '14.6px' },
   { href: '/dashboard/admin-it/data-management', labelKey: 'admin.nav.rolesPermissions', iconSrc: '/35c5014baf8a4dbdd4e2e22a6dc38be72dc2cbad.svg', iconW: '14.6px', iconH: '18.3px' },
-  { href: '/dashboard/admin-it/data-akademik', labelKey: 'admin.nav.academicData', iconSrc: '/4d11301ba0e518812f9197dcc18f1eb16b37d766.svg', iconW: '20.1px', iconH: '16.5px' },
+  { href: '/dashboard/admin-it/monitoring-data', labelKey: 'admin.nav.monitoringData', iconSrc: '/4d11301ba0e518812f9197dcc18f1eb16b37d766.svg', iconW: '20.1px', iconH: '16.5px' },
   { href: '/dashboard/admin-it/keuangan', labelKey: 'admin.nav.finance', iconSrc: '/7d7433302d2473cb297414941d2c9fba21779e91.svg', iconW: '20.1px', iconH: '14.6px' },
   { href: '/dashboard/admin-it/pengaturan-sistem', labelKey: 'admin.nav.systemSettings', iconSrc: '/f2c53fa4859da524365e8bda2fd717f3946f2e8a.svg', iconW: '18.4px', iconH: '18.3px' },
 ];
@@ -53,15 +53,12 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
 
   const isActive = (href: string) => {
     if (href === '/dashboard/admin-it') return pathname === '/dashboard/admin-it';
-    // Exact match for better precision
     return pathname === href || pathname.startsWith(href + '/');
   };
 
-  // Use real admin data if available, otherwise use fallback
   const displayName = admin?.full_name || 'Admin IT';
   const roleLabel = admin?.role === 'ADMIN_IT' ? t('admin.superAdmin') : t('admin.administrator');
 
-  // Get initials for avatar
   const getInitials = (name: string) => {
     return name
       .split(' ')
@@ -74,86 +71,142 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
   return (
     <aside
       className={`
-        flex flex-col bg-white border-r border-slate-200 h-full
-        transition-all duration-300 ease-in-out
-        ${isSidebarOpen ? 'w-[288px]' : 'w-16'}
+        flex flex-col bg-white border-r border-slate-100 h-full overflow-hidden
+        transition-[width] duration-300 ease-in-out
+        ${isSidebarOpen ? 'w-[280px]' : 'w-[64px]'}
       `}
     >
-      <div className={`p-6 flex flex-col gap-6 ${!isSidebarOpen ? 'items-center' : ''}`}>
-        {/* User Profile */}
+      {/* ── Header / Profile ── */}
+      <div
+        className={`
+          flex flex-col
+          ${isSidebarOpen ? 'px-4 pt-6 pb-4 gap-5' : 'px-2 pt-5 pb-4 gap-4 items-center'}
+        `}
+      >
         {isSidebarOpen ? (
-          <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Avatar */}
+            <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0 select-none">
               {getInitials(displayName)}
             </div>
-            <div className="flex flex-col">
-              <h1 className="text-text-main text-sm font-semibold leading-tight">{displayName}</h1>
-              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wide mt-0.5">{roleLabel}</p>
+            {/* Name + role */}
+            <div className="flex flex-col min-w-0">
+              <span className="text-slate-800 text-sm font-semibold leading-tight truncate">
+                {displayName}
+              </span>
+              <span className="text-slate-400 text-[11px] font-medium uppercase tracking-wider mt-0.5 truncate">
+                {roleLabel}
+              </span>
             </div>
           </div>
         ) : (
-          <div className="w-11 h-11 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0">
+          <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0 select-none">
             {getInitials(displayName)}
           </div>
         )}
-        {/* Navigation */}
-        <nav className="flex flex-col gap-1">
+
+        {/* ── Navigation ── */}
+        <nav className="flex flex-col gap-1 w-full">
           {navItems.map((item) => {
             const active = isActive(item.href);
             return (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer relative ${
-                  active
-                    ? 'bg-primary text-white shadow-[0px_4px_6px_-1px_rgba(19,127,236,0.2),0px_2px_4px_-2px_rgba(19,127,236,0.2)]'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
-                } ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
                 title={!isSidebarOpen ? t(item.labelKey) : undefined}
+                className={`
+                  flex items-center rounded-lg transition-all duration-150 cursor-pointer relative overflow-hidden
+                  ${active
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                  }
+                  ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}
+                `}
               >
-                {/* Active indicator - left border */}
+                {/* Active bar */}
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-white rounded-r-full" />
+                  <span className="absolute left-0 inset-y-0 w-[3px] bg-white/60 rounded-r-full" />
                 )}
-                <div
-                  className="flex items-center justify-center shrink-0 relative"
-                  style={{ width: item.iconW, height: item.iconH } as React.CSSProperties}
-                >
+
+                {/* Icon */}
+                <div className="flex items-center justify-center shrink-0 w-[22px] h-[22px]">
                   <Image
                     src={item.iconSrc}
                     alt=""
-                    fill
+                    width={parseFloat(item.iconW)}
+                    height={parseFloat(item.iconH)}
                     className={`object-contain pointer-events-none ${active ? 'brightness-0 invert' : ''}`}
                   />
                 </div>
-                {isSidebarOpen && <span className="text-sm font-medium">{t(item.labelKey)}</span>}
+
+                {/* Label – whitespace-nowrap prevents wrapping */}
+                {isSidebarOpen && (
+                  <span className="text-sm font-medium whitespace-nowrap leading-none">
+                    {t(item.labelKey)}
+                  </span>
+                )}
               </Link>
             );
           })}
         </nav>
       </div>
-      {/* Language & Logout */}
-      <div className={`mt-auto border-t border-slate-100 flex flex-col gap-4 ${isSidebarOpen ? 'p-6 pt-6 pb-6' : 'py-6 px-3'}`}>
-        {isSidebarOpen && <LanguageSwitcher />}
+
+      {/* ── Footer ── */}
+      <div
+        className={`
+          mt-auto border-t border-slate-100
+          ${isSidebarOpen ? 'px-4 py-4 flex flex-col gap-1' : 'px-2 py-4 flex flex-col gap-1 items-center'}
+        `}
+      >
+        {isSidebarOpen && (
+          <div className="mb-2">
+            <LanguageSwitcher />
+          </div>
+        )}
+
+        {/* Minimize / Expand */}
         <button
           onClick={toggleSidebar}
-          className={`flex items-center rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`
+            flex items-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-700
+            transition-colors duration-150 cursor-pointer
+            ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
+          `}
           title={isSidebarOpen ? 'Minimize' : 'Expand'}
         >
-          <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />
-          {isSidebarOpen && <span className="text-sm font-medium">Minimize</span>}
+          <ChevronLeft
+            className={`w-4 h-4 shrink-0 transition-transform duration-300 ${!isSidebarOpen ? 'rotate-180' : ''}`}
+            strokeWidth={2}
+          />
+          {isSidebarOpen && (
+            <span className="text-sm font-medium whitespace-nowrap">Minimize</span>
+          )}
         </button>
+
+        {/* Logout */}
         <button
           type="button"
           onClick={() => setShowLogoutConfirm(true)}
-          className={`flex items-center rounded-lg text-red-500 hover:bg-red-50 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`
+            flex items-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-500
+            transition-colors duration-150 cursor-pointer
+            ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
+          `}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('admin.auth.logout')}
         >
-          <div className="w-5 h-5 flex items-center justify-center shrink-0 relative">
-            <Image src="/d37cd33084d326886dd872d5fdcb919c7d930cdd.svg" alt="" fill className="object-contain pointer-events-none" />
+          <div className="flex items-center justify-center shrink-0 w-[22px] h-[22px]">
+            <Image
+              src="/d37cd33084d326886dd872d5fdcb919c7d930cdd.svg"
+              alt=""
+              width={20}
+              height={18}
+              className="object-contain pointer-events-none"
+            />
           </div>
-          {isSidebarOpen && <span className="text-sm font-medium">{t('admin.auth.logout')}</span>}
+          {isSidebarOpen && (
+            <span className="text-sm font-medium whitespace-nowrap">{t('admin.auth.logout')}</span>
+          )}
         </button>
       </div>
 
