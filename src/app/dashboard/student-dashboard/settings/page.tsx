@@ -155,7 +155,7 @@ export default function SettingsPage() {
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-[896px] mx-auto p-10 flex flex-col gap-8">
+        <div className="max-w-[896px] mx-auto p-6 flex flex-col gap-5">
           {/* Toast Message */}
           {message && (
             <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
@@ -167,26 +167,26 @@ export default function SettingsPage() {
 
           {/* Header */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.settings.title')}</h2>
-            <p className="text-base text-muted-foreground">{t('student.settings.subtitle')}</p>
+            <h2 className="text-2xl font-bold text-foreground tracking-tight">{t('student.settings.title')}</h2>
+            <p className="text-sm text-muted-foreground">{t('student.settings.subtitle')}</p>
           </div>
 
           {/* Profile Information */}
           <form onSubmit={handleProfileUpdate} className="bg-card rounded-xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-            <div className="px-6 py-6 border-b border-border/60">
+            <div className="px-5 py-4 border-b border-border/60">
               <h3 className="text-lg font-semibold text-foreground">{t('student.settings.profile.title')}</h3>
               <p className="text-sm text-muted-foreground">{t('student.settings.profile.desc')}</p>
             </div>
 
-            <div className="p-6 flex flex-col gap-8">
+            <div className="p-5 flex flex-col gap-5">
               {/* Avatar */}
-              <div className="flex items-center gap-6">
+              <div className="flex items-center gap-4">
                 <div className="relative">
-                  <div className="w-24 h-24 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-[0px_0px_0px_4px_#f1f5f9]">
+                  <div className="w-[72px] h-[72px] rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-2xl font-bold shadow-[0px_0px_0px_4px_#f1f5f9]">
                     {profile ? getInitials(profile.full_name) : 'AJ'}
                   </div>
-                  <button type="button" title={t('student.settings.profile.upload')} className="absolute bottom-0 right-0 w-8 h-8 bg-primary border-2 border-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary/90 transition-colors">
-                    <Camera className="w-4 h-4 text-white" />
+                  <button type="button" title={t('student.settings.profile.upload')} className="absolute bottom-0 right-0 w-7 h-7 bg-primary border-2 border-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary/90 transition-colors">
+                    <Camera className="w-3.5 h-3.5 text-white" />
                   </button>
                 </div>
                 <div className="flex flex-col gap-1">
@@ -196,7 +196,7 @@ export default function SettingsPage() {
               </div>
 
               {/* Form Fields */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 gap-y-4">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="fullName" className="text-sm font-medium text-foreground">{t('student.settings.profile.fullName')}</label>
                   <input
@@ -206,7 +206,7 @@ export default function SettingsPage() {
                     defaultValue={profile?.full_name || ''}
                     placeholder="e.g. Ahmad Junaidi"
                     required
-                    className="bg-card border border-border rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -217,7 +217,7 @@ export default function SettingsPage() {
                     type="text"
                     value={profile?.nis || 'S12345'}
                     disabled
-                    className="bg-muted/50 border border-border rounded-lg px-3.5 py-2.5 text-base text-muted-foreground cursor-not-allowed"
+                    className="bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
                   />
                 </div>
 
@@ -229,7 +229,7 @@ export default function SettingsPage() {
                     type="tel"
                     defaultValue={profile?.phone || ''}
                     placeholder="08123456789"
-                    className="bg-card border border-border rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -242,18 +242,18 @@ export default function SettingsPage() {
                     defaultValue={profile?.email || ''}
                     required
                     placeholder="ahmad.junaidi@student.ac.id"
-                    className="bg-muted/50 border border-border rounded-lg px-3.5 py-2.5 text-base text-muted-foreground cursor-not-allowed"
+                    className="bg-muted/50 border border-border rounded-lg px-3 py-2 text-sm text-muted-foreground cursor-not-allowed"
                     readOnly
                   />
                 </div>
               </div>
             </div>
 
-            <div className="px-6 py-5 border-t border-border/60 bg-slate-50/50 flex items-center justify-end gap-3">
-              <button type="button" className="px-4 py-2 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent transition-colors cursor-pointer">
+            <div className="px-5 py-4 border-t border-border/60 bg-slate-50/50 flex items-center justify-end gap-2">
+              <button type="button" className="px-3 py-1.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-accent transition-colors cursor-pointer">
                 {t('student.settings.profile.discard')}
               </button>
-              <button type="submit" disabled={updating} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              <button type="submit" disabled={updating} className="bg-primary text-white px-3 py-1.5 rounded-lg text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                 {updating && <Loader2 className="w-4 h-4 animate-spin" />}
                 {t('student.settings.profile.save')}
               </button>
@@ -261,15 +261,15 @@ export default function SettingsPage() {
           </form>
 
           {/* Security & Notifications Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-start">
             {/* Security */}
             <form onSubmit={handlePasswordChange} className="bg-card rounded-xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="px-6 py-6 border-b border-border/60">
+              <div className="px-5 py-4 border-b border-border/60">
                 <h3 className="text-lg font-semibold text-foreground">{t('student.settings.security.title')}</h3>
                 <p className="text-sm text-muted-foreground">{t('student.settings.security.desc')}</p>
               </div>
 
-              <div className="p-6 flex flex-col gap-4">
+              <div className="p-5 flex flex-col gap-3.5">
                 <div className="flex flex-col gap-2">
                   <label htmlFor="currPassword" className="text-sm font-medium text-foreground">{t('student.settings.security.current')}</label>
                   <input
@@ -278,7 +278,7 @@ export default function SettingsPage() {
                     type="password"
                     placeholder="••••••••"
                     required
-                    className="bg-card border border-border rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -291,7 +291,7 @@ export default function SettingsPage() {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    className="bg-card border border-border rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -304,13 +304,13 @@ export default function SettingsPage() {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    className="bg-card border border-border rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-card border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
               </div>
 
-              <div className="px-6 py-5 border-t border-border/60 bg-slate-50/50 flex items-center justify-end">
-                <button type="submit" disabled={updating} className="bg-slate-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              <div className="px-5 py-4 border-t border-border/60 bg-slate-50/50 flex items-center justify-end">
+                <button type="submit" disabled={updating} className="bg-slate-900 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                   {updating && <Loader2 className="w-4 h-4 animate-spin" />}
                   {t('student.settings.security.update')}
                 </button>
@@ -319,12 +319,12 @@ export default function SettingsPage() {
 
             {/* Notifications */}
             <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="px-6 py-6 border-b border-border/60">
+              <div className="px-5 py-4 border-b border-border/60">
                 <h3 className="text-lg font-semibold text-foreground">{t('student.settings.notif.title')}</h3>
                 <p className="text-sm text-muted-foreground">{t('student.settings.notif.desc')}</p>
               </div>
 
-              <div className="p-6 flex flex-col gap-6">
+              <div className="p-5 flex flex-col gap-4">
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-sm font-medium text-foreground">{t('student.settings.notif.email.title')}</p>
@@ -365,7 +365,7 @@ export default function SettingsPage() {
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-border">
             <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>

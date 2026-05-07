@@ -71,17 +71,17 @@ export default function StudentSidebar() {
       `}
     >
       {/* Logo */}
-      <div className={`px-6 py-6 ${!isSidebarOpen ? 'px-3' : ''}`}>
+      <div className={`px-5 py-4 ${!isSidebarOpen ? 'px-3' : ''}`}>
         <div className={`flex items-center gap-3 ${!isSidebarOpen ? 'justify-center' : ''}`}>
           <ProfileAvatar
             name="SIAKAD"
             role="SISWA"
-            className="size-11 rounded-xl"
+            className="size-10 rounded-xl"
             fallbackClassName="rounded-xl text-base"
           />
           {isSidebarOpen && (
             <div className="flex flex-col">
-              <h1 className="text-foreground text-lg font-semibold leading-7">SIAKAD</h1>
+              <h1 className="text-foreground text-base font-semibold leading-6">SIAKAD</h1>
               <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-wide">{t('student.portal')}</p>
             </div>
           )}
@@ -90,7 +90,7 @@ export default function StudentSidebar() {
 
 
       {/* Navigation */}
-      <div className={`pb-6 pt-4 ${isSidebarOpen ? 'px-4' : 'px-2'}`}>
+      <div className={`pb-4 pt-2 ${isSidebarOpen ? 'px-4' : 'px-2'}`}>
         <nav className="flex flex-col gap-1">
           {navItems.map((item) => {
             const active = isActive(item.href);
@@ -103,7 +103,7 @@ export default function StudentSidebar() {
                   active
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-accent hover:text-foreground'
-                } ${isSidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+                } ${isSidebarOpen ? 'gap-3 px-3 py-2' : 'justify-center w-9 h-9 mx-auto'}`.trim()}
                 title={!isSidebarOpen ? t(item.labelKey) : undefined}
               >
                 <IconComponent
@@ -119,8 +119,8 @@ export default function StudentSidebar() {
 
       {/* System Section */}
       {isSidebarOpen && (
-        <div className="px-4 pt-4 pb-4 border-t border-border/60">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-4 mb-2">{t('student.nav.system')}</p>
+        <div className="px-4 pt-3 pb-3 border-t border-border/60">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest px-3 mb-1.5">{t('student.nav.system')}</p>
           {systemItems.map((item) => {
             const active = isActive(item.href);
             const IconComponent = item.icon;
@@ -128,7 +128,7 @@ export default function StudentSidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg group transition-all duration-200 cursor-pointer ${
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg group transition-all duration-200 cursor-pointer ${
                   active
                     ? 'bg-primary/10 text-primary'
                     : 'text-muted-foreground hover:bg-accent hover:text-foreground'
@@ -149,11 +149,11 @@ export default function StudentSidebar() {
       <div className="flex-1" />
 
       {/* Language & Logout */}
-      <div className={`border-t border-border flex flex-col gap-4 ${isSidebarOpen ? 'px-4 pt-4 pb-4' : 'pt-4 pb-4 px-2'}`}>
+      <div className={`border-t border-border flex flex-col gap-2.5 ${isSidebarOpen ? 'px-4 pt-3 pb-3' : 'pt-3 pb-3 px-2'}`}>
         {isSidebarOpen && <LanguageSwitcher />}
         <button
           onClick={toggleSidebar}
-          className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2 w-full text-left' : 'justify-center w-9 h-9 mx-auto'}`.trim()}
           title={isSidebarOpen ? t('common.action.minimize') : t('common.action.expand')}
         >
           <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />
@@ -161,7 +161,7 @@ export default function StudentSidebar() {
         </button>
         <button
           onClick={() => setShowLogoutConfirm(true)}
-          className={`flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2 w-full text-left' : 'justify-center w-9 h-9 mx-auto'}`.trim()}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('student.auth.logout')}
         >

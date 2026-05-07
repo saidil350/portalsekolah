@@ -1,11 +1,10 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
 import { MoreVertical, ArrowUpRight, TrendingUp, Users, UserCheck, School, DollarSign, Calendar } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Skeleton, MetricSkeleton, TableSkeleton } from '@/components/ui/skeleton';
+import { MetricSkeleton, TableSkeleton } from '@/components/ui/skeleton';
 import RoleGreetingCard from '@/components/dashboard/RoleGreetingCard';
 import { getCurrentAdmin } from './actions';
 import { type User } from '@/types/user';
@@ -15,15 +14,6 @@ interface DashboardStats {
   totalStudents: number;
   totalTeachers: number;
   activeClasses: number;
-}
-
-interface StudentStats {
-  active: number;
-  graduated: number;
-  transferred: number;
-  dropout: number;
-  inactive: number;
-  total: number;
 }
 
 interface FinancialStats {
@@ -44,14 +34,6 @@ export default function AdminDashboardPage() {
     totalTeachers: 0,
     activeClasses: 0,
   });
-  const [studentStats, setStudentStats] = useState<StudentStats>({
-    active: 0,
-    graduated: 0,
-    transferred: 0,
-    dropout: 0,
-    inactive: 0,
-    total: 0,
-  });
   const [financialStats, setFinancialStats] = useState<FinancialStats>({
     unpaidCount: 0,
     recentInvoices: [],
@@ -69,16 +51,14 @@ export default function AdminDashboardPage() {
     async function fetchAllStats() {
       setLoading(true);
       try {
-        const [statsRes, studentRes, financialRes, attendanceRes, profileData] = await Promise.all([
+        const [statsRes, financialRes, attendanceRes, profileData] = await Promise.all([
           fetch('/api/admin/stats').then(res => res.json()),
-          fetch('/api/admin/student-stats').then(res => res.json()),
           fetch('/api/admin/financial-stats').then(res => res.json()),
           fetch('/api/admin/attendance-stats').then(res => res.json()),
           getCurrentAdmin()
         ]);
 
         if (statsRes.success) setStats(statsRes.data);
-        if (studentRes.success) setStudentStats(studentRes.data);
         if (financialRes.success) setFinancialStats(financialRes.data);
         if (attendanceRes.success) setAttendanceStats(attendanceRes.data);
         if (profileData) setUserProfile(profileData);
@@ -114,11 +94,13 @@ export default function AdminDashboardPage() {
     }
 
     const data = attendanceStats.trend;
-    const width = 600;
-    const height = 200;
-    const paddingX = 48;
-    const paddingTop = 16;
-    const paddingBottom = 36; // room for month labels
+    const width = 720;
+    const height = 220;
+    const paddingLeft = 58;
+    const paddingRight = 18;
+    const paddingTop = 20;
+    const paddingBottom = 42; // room for month labels
+    const graphBottom = height - paddingBottom;
 
     // Y-axis range: dari min-5 ke max+5, supaya garis tidak nempel di atas/bawah
     const percentages = data.map(d => d.percentage);
@@ -127,9 +109,9 @@ export default function AdminDashboardPage() {
     const range = maxVal - minVal || 1;
 
     const toX = (i: number) =>
-      paddingX + (i * (width - paddingX * 2)) / (data.length - 1);
+      paddingLeft + (i * (width - paddingLeft - paddingRight)) / (data.length - 1);
     const toY = (val: number) =>
-      paddingTop + ((maxVal - val) / range) * (height - paddingTop - paddingBottom);
+      paddingTop + ((maxVal - val) / range) * (graphBottom - paddingTop);
 
     const points = data.map((d, i) => ({ x: toX(i), y: toY(d.percentage) }));
 
@@ -138,7 +120,7 @@ export default function AdminDashboardPage() {
       points.slice(1).map(p => `L ${p.x} ${p.y}`).join(' ');
 
     const fillPathData =
-      `${pathData} L ${points[points.length - 1].x} ${height - paddingBottom} L ${points[0].x} ${height - paddingBottom} Z`;
+      `${pathData} L ${points[points.length - 1].x} ${graphBottom} L ${points[0].x} ${graphBottom} Z`;
 
     // Y-axis guide lines at nice intervals
     const guideLines = [];
@@ -148,8 +130,8 @@ export default function AdminDashboardPage() {
     }
 
     return (
-      <div className="relative w-full h-full">
-        <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-full overflow-visible">
+      <div className="relative mx-auto h-full w-full max-w-[760px]">
+        <svg viewBox={`0 0 ${width} ${height}`} className="h-full w-full overflow-visible" preserveAspectRatio="xMidYMid meet">
           <defs>
             <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.18" />
@@ -163,12 +145,12 @@ export default function AdminDashboardPage() {
             return (
               <g key={v}>
                 <line
-                  x1={paddingX} y1={y}
-                  x2={width - paddingX} y2={y}
+                  x1={paddingLeft} y1={y}
+                  x2={width - paddingRight} y2={y}
                   stroke="#e2e8f0" strokeDasharray="4 3" strokeWidth="1"
                 />
                 <text
-                  x={paddingX - 6} y={y + 4}
+                  x={paddingLeft - 10} y={y + 4}
                   textAnchor="end"
                   fontSize="10"
                   fill="#94a3b8"
@@ -234,8 +216,8 @@ export default function AdminDashboardPage() {
 
           {/* X-axis baseline */}
           <line
-            x1={paddingX} y1={height - paddingBottom}
-            x2={width - paddingX} y2={height - paddingBottom}
+            x1={paddingLeft} y1={graphBottom}
+            x2={width - paddingRight} y2={graphBottom}
             stroke="#e2e8f0" strokeWidth="1"
           />
         </svg>
@@ -366,9 +348,9 @@ export default function AdminDashboardPage() {
             </motion.div>
           </div>
 
-          {/* Chart & Status Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-border p-4 shadow-sm">
+          {/* Chart Section */}
+          <div className="grid grid-cols-1 gap-4">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl border border-border p-4 shadow-sm">
               <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                   <div>
@@ -387,103 +369,9 @@ export default function AdminDashboardPage() {
                 </div>
                 
                 {/* Custom Interactive Chart */}
-                <div className="h-56 w-full">
+                <div className="h-52 w-full overflow-hidden">
                   {renderAttendanceChart()}
                 </div>
-              </div>
-            </motion.div>
-
-            {/* Student Status Widget */}
-            <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-4">
-              <div className="bg-card rounded-xl border border-border p-5 shadow-sm flex-1">
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="text-foreground text-lg font-bold">{t('admin.db.studentStatus')}</h3>
-                  <Users className="w-5 h-5 text-muted-foreground" />
-                </div>
-                
-                {loading ? (
-                  <div className="space-y-6">
-                    {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} variant="text" />)}
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {/* Active */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">{t('admin.db.status.active')}</span>
-                        <span className="font-medium">{studentStats.active.toLocaleString('id-ID')}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          className="bg-green-500 h-2 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${studentStats.total > 0 ? (studentStats.active / studentStats.total) * 100 : 0}%` }}
-                          transition={{ duration: 1 }}
-                        />
-                      </div>
-                    </div>
-                    {/* Graduated */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">{t('admin.db.status.graduated')}</span>
-                        <span className="font-medium">{studentStats.graduated.toLocaleString('id-ID')}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          className="bg-purple-500 h-2 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${studentStats.total > 0 ? (studentStats.graduated / studentStats.total) * 100 : 0}%` }}
-                          transition={{ duration: 1, delay: 0.1 }}
-                        />
-                      </div>
-                    </div>
-                    {/* Transferred */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">{t('admin.db.status.transferred')}</span>
-                        <span className="font-medium">{studentStats.transferred.toLocaleString('id-ID')}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          className="bg-orange-400 h-2 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${studentStats.total > 0 ? (studentStats.transferred / studentStats.total) * 100 : 0}%` }}
-                          transition={{ duration: 1, delay: 0.2 }}
-                        />
-                      </div>
-                    </div>
-                    {/* Dropout */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">{t('admin.db.status.dropout')}</span>
-                        <span className="font-medium">{studentStats.dropout.toLocaleString('id-ID')}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          className="bg-red-500 h-2 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${studentStats.total > 0 ? (studentStats.dropout / studentStats.total) * 100 : 0}%` }}
-                          transition={{ duration: 1, delay: 0.3 }}
-                        />
-                      </div>
-                    </div>
-                    {/* Inactive */}
-                    <div>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span className="text-muted-foreground">{t('admin.db.status.inactive')}</span>
-                        <span className="font-medium">{studentStats.inactive.toLocaleString('id-ID')}</span>
-                      </div>
-                      <div className="w-full bg-muted rounded-full h-2">
-                        <motion.div
-                          className="bg-gray-400 h-2 rounded-full"
-                          initial={{ width: 0 }}
-                          animate={{ width: `${studentStats.total > 0 ? (studentStats.inactive / studentStats.total) * 100 : 0}%` }}
-                          transition={{ duration: 1, delay: 0.4 }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </motion.div>
           </div>

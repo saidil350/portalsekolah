@@ -16,7 +16,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 export default function PengaturanSistemPage() {
   const { t } = useLanguage();
   const [settings, setSettings] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
@@ -40,8 +39,6 @@ export default function PengaturanSistemPage() {
         }
       } catch (error) {
         console.error('Error loading settings:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
@@ -174,16 +171,6 @@ export default function PengaturanSistemPage() {
       showMessage('error', t('admin.settings.common.error'));
     }
   };
-
-  if (loading) {
-    return (
-      <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
-        <div className="flex-1 overflow-y-auto flex items-center justify-center">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </main>
-    );
-  }
 
   return (
       <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
