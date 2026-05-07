@@ -67,17 +67,17 @@ export default function KeuanganPage() {
 
   return (
       <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
-        <header className="h-[64px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0">
+        <header className="h-16 bg-card border-b border-border flex items-center justify-between px-6 shrink-0">
           <div className="flex flex-col">
             <h2 className="text-foreground text-[20px] font-bold">{t('admin.finance.title')}</h2>
             <p className="text-muted-foreground text-sm">{t('admin.finance.description')}</p>
           </div>
-          <div className="flex items-center gap-4">
-            <button type="button" className="flex items-center justify-center gap-2 px-4 py-2 bg-card border border-border text-foreground rounded-lg text-sm font-medium hover:bg-accent active:scale-[0.97] transition-all shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <button type="button" className="flex h-8 items-center justify-center gap-2 px-3 bg-card border border-border text-foreground rounded-md text-xs font-medium hover:bg-accent active:scale-[0.97] transition-all shadow-sm">
               <CalendarClock className="w-4 h-4" />
               {t('admin.finance.btn.billingHistory')}
             </button>
-            <button type="button" className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 active:scale-[0.97] transition-all shadow-sm">
+            <button type="button" className="flex h-8 items-center justify-center gap-2 px-3 bg-primary text-white rounded-md text-xs font-medium hover:bg-primary/90 active:scale-[0.97] transition-all shadow-sm">
               <Banknote className="w-4 h-4" />
               {t('admin.finance.btn.generateBills')}
             </button>
@@ -85,13 +85,13 @@ export default function KeuanganPage() {
         </header>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 relative">
-          <div className="max-w-[1280px] flex flex-col gap-8 mx-auto w-full">
+        <div className="flex-1 overflow-y-auto p-6 relative">
+          <div className="max-w-[1280px] flex flex-col gap-6 mx-auto w-full">
             
             {/* Top Summary Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full">
-              <div className="bg-card border border-border rounded-xl p-6 relative shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
+              <div className="bg-card border border-border rounded-xl p-4 relative shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-muted-foreground text-sm font-medium">{t('admin.finance.card.revenue.title')}</span>
                   <TrendingUp className="w-5 h-5 text-emerald-500" />
                 </div>
@@ -99,8 +99,8 @@ export default function KeuanganPage() {
                 <p className="text-emerald-600 text-xs font-medium">{t('admin.finance.card.revenue.desc')}</p>
               </div>
 
-              <div className="bg-card border border-border rounded-xl p-6 relative shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-card border border-border rounded-xl p-4 relative shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-muted-foreground text-sm font-medium">{t('admin.finance.card.outstanding.title')}</span>
                   <AlertCircle className="w-5 h-5 text-red-500" />
                 </div>
@@ -108,8 +108,8 @@ export default function KeuanganPage() {
                 <p className="text-red-600 text-xs font-medium">{t('admin.finance.card.outstanding.desc')}</p>
               </div>
 
-              <div className="bg-card border border-border rounded-xl p-6 relative shadow-sm hover:shadow-md transition-shadow">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-card border border-border rounded-xl p-4 relative shadow-sm hover:shadow-md transition-shadow">
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-muted-foreground text-sm font-medium">{t('admin.finance.card.nextCycle.title')}</span>
                   <CalendarClock className="w-5 h-5 text-blue-500" />
                 </div>
@@ -119,12 +119,12 @@ export default function KeuanganPage() {
             </div>
 
             {/* Configuration Forms Layout */}
-            <div className="flex flex-col lg:flex-row gap-8 w-full">
+            <div className="flex flex-col lg:flex-row gap-6 w-full">
               
               {/* Left Column: Tuition Rates */}
-              <div className="flex-1 flex flex-col gap-6">
+              <div className="flex-1 flex flex-col gap-5">
                 <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col w-full">
-                  <div className="border-b border-border/60 p-6 flex items-center justify-between">
+                  <div className="border-b border-border/60 p-5 flex items-center justify-between">
                     <div>
                       <h3 className="text-foreground text-lg font-bold">{t('admin.finance.rates.title')}</h3>
                       <p className="text-muted-foreground text-sm">{t('admin.finance.rates.description')}</p>
@@ -134,10 +134,10 @@ export default function KeuanganPage() {
                       {t('admin.finance.rates.btn.addSpecial')}
                     </button>
                   </div>
-                  <div className="p-6 flex flex-col gap-6">
+                  <div className="p-5 flex flex-col gap-4">
                     {/* Grade 10 */}
-                    <div className="border border-border/60 rounded-xl p-4 flex flex-col sm:flex-row gap-4 sm:items-center w-full hover:border-slate-200 transition-colors">
-                      <div className="bg-muted rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+                    <div className="border border-border/60 rounded-xl p-3.5 flex flex-col sm:flex-row gap-3 sm:items-center w-full hover:border-slate-200 transition-colors">
+                      <div className="bg-muted rounded-lg w-10 h-10 flex items-center justify-center shrink-0">
                         <span className="text-foreground text-lg font-bold">10</span>
                       </div>
                       <div className="flex-1 flex flex-col">
@@ -155,8 +155,8 @@ export default function KeuanganPage() {
                     </div>
 
                     {/* Grade 11 */}
-                    <div className="border border-border/60 rounded-xl p-4 flex flex-col sm:flex-row gap-4 sm:items-center w-full hover:border-slate-200 transition-colors">
-                      <div className="bg-muted rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+                    <div className="border border-border/60 rounded-xl p-3.5 flex flex-col sm:flex-row gap-3 sm:items-center w-full hover:border-slate-200 transition-colors">
+                      <div className="bg-muted rounded-lg w-10 h-10 flex items-center justify-center shrink-0">
                         <span className="text-foreground text-lg font-bold">11</span>
                       </div>
                       <div className="flex-1 flex flex-col">
@@ -174,8 +174,8 @@ export default function KeuanganPage() {
                     </div>
 
                     {/* Grade 12 */}
-                    <div className="border border-border/60 rounded-xl p-4 flex flex-col sm:flex-row gap-4 sm:items-center w-full hover:border-slate-200 transition-colors">
-                      <div className="bg-muted rounded-lg w-12 h-12 flex items-center justify-center shrink-0">
+                    <div className="border border-border/60 rounded-xl p-3.5 flex flex-col sm:flex-row gap-3 sm:items-center w-full hover:border-slate-200 transition-colors">
+                      <div className="bg-muted rounded-lg w-10 h-10 flex items-center justify-center shrink-0">
                         <span className="text-foreground text-lg font-bold">12</span>
                       </div>
                       <div className="flex-1 flex flex-col">
@@ -196,7 +196,7 @@ export default function KeuanganPage() {
                     <div className="flex justify-end mt-2">
                       <button
                         type="button"
-                        className={`px-6 py-2 rounded-lg text-sm font-medium transition-all active:scale-[0.97] flex items-center gap-2 ${
+                        className={`h-8 px-4 rounded-md text-xs font-medium transition-all active:scale-[0.97] flex items-center gap-2 ${
                           saveState === 'saved' ? 'bg-emerald-500 text-white' : saveState === 'saving' ? 'bg-slate-700 text-white' : 'bg-slate-900 text-white hover:bg-slate-800'
                         }`}
                         onClick={handleSaveRates}
@@ -223,11 +223,11 @@ export default function KeuanganPage() {
               </div>
 
               {/* Right Column: Payment Methods & Billing */}
-              <div className="w-full lg:w-[320px] flex flex-col gap-6 shrink-0">
+              <div className="w-full lg:w-[320px] flex flex-col gap-5 shrink-0">
                 {/* Payment Methods */}
-                <div className="bg-card border border-border rounded-xl shadow-sm p-6 w-full flex flex-col gap-4">
+                <div className="bg-card border border-border rounded-xl shadow-sm p-5 w-full flex flex-col gap-3.5">
                   <h3 className="text-foreground text-lg font-bold">{t('admin.finance.payment.title')}</h3>
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3">
                     
                     {/* Method 1 - Virtual Account */}
                     <div className={`border rounded-lg p-3 flex items-center justify-between transition-all duration-200 ${virtualAccount ? 'bg-muted/50 border-border/60' : 'bg-card border-border opacity-60'}`}>
@@ -275,12 +275,12 @@ export default function KeuanganPage() {
                 </div>
 
                 {/* Billing Cycle */}
-                <div className="bg-card border border-border rounded-xl shadow-sm p-6 w-full flex flex-col gap-5">
+                <div className="bg-card border border-border rounded-xl shadow-sm p-5 w-full flex flex-col gap-4">
                   <h3 className="text-foreground text-lg font-bold">{t('admin.finance.cycle.title')}</h3>
                   
                   <div className="flex flex-col gap-2">
                     <label htmlFor="invoiceDay" className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">{t('admin.finance.cycle.invoiceDay')}</label>
-                    <select id="invoiceDay" value={invoiceDay} onChange={(e) => setInvoiceDay(e.target.value)} aria-label={t('admin.finance.cycle.invoiceDay')} title={t('admin.finance.cycle.invoiceDay')} className="bg-muted/50 border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer">
+                    <select id="invoiceDay" value={invoiceDay} onChange={(e) => setInvoiceDay(e.target.value)} aria-label={t('admin.finance.cycle.invoiceDay')} title={t('admin.finance.cycle.invoiceDay')} className="bg-muted/50 border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer">
                       <option value="1st">{t('admin.finance.cycle.option.1st')}</option>
                       <option value="5th">{t('admin.finance.cycle.option.5th')}</option>
                       <option value="10th">{t('admin.finance.cycle.option.10th')}</option>
@@ -289,7 +289,7 @@ export default function KeuanganPage() {
 
                   <div className="flex flex-col gap-2">
                     <label htmlFor="dueDate" className="text-muted-foreground text-xs font-semibold uppercase tracking-wide">{t('admin.finance.cycle.dueDate')}</label>
-                    <select id="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} aria-label={t('admin.finance.cycle.dueDate')} title={t('admin.finance.cycle.dueDate')} className="bg-muted/50 border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer">
+                    <select id="dueDate" value={dueDate} onChange={(e) => setDueDate(e.target.value)} aria-label={t('admin.finance.cycle.dueDate')} title={t('admin.finance.cycle.dueDate')} className="bg-muted/50 border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-all cursor-pointer">
                       <option value="15th">{t('admin.finance.cycle.option.15th')}</option>
                       <option value="20th">{t('admin.finance.cycle.option.20th')}</option>
                       <option value="end">{t('admin.finance.cycle.option.end')}</option>
@@ -326,12 +326,12 @@ export default function KeuanganPage() {
 
             {/* Bottom Table: Incomplete Student Profiles */}
             <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col w-full mb-8">
-              <div className="border-b border-border/60 p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="border-b border-border/60 p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                   <h3 className="text-foreground text-lg font-bold">{t('admin.finance.incomplete.title')}</h3>
                   <p className="text-muted-foreground text-sm">{t('admin.finance.incomplete.description')}</p>
                 </div>
-                <button type="button" className="flex items-center justify-center px-4 py-2 bg-primary/5 border border-primary/20 text-primary rounded-lg text-sm font-medium hover:bg-primary/10 active:scale-[0.97] transition-all whitespace-nowrap">
+                <button type="button" className="flex h-8 items-center justify-center px-3 bg-primary/5 border border-primary/20 text-primary rounded-md text-xs font-medium hover:bg-primary/10 active:scale-[0.97] transition-all whitespace-nowrap">
                   {t('admin.finance.incomplete.btn.bulk')}
                 </button>
               </div>
@@ -375,7 +375,7 @@ export default function KeuanganPage() {
               </div>
 
               {/* Pagination Footer */}
-              <div className="bg-slate-50/50 border-t border-border/60 px-6 py-4 flex items-center justify-between">
+              <div className="bg-slate-50/50 border-t border-border/60 px-4 py-3 flex items-center justify-between">
                 <p className="text-xs text-muted-foreground">
                   {t('admin.finance.incomplete.pagination.showing')} <span className="font-semibold text-foreground">{Math.min((incompletePage - 1) * incompleteLimit + 1, incompleteTotal)}</span> {t('admin.finance.incomplete.pagination.to')} <span className="font-semibold text-foreground">{Math.min(incompletePage * incompleteLimit, incompleteTotal)}</span> {t('admin.finance.incomplete.pagination.of')} <span className="font-semibold text-foreground">{incompleteTotal}</span> {t('admin.finance.incomplete.pagination.students')}
                 </p>

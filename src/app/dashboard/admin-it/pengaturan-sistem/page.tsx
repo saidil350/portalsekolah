@@ -197,13 +197,13 @@ export default function PengaturanSistemPage() {
         )}
 
         {/* Header content */}
-        <header className="h-auto min-h-[64px] bg-card border-b border-border flex items-center justify-between px-8 py-3 shrink-0">
+        <header className="h-auto min-h-16 bg-card border-b border-border flex items-center justify-between px-6 py-3 shrink-0">
           <div className="flex flex-col">
             <h2 className="text-foreground text-[20px] font-bold">{t('admin.settings.title')}</h2>
             <p className="text-muted-foreground text-sm">{t('admin.settings.subtitle')}</p>
           </div>
           <div className="flex items-center gap-4">
-            <div className={`${maintenanceMode ? 'bg-orange-100 border-orange-300' : 'bg-orange-50 border-orange-100'} border flex items-center gap-3 px-4 py-2 rounded-lg transition-colors`}>
+            <div className={`${maintenanceMode ? 'bg-orange-100 border-orange-300' : 'bg-orange-50 border-orange-100'} border flex items-center gap-2.5 px-3 py-1.5 rounded-lg transition-colors`}>
                 <span className="text-orange-700 text-xs font-semibold uppercase tracking-wide">{t('admin.settings.maintenance.label')}</span>
                 {maintenanceMode ? (
                   <button
@@ -238,29 +238,29 @@ export default function PengaturanSistemPage() {
 
         {/* Maintenance Mode Banner */}
         {maintenanceMode && (
-          <div className="bg-orange-500 text-white px-8 py-3 flex items-center gap-3 shrink-0 animate-in fade-in slide-in-from-top-2">
+          <div className="bg-orange-500 text-white px-6 py-2 flex items-center gap-3 shrink-0 animate-in fade-in slide-in-from-top-2">
             <AlertTriangle className="w-5 h-5 shrink-0" />
             <span className="text-sm font-medium">{t('admin.settings.maintenance.active')}</span>
           </div>
         )}
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 relative">
-          <div className="max-w-[1152px] flex flex-col lg:flex-row gap-8 mx-auto w-full">
+        <div className="flex-1 overflow-y-auto p-6 relative">
+          <div className="max-w-[1152px] flex flex-col lg:flex-row gap-6 mx-auto w-full">
 
             {/* Left Column: Settings Cards */}
-            <div className="flex-1 flex flex-col gap-8 w-full min-w-0">
+            <div className="flex-1 flex flex-col gap-6 w-full min-w-0">
 
                {/* Admin Profile Card */}
                <form onSubmit={handleSaveProfile} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col w-full">
-                  <div className="border-b border-border/60 p-6 flex flex-col gap-1">
+                  <div className="border-b border-border/60 p-5 flex flex-col gap-1">
                     <h3 className="text-foreground text-lg font-bold">{t('admin.settings.profile.title')}</h3>
                     <p className="text-muted-foreground text-sm">{t('admin.settings.profile.subtitle')}</p>
                   </div>
-                  <div className="p-6 flex flex-col gap-6">
+                  <div className="p-5 flex flex-col gap-4">
 
                      {/* Text Inputs Row */}
-                     <div className="flex flex-col sm:flex-row gap-6 w-full">
+                     <div className="flex flex-col sm:flex-row gap-4 w-full">
                         <div className="flex-1 flex flex-col gap-2">
                            <label htmlFor="fullName" className="text-foreground text-sm font-semibold">{t('admin.settings.profile.fullName')}</label>
                            <input
@@ -270,7 +270,7 @@ export default function PengaturanSistemPage() {
                              required
                              defaultValue={profile?.full_name || ''}
                              placeholder={t('admin.settings.profile.fullNamePlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                         <div className="flex-1 flex flex-col gap-2">
@@ -282,12 +282,12 @@ export default function PengaturanSistemPage() {
                              required
                              defaultValue={profile?.email || ''}
                              placeholder={t('admin.settings.profile.emailPlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                      </div>
 
-                     <div className="flex flex-col sm:flex-row gap-6 w-full">
+                     <div className="flex flex-col sm:flex-row gap-4 w-full">
                         <div className="flex-1 flex flex-col gap-2">
                            <label htmlFor="profile-nip" className="text-foreground text-sm font-semibold">{t('admin.settings.profile.nip')}</label>
                            <input
@@ -296,7 +296,7 @@ export default function PengaturanSistemPage() {
                              type="text"
                              defaultValue={profile?.nip || ''}
                              placeholder={t('admin.settings.profile.nipPlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                         <div className="flex-1 flex flex-col gap-2">
@@ -307,17 +307,17 @@ export default function PengaturanSistemPage() {
                              type="password"
                              minLength={6}
                              placeholder={t('admin.settings.profile.passwordPlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                      </div>
 
                   </div>
-                  <div className="bg-muted/50 px-6 py-4 flex justify-end border-t border-border/60">
+                  <div className="bg-muted/50 px-5 py-3 flex justify-end border-t border-border/60">
                      <button
                        type="submit"
                        disabled={profileSaving}
-                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${profileSaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                       className={`h-8 px-4 rounded-md text-xs font-medium transition-all shadow-sm flex items-center gap-2 ${profileSaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
                      >
                         {profileSaving ? (
                           <>
@@ -340,14 +340,14 @@ export default function PengaturanSistemPage() {
 
                {/* School Identity Card */}
                <form onSubmit={handleSaveIdentity} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col w-full">
-                  <div className="border-b border-border/60 p-6 flex flex-col gap-1">
+                  <div className="border-b border-border/60 p-5 flex flex-col gap-1">
                     <h3 className="text-foreground text-lg font-bold">{t('admin.settings.identity.title')}</h3>
                     <p className="text-muted-foreground text-sm">{t('admin.settings.identity.subtitle')}</p>
                   </div>
-                  <div className="p-6 flex flex-col gap-6">
+                  <div className="p-5 flex flex-col gap-4">
 
                      {/* Text Inputs Row */}
-                     <div className="flex flex-col sm:flex-row gap-6 w-full">
+                     <div className="flex flex-col sm:flex-row gap-4 w-full">
                         <div className="flex-1 flex flex-col gap-2">
                            <label htmlFor="school-name" className="text-foreground text-sm font-semibold">{t('admin.settings.identity.schoolName')}</label>
                            <input
@@ -356,7 +356,7 @@ export default function PengaturanSistemPage() {
                              type="text"
                              defaultValue={settings?.school_name || ''}
                              placeholder={t('admin.settings.identity.schoolNamePlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                         <div className="flex-1 flex flex-col gap-2">
@@ -367,7 +367,7 @@ export default function PengaturanSistemPage() {
                              type="text"
                              defaultValue={settings?.school_code || ''}
                              placeholder={t('admin.settings.identity.schoolCodePlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                      </div>
@@ -381,12 +381,12 @@ export default function PengaturanSistemPage() {
                            rows={3}
                            defaultValue={settings?.school_address || ''}
                            placeholder={t('admin.settings.identity.addressPlaceholder')}
-                           className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none transition-colors"
+                           className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary resize-none transition-colors"
                         />
                      </div>
 
                      {/* Contact Info */}
-                     <div className="flex flex-col sm:flex-row gap-6 w-full">
+                     <div className="flex flex-col sm:flex-row gap-4 w-full">
                         <div className="flex-1 flex flex-col gap-2">
                            <label htmlFor="school-phone" className="text-foreground text-sm font-semibold">{t('admin.settings.identity.phone')}</label>
                            <input
@@ -395,7 +395,7 @@ export default function PengaturanSistemPage() {
                              type="tel"
                              defaultValue={settings?.school_phone || ''}
                              placeholder={t('admin.settings.identity.phonePlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                         <div className="flex-1 flex flex-col gap-2">
@@ -406,13 +406,13 @@ export default function PengaturanSistemPage() {
                              type="email"
                              defaultValue={settings?.school_email || ''}
                              placeholder={t('admin.settings.identity.emailPlaceholder')}
-                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2.5 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
+                             className="bg-card border border-border text-foreground text-sm rounded-lg block w-full p-2 outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition-colors"
                            />
                         </div>
                      </div>
 
                      {/* Logo Upload */}
-                     <div className="flex items-center gap-6 w-full">
+                     <div className="flex items-center gap-4 w-full">
                         <div
                           className="w-24 h-24 bg-muted/50 border-2 border-border border-dashed rounded-lg flex items-center justify-center shrink-0 relative overflow-hidden group hover:border-primary transition-colors cursor-pointer"
                           onClick={() => fileInputRef.current?.click()}
@@ -439,11 +439,11 @@ export default function PengaturanSistemPage() {
                      </div>
 
                   </div>
-                  <div className="bg-muted/50 px-6 py-4 flex justify-end border-t border-border/60">
+                  <div className="bg-muted/50 px-5 py-3 flex justify-end border-t border-border/60">
                      <button
                        type="submit"
                        disabled={updating}
-                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${identitySaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                       className={`h-8 px-4 rounded-md text-xs font-medium transition-all shadow-sm flex items-center gap-2 ${identitySaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
                      >
                         {updating ? (
                           <>
@@ -466,11 +466,11 @@ export default function PengaturanSistemPage() {
 
                {/* Backup & Restore Card */}
                <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col w-full">
-                  <div className="border-b border-border/60 p-6 flex flex-col gap-1">
+                  <div className="border-b border-border/60 p-5 flex flex-col gap-1">
                     <h3 className="text-foreground text-lg font-bold">{t('admin.settings.backup.title')}</h3>
                     <p className="text-muted-foreground text-sm">{t('admin.settings.backup.subtitle')}</p>
                   </div>
-                  <div className="p-6 flex flex-col gap-6">
+                  <div className="p-5 flex flex-col gap-4">
 
                      {/* Summary Statuses */}
                      <div className="flex flex-col sm:flex-row gap-4 w-full">
@@ -514,11 +514,11 @@ export default function PengaturanSistemPage() {
                      </div>
 
                   </div>
-                  <div className="bg-muted/50 px-6 py-4 flex items-center justify-between border-t border-border/60">
+                  <div className="bg-muted/50 px-5 py-3 flex items-center justify-between border-t border-border/60">
                      <span className="text-muted-foreground text-xs">{t('admin.settings.backup.storage').replace('{used}', '840 MB').replace('{total}', '5 GB').replace('{percent}', '16.8')}</span>
                      <button
                        type="button"
-                       className={`flex items-center gap-2 px-4 py-2 border rounded-lg text-sm font-medium transition-all shadow-sm ${backupCreating ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-card border-border text-foreground hover:bg-accent'}`}
+                       className={`flex h-8 items-center gap-2 px-3 border rounded-md text-xs font-medium transition-all shadow-sm ${backupCreating ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-card border-border text-foreground hover:bg-accent'}`}
                        onClick={handleCreateBackup}
                        disabled={backupCreating}
                      >
@@ -542,7 +542,7 @@ export default function PengaturanSistemPage() {
             {/* Right Column: System Audit Logs */}
             <div className="w-full lg:w-[288px] shrink-0">
                <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden flex flex-col lg:h-[750px] w-full">
-                  <div className="border-b border-border/60 p-6 flex items-center justify-between shrink-0">
+                  <div className="border-b border-border/60 p-5 flex items-center justify-between shrink-0">
                     <h3 className="text-foreground text-lg font-bold">{t('admin.settings.audit.title')}</h3>
                     <button type="button" className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">{t('admin.settings.audit.viewAll')}</button>
                   </div>
@@ -560,7 +560,7 @@ export default function PengaturanSistemPage() {
                      <button
                        type="button"
                        onClick={handleExportLogs}
-                       className="flex items-center justify-center gap-2 w-full py-2 bg-card border border-border text-foreground rounded-lg text-sm font-medium hover:bg-accent transition-colors shadow-sm"
+                       className="flex h-8 items-center justify-center gap-2 w-full bg-card border border-border text-foreground rounded-md text-xs font-medium hover:bg-accent transition-colors shadow-sm"
                      >
                         <DownloadCloud className="w-4 h-4 text-muted-foreground" />
                         {t('admin.settings.audit.export')}

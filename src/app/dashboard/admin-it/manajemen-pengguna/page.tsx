@@ -257,7 +257,7 @@ export default function UserManagementPage() {
 
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-6">
         <motion.div 
           className="max-w-7xl mx-auto flex flex-col gap-6"
           variants={containerVariants}
@@ -277,15 +277,15 @@ export default function UserManagementPage() {
           {/* Header */}
           <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex flex-col gap-1">
-              <h2 className="text-foreground text-3xl font-bold tracking-tight">{t('admin.userManagement.title')}</h2>
-              <p className="text-muted-foreground text-base">{t('admin.userManagement.description')}</p>
+              <h2 className="text-foreground text-2xl font-bold tracking-tight">{t('admin.userManagement.title')}</h2>
+              <p className="text-muted-foreground text-sm">{t('admin.userManagement.description')}</p>
             </div>
             <div className="flex gap-3">
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowSyncConfirm(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-8 items-center gap-2 px-3 bg-card border border-border rounded-md text-xs font-medium text-foreground hover:bg-accent shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={actionLoading}
               >
                 <RefreshCcw className="w-4 h-4 text-muted-foreground" />
@@ -295,7 +295,7 @@ export default function UserManagementPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex h-8 items-center gap-2 px-3 bg-primary text-white rounded-md text-xs font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={actionLoading}
               >
                 <UserPlus className="w-4 h-4" />
@@ -305,7 +305,7 @@ export default function UserManagementPage() {
           </motion.div>
 
           {/* Filters */}
-          <motion.div variants={itemVariants} className="bg-card border border-border rounded-xl shadow-sm p-4 flex flex-col md:flex-row gap-4 h-auto md:h-[72px] items-center">
+          <motion.div variants={itemVariants} className="bg-card border border-border rounded-xl shadow-sm p-3.5 flex flex-col md:flex-row gap-3 h-auto md:min-h-14 items-center">
             <div className="flex-1 relative w-full">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Search className="w-4 h-4 text-muted-foreground" />
@@ -316,17 +316,17 @@ export default function UserManagementPage() {
                 placeholder={t('admin.userManagement.search.placeholder')}
                 value={searchDebounce}
                 onChange={(e) => setSearchDebounce(e.target.value)}
-                className="w-full bg-muted/50 border border-border rounded-lg py-2.5 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-slate-400"
+                className="w-full bg-muted/50 border border-border rounded-lg py-2 pl-10 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground placeholder:text-slate-400"
               />
             </div>
-            <div className="flex flex-wrap md:flex-nowrap gap-3 w-full md:w-auto">
+            <div className="flex flex-wrap md:flex-nowrap gap-2.5 w-full md:w-auto">
               <div className="relative flex-1 md:flex-none">
                 <select
                   title={t('admin.userManagement.filter.role.title')}
                   aria-label={t('admin.userManagement.filter.role.title')}
                   value={filters.role}
                   onChange={(e) => handleRoleFilterChange(e.target.value)}
-                  className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer w-full"
+                  className="appearance-none bg-muted/50 border border-border rounded-lg py-2 pl-3 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer w-full"
                 >
                   <option value="">{t('admin.userManagement.filter.role.all')}</option>
                   {ROLE_CONFIGS.map(role => (
@@ -343,7 +343,7 @@ export default function UserManagementPage() {
                   aria-label={t('admin.userManagement.filter.status.title')}
                   value={filters.status}
                   onChange={(e) => handleStatusFilterChange(e.target.value)}
-                  className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer w-full"
+                  className="appearance-none bg-muted/50 border border-border rounded-lg py-2 pl-3 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer w-full"
                 >
                   <option value="">{t('admin.userManagement.filter.status.all')}</option>
                   {STATUS_CONFIGS.map(status => (
@@ -356,7 +356,7 @@ export default function UserManagementPage() {
               </div>
               <button
                 onClick={clearFilters}
-                className="hidden md:flex items-center justify-center px-4 py-2 text-primary font-medium text-sm hover:bg-primary/5 rounded-lg transition-colors whitespace-nowrap"
+                className="hidden md:flex h-8 items-center justify-center px-3 text-primary font-medium text-xs hover:bg-primary/5 rounded-md transition-colors whitespace-nowrap"
               >
                 {t('admin.userManagement.filter.clear')}
               </button>
@@ -369,12 +369,12 @@ export default function UserManagementPage() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50/50 border-b border-border/60">
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.user')}</th>
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.email')}</th>
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.role')}</th>
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.status')}</th>
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.lastLogin')}</th>
-                    <th className="py-4 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider text-right">{t('admin.userManagement.table.action')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.user')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.email')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.role')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.status')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider">{t('admin.userManagement.table.lastLogin')}</th>
+                    <th className="py-3 px-4 font-bold text-xs text-muted-foreground uppercase tracking-wider text-right">{t('admin.userManagement.table.action')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-50">
@@ -416,7 +416,7 @@ export default function UserManagementPage() {
                           >
                           <td className="py-3 px-4">
                             <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 rounded-full ${avatarColorClass} flex items-center justify-center shrink-0`}>
+                              <div className={`w-9 h-9 rounded-full ${avatarColorClass} flex items-center justify-center shrink-0`}>
                                 <span className="font-bold text-sm">{avatarInitials}</span>
                               </div>
                               <div className="flex flex-col min-w-0">
@@ -443,7 +443,7 @@ export default function UserManagementPage() {
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
+                                className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/5 rounded-md transition-colors"
                                 title={t('admin.userManagement.action.edit')}
                                 onClick={() => {
                                   setSelectedUser(user)
@@ -455,7 +455,7 @@ export default function UserManagementPage() {
                               <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
-                                className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="p-1.5 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 title={t('admin.userManagement.action.delete')}
                                 onClick={() => {
                                   setSelectedUser(user)
@@ -477,7 +477,7 @@ export default function UserManagementPage() {
             </div>
 
             {/* Pagination Footer */}
-            <div className="bg-slate-50/50 border-t border-border/60 px-6 py-4 flex items-center justify-between">
+            <div className="bg-slate-50/50 border-t border-border/60 px-4 py-3 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">
                 {pagination.total > 0 ? (
                   <>

@@ -725,11 +725,11 @@ export default function DataManagementPage() {
   };
 
   return (
-    <main className="flex-1 flex flex-col h-full bg-[#FAFAFA] relative min-w-0 overflow-hidden text-sm">
+    <main className="flex-1 flex flex-col h-full bg-[#FAFAFA] relative min-w-0 overflow-hidden text-sm [&_th]:!px-4 [&_th]:!py-3 [&_td]:!px-4 [&_td]:!py-3">
       {/* Confirm Dialog */}
       {confirmDialog.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-card rounded-xl shadow-xl w-full max-w-md p-6">
+          <div className="bg-card rounded-xl shadow-lg w-full max-w-md p-5">
             <h3 className="text-lg font-bold text-foreground mb-2">{t('admin.dataManagement.dialog.delete.title')}</h3>
             <p className="text-muted-foreground mb-6">
               {t('admin.dataManagement.dialog.delete.message')
@@ -738,7 +738,7 @@ export default function DataManagementPage() {
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDialog({ isOpen: false, type: null, id: null, name: '' })}
-                className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm"
+                className="flex-1 h-8 px-3 border border-border text-foreground rounded-md hover:bg-accent transition-all font-medium text-xs"
               >
                 {t('common.action.cancel')}
               </button>
@@ -755,7 +755,7 @@ export default function DataManagementPage() {
                   }
                   setConfirmDialog({ isOpen: false, type: null, id: null, name: '' });
                 }}
-                className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium text-sm"
+                className="flex-1 h-8 px-3 bg-red-600 text-white rounded-md hover:bg-red-700 transition-all font-medium text-xs"
               >
                 {t('common.action.delete')}
               </button>
@@ -765,8 +765,8 @@ export default function DataManagementPage() {
       )}
 
       {/* Header */}
-      <header className="pt-8 px-8 pb-0 bg-card border-b border-border shrink-0">
-        <div className="flex items-center justify-between mb-6">
+      <header className="pt-6 px-6 pb-0 bg-card border-b border-border shrink-0">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <h2 className="text-foreground text-[22px] font-bold tracking-tight mb-1">{t('admin.dataManagement.title')}</h2>
             <p className="text-muted-foreground text-[13px] font-medium">{t('admin.dataManagement.subtitle')}</p>
@@ -774,7 +774,7 @@ export default function DataManagementPage() {
         </div>
 
         {/* Tabs */}
-        <div className="flex items-center gap-8 border-b border-white">
+        <div className="flex items-center gap-6 border-b border-white">
           <button
             onClick={() => setActiveTab('kelas_dan_roster')}
             className={`pb-3 border-b-2 font-bold text-sm transition-colors ${
@@ -811,15 +811,15 @@ export default function DataManagementPage() {
       </header>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto p-8 relative">
+      <div className="flex-1 overflow-y-auto p-4 relative">
         <div className="max-w-[1200px] mx-auto w-full">
 
           {/* Table Container */}
-          <div className="bg-card border flex flex-col border-border rounded-xl shadow-sm overflow-hidden min-h-[500px]">
+          <div className="bg-card border flex flex-col border-border rounded-xl shadow-sm overflow-hidden min-h-0">
 
             {/* Toolbar */}
-            <div className="p-4 flex items-center justify-between border-b border-border/60 bg-card gap-3">
-              <div className="relative w-full max-w-[320px]">
+            <div className="p-3 flex items-center justify-between border-b border-border/60 bg-card gap-2.5">
+              <div className="relative w-full max-w-[220px]">
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
@@ -831,7 +831,7 @@ export default function DataManagementPage() {
                     else if (activeTab === 'ruangan') setRoomsSearch(e.target.value);
                     else setSubjectsSearch(e.target.value);
                   }}
-                  className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+                  className="w-full pl-9 pr-3 py-1.5 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -840,7 +840,7 @@ export default function DataManagementPage() {
                 {/* Level/Type Filter */}
                 <div className="relative">
                   <select
-                    className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
+                    className="appearance-none bg-muted/50 border border-border rounded-lg py-1.5 pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[140px]"
                     value={activeTab === 'kelas_dan_roster' ? classesLevelFilter : activeTab === 'ruangan' ? roomsTypeFilter : subjectsTypeFilter}
                     aria-label={activeTab === 'kelas_dan_roster' ? t('admin.dataManagement.filter.level') : t('admin.dataManagement.filter.type')}
                     onChange={(e) => {
@@ -877,7 +877,7 @@ export default function DataManagementPage() {
                 {(activeTab === 'kelas_dan_roster' || activeTab === 'mata_pelajaran') && (
                   <div className="relative">
                     <select
-                      className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
+                      className="appearance-none bg-muted/50 border border-border rounded-lg py-1.5 pl-3 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[140px]"
                       value={activeTab === 'kelas_dan_roster' ? classesDeptFilter : subjectsDeptFilter}
                       aria-label={t('admin.dataManagement.filter.department')}
                       onChange={(e) => {
@@ -907,7 +907,7 @@ export default function DataManagementPage() {
                       else if (masterDataSubTab === 'departments') setDepartmentModal({ isOpen: true, mode: 'create', department: null });
                     }
                   }}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg font-semibold shadow-[0px_2px_4px_rgba(19,127,236,0.1)] hover:bg-primary/90 transition-all active:scale-[0.97] whitespace-nowrap"
+                  className="flex h-8 items-center justify-center gap-1.5 px-3 bg-primary text-white rounded-md text-xs font-semibold shadow-[0px_2px_4px_rgba(19,127,236,0.1)] hover:bg-primary/90 transition-all active:scale-[0.97] whitespace-nowrap"
                 >
                   <Plus className="w-4 h-4" strokeWidth={3} />
                   {t('common.action.addNew')}
@@ -937,9 +937,10 @@ export default function DataManagementPage() {
                     <>
                       {/* Classes Grid */}
                       {activeTab === 'kelas_dan_roster' && (
-                        <div className="p-6">
+                        <div className="p-3">
                           {classes.length === 0 ? (
                             <EmptyTableState
+                              compact
                               type="classes"
                               hasFilters={!!classesSearch || !!classesLevelFilter || !!classesDeptFilter}
                               hasSearch={!!classesSearch}
@@ -959,7 +960,7 @@ export default function DataManagementPage() {
                                   <div
                                     key={cls.id}
                                     onClick={() => handleClassClick(cls.id)}
-                                    className="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                                    className="bg-card border border-border rounded-xl p-4 shadow-sm hover:shadow-md transition-all cursor-pointer group"
                                   >
                                     {/* Header */}
                                     <div className="flex items-start justify-between mb-4">
@@ -1025,6 +1026,7 @@ export default function DataManagementPage() {
                       {activeTab === 'ruangan' && (
                         rooms.length === 0 ? (
                           <EmptyTableState
+                            compact
                             type="rooms"
                             hasFilters={!!roomsSearch || !!roomsTypeFilter || roomsActiveFilter !== undefined}
                             hasSearch={!!roomsSearch}
@@ -1114,6 +1116,7 @@ export default function DataManagementPage() {
                       {activeTab === 'mata_pelajaran' && (
                         subjects.length === 0 ? (
                           <EmptyTableState
+                            compact
                             type="subjects"
                             hasFilters={!!subjectsSearch || !!subjectsTypeFilter || !!subjectsDeptFilter}
                             hasSearch={!!subjectsSearch}
@@ -1297,7 +1300,7 @@ export default function DataManagementPage() {
                           </div>
 
                           {/* Content */}
-                          <div className="p-6 min-h-[500px] flex flex-col">
+                          <div className="p-5 min-h-[460px] flex flex-col">
                             {masterDataLoading ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -1316,6 +1319,7 @@ export default function DataManagementPage() {
                                 {masterDataSubTab === 'academic_years' && (
                                   academicYears.length === 0 ? (
                                     <EmptyTableState
+                                      compact
                                       type="generic"
                                       hasSearch={false}
                                       hasFilters={false}
@@ -1381,6 +1385,7 @@ export default function DataManagementPage() {
                                 {masterDataSubTab === 'semesters' && (
                                   semesters.length === 0 ? (
                                     <EmptyTableState
+                                      compact
                                       type="generic"
                                       hasSearch={false}
                                       hasFilters={false}
@@ -1444,6 +1449,7 @@ export default function DataManagementPage() {
                                 {masterDataSubTab === 'class_levels' && (
                                   classLevels.length === 0 ? (
                                     <EmptyTableState
+                                      compact
                                       type="generic"
                                       title={t('admin.dataManagement.empty.noClassLevels.title')}
                                       description={t('admin.dataManagement.empty.noClassLevels.desc')}
@@ -1513,6 +1519,7 @@ export default function DataManagementPage() {
                                 {masterDataSubTab === 'departments' && (
                                   departments.length === 0 ? (
                                     <EmptyTableState
+                                      compact
                                       type="generic"
                                       title={t('admin.dataManagement.empty.noDepartments.title')}
                                       description={t('admin.dataManagement.empty.noDepartments.desc')}

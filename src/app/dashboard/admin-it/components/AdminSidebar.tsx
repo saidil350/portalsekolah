@@ -78,7 +78,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
       <div
         className={`
           flex flex-col
-          ${isSidebarOpen ? 'px-4 pt-6 pb-4 gap-5' : 'px-2 pt-5 pb-4 gap-4 items-center'}
+          ${isSidebarOpen ? 'px-3.5 pt-5 pb-3.5 gap-4' : 'px-2 pt-4 pb-3 gap-3 items-center'}
         `}
       >
         {isSidebarOpen ? (
@@ -113,7 +113,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
                     ? 'bg-primary text-white shadow-sm'
                     : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }
-                  ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}
+                  ${isSidebarOpen ? 'gap-2.5 px-3 py-2' : 'justify-center w-9 h-9 mx-auto'}
                 `}
               >
                 {/* Active bar */}
@@ -144,7 +144,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
       <div
         className={`
           mt-auto border-t border-border/60
-          ${isSidebarOpen ? 'px-4 py-4 flex flex-col gap-1' : 'px-2 py-4 flex flex-col gap-1 items-center'}
+          ${isSidebarOpen ? 'px-3.5 py-3.5 flex flex-col gap-1' : 'px-2 py-3 flex flex-col gap-1 items-center'}
         `}
       >
         {isSidebarOpen && (
@@ -159,7 +159,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
           className={`
             flex items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground
             transition-colors duration-150 cursor-pointer
-            ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
+            ${isSidebarOpen ? 'gap-2.5 px-3 py-2 w-full' : 'justify-center w-9 h-9 mx-auto'}
           `}
           title={isSidebarOpen ? t('common.action.minimize') : t('common.action.expand')}
         >
@@ -179,7 +179,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
           className={`
             flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive
             transition-colors duration-150 cursor-pointer
-            ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
+            ${isSidebarOpen ? 'gap-2.5 px-3 py-2 w-full' : 'justify-center w-9 h-9 mx-auto'}
           `}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('admin.auth.logout')}

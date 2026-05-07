@@ -92,14 +92,14 @@ export default function KelasDanRosterPage() {
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA]">
       {/* Header */}
-      <header className="bg-card border-b border-border px-8 py-6 shrink-0">
+      <header className="bg-card border-b border-border px-6 py-5 shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
               <Users className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">{t('admin.roster.title')}</h1>
+              <h1 className="text-xl font-bold text-foreground">{t('admin.roster.title')}</h1>
               <p className="text-muted-foreground text-sm">
                 {t('admin.roster.subtitle')}
               </p>
@@ -108,7 +108,7 @@ export default function KelasDanRosterPage() {
 
           <button
             onClick={handleCreateClass}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
+            className="flex h-8 items-center gap-2 px-3 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
           >
             <Plus className="w-4 h-4" />
             {t('admin.roster.createClass')}
@@ -117,8 +117,8 @@ export default function KelasDanRosterPage() {
       </header>
 
       {/* Filters */}
-      <div className="bg-card border-b border-border px-8 py-4 shrink-0">
-        <div className="flex items-center gap-4">
+      <div className="bg-card border-b border-border px-6 py-3.5 shrink-0">
+        <div className="flex items-center gap-3">
           {/* Search */}
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -127,7 +127,7 @@ export default function KelasDanRosterPage() {
               placeholder={t('admin.roster.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
             />
           </div>
 
@@ -138,7 +138,7 @@ export default function KelasDanRosterPage() {
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
               title={t('admin.roster.filter.level')}
-              className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
+              className="pl-9 pr-9 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">{t('admin.roster.filter.allLevels')}</option>
               {classLevels.map(level => (
@@ -156,7 +156,7 @@ export default function KelasDanRosterPage() {
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
               title={t('admin.roster.filter.department')}
-              className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
+              className="pl-9 pr-9 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">{t('admin.roster.filter.allDepartments')}</option>
               {departments.map(dept => (
@@ -175,7 +175,7 @@ export default function KelasDanRosterPage() {
                 setLevelFilter('')
                 setDepartmentFilter('')
               }}
-              className="px-4 py-2.5 text-muted-foreground hover:text-slate-900 text-sm font-medium hover:bg-accent rounded-lg transition-colors"
+              className="h-8 px-3 text-muted-foreground hover:text-slate-900 text-xs font-medium hover:bg-accent rounded-md transition-colors"
             >
               {t('common.action.clearFilter')}
             </button>
@@ -189,7 +189,7 @@ export default function KelasDanRosterPage() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-6">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
@@ -223,7 +223,7 @@ export default function KelasDanRosterPage() {
           />
         ) : (
           /* Class Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {classes.map((cls) => {
               const badge = getOccupancyBadge(cls.current_enrollment, cls.capacity)
 
@@ -234,7 +234,7 @@ export default function KelasDanRosterPage() {
                   className="bg-card rounded-xl border border-border shadow-sm hover:shadow-md hover:border-blue-300 transition-all cursor-pointer group"
                 >
                   {/* Header */}
-                  <div className="p-6 border-b border-border/60">
+                  <div className="p-5 border-b border-border/60">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
                         <h3 className="text-lg font-bold text-foreground group-hover:text-blue-600 transition-colors">
@@ -259,8 +259,8 @@ export default function KelasDanRosterPage() {
                   </div>
 
                   {/* Stats */}
-                  <div className="p-6">
-                    <div className="grid grid-cols-2 gap-4">
+                  <div className="p-5">
+                    <div className="grid grid-cols-2 gap-3">
                       <div className="flex items-center gap-2">
                         <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
                           <Users className="w-4 h-4 text-blue-600" />
@@ -308,7 +308,7 @@ export default function KelasDanRosterPage() {
                   </div>
 
                   {/* Footer */}
-                  <div className="px-6 py-3 bg-muted/50 rounded-b-xl flex items-center justify-center">
+                  <div className="px-5 py-2 bg-muted/50 rounded-b-xl flex items-center justify-center">
                     <span className="text-sm text-blue-600 font-medium group-hover:underline">
                       {t('admin.roster.viewDetails')}
                     </span>

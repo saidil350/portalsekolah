@@ -59,23 +59,23 @@ const RoleGreetingCard: React.FC<RoleGreetingCardProps> = ({
       initial={{ opacity: 0, x: -10 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5 }}
-      className="mb-8"
+      className="mb-3"
     >
       {/* Dynamic Greeting Label */}
-      <div className="flex items-center gap-2 text-muted-foreground mb-1">
-        <Icon className="size-4 text-primary/70" />
-        <span className="text-sm font-medium uppercase tracking-wider">{greeting}</span>
+      <div className="flex items-center gap-2 text-muted-foreground">
+        <Icon className="size-3.5 text-primary/70" />
+        <span className="text-xs font-medium uppercase tracking-wider">{greeting}</span>
       </div>
       
       {/* Name and Identity Details */}
-      <div className="flex flex-col md:flex-row md:items-end gap-2 md:gap-4 mt-2">
-        <h1 className="text-4xl font-extrabold text-foreground tracking-tight leading-tight">
+      <div className="flex flex-col md:flex-row md:items-end gap-2 md:gap-3 mt-1">
+        <h1 className="text-3xl font-extrabold text-foreground tracking-tight leading-tight">
           {userName} <span className="inline-block animate-bounce-slow">👋</span>
         </h1>
         
-        <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm md:border-l md:border-slate-200 md:pl-4 md:mb-2 lg:mb-3">
-          <div className="flex items-center gap-1.5 py-1 px-3 bg-muted/50 rounded-lg border border-border/60">
-            <School className="size-4 text-muted-foreground" />
+        <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs md:border-l md:border-slate-200 md:pl-3 md:mb-1.5">
+          <div className="flex items-center gap-1.5 py-1 px-2.5 bg-muted/50 rounded-lg border border-border/60">
+            <School className="size-3.5 text-muted-foreground" />
             <span className="font-semibold text-foreground">{schoolName}</span>
           </div>
           

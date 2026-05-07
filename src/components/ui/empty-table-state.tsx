@@ -29,6 +29,7 @@ export interface EmptyTableStateProps {
   title?: string
   description?: string
   className?: string
+  compact?: boolean
 }
 
 export function EmptyTableState({
@@ -40,7 +41,8 @@ export function EmptyTableState({
   addLabel,
   title,
   description,
-  className
+  className,
+  compact = false
 }: EmptyTableStateProps) {
   const { t } = useLanguage()
   const isFiltering = hasFilters || hasSearch
@@ -126,35 +128,45 @@ export function EmptyTableState({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: "easeOut" }}
       className={cn(
-        "flex flex-col items-center justify-center py-20 px-8 bg-linear-to-br from-slate-50/80 to-blue-50/40 rounded-3xl border-2 border-dashed border-slate-200/80 shadow-inner", 
+        "flex flex-col items-center justify-center bg-linear-to-br from-slate-50/80 to-blue-50/40 border-2 border-dashed border-slate-200/80 shadow-inner",
+        compact ? "py-8 px-5 rounded-2xl" : "py-20 px-8 rounded-3xl",
         className
       )}
     >
-      <div className="relative mb-8">
-        <div className="w-24 h-24 rounded-3xl bg-card shadow-xl shadow-slate-200/50 border border-border/60 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300">
+      <div className={cn("relative", compact ? "mb-4" : "mb-8")}>
+        <div className={cn(
+          "bg-card shadow-xl shadow-slate-200/50 border border-border/60 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300",
+          compact ? "w-16 h-16 rounded-2xl [&_svg]:w-7 [&_svg]:h-7" : "w-24 h-24 rounded-3xl"
+        )}>
           {isFiltering ? <FileSearch className="w-12 h-12" /> : config.icon}
         </div>
-        <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-white border-4 border-white">
+        <div className={cn(
+          "absolute bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-white border-white",
+          compact ? "-bottom-2 -right-2 w-8 h-8 rounded-xl border-[3px] [&_svg]:w-4 [&_svg]:h-4" : "-bottom-3 -right-3 w-10 h-10 rounded-2xl border-4"
+        )}>
           {isFiltering ? <Search className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
       </div>
 
-      <h3 className="text-2xl font-black text-foreground mb-3 text-center tracking-tight">
+      <h3 className={cn("font-black text-foreground text-center tracking-tight", compact ? "text-xl mb-2" : "text-2xl mb-3")}>
         {displayTitle}
       </h3>
 
-      <p className="text-base text-muted-foreground text-center max-w-sm mb-10 leading-relaxed font-medium">
+      <p className={cn(
+        "text-muted-foreground text-center max-w-sm leading-relaxed font-medium",
+        compact ? "text-sm mb-5" : "text-base mb-10"
+      )}>
         {displayDescription}
       </p>
 
-      <div className="flex flex-wrap items-center justify-center gap-4">
+      <div className={cn("flex flex-wrap items-center justify-center", compact ? "gap-2.5" : "gap-4")}>
         {showClearFilters && (
           <Button
             variant="secondary"
-            size="lg"
+            size={compact ? "sm" : "lg"}
             onClick={onClearFilters}
-            className="bg-card hover:bg-accent border-border text-foreground font-bold px-8 rounded-xl"
-            leftIcon={<X className="w-5 h-5" />}
+            className={cn("bg-card hover:bg-accent border-border text-foreground font-bold", compact ? "px-4 rounded-md" : "px-8 rounded-xl")}
+            leftIcon={<X className={compact ? "w-4 h-4" : "w-5 h-5"} />}
           >
             {t('common.action.clearFilter')}
           </Button>
@@ -163,10 +175,10 @@ export function EmptyTableState({
         {showAddButton && (
           <Button
             variant="primary"
-            size="lg"
+            size={compact ? "sm" : "lg"}
             onClick={onAdd}
-            className="font-bold px-10 rounded-xl hover:scale-105 active:scale-95 transition-all bg-primary"
-            leftIcon={<Plus className="w-5 h-5" />}
+            className={cn("font-bold hover:scale-105 active:scale-95 transition-all bg-primary", compact ? "px-4 rounded-md" : "px-10 rounded-xl")}
+            leftIcon={<Plus className={compact ? "w-4 h-4" : "w-5 h-5"} />}
           >
             {displayAddLabel}
           </Button>

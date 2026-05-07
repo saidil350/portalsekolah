@@ -166,8 +166,8 @@ export default function CreateClassPage() {
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA]">
       {/* Header */}
-      <header className="bg-card border-b border-border px-8 py-6 shrink-0">
-        <div className="flex items-center gap-2 mb-4">
+      <header className="bg-card border-b border-border px-6 py-5 shrink-0">
+        <div className="flex items-center gap-2 mb-3">
           <button
             onClick={() => router.back()}
             className="flex items-center gap-1 text-sm text-muted-foreground hover:text-slate-700 transition-colors"
@@ -182,7 +182,7 @@ export default function CreateClassPage() {
             <Plus className="w-5 h-5 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Buat Kelas Baru</h1>
+            <h1 className="text-xl font-bold text-foreground">Buat Kelas Baru</h1>
             <p className="text-muted-foreground text-sm">
               Tambahkan kelas baru ke sistem sekolah
             </p>
@@ -191,9 +191,9 @@ export default function CreateClassPage() {
       </header>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-3xl mx-auto">
-          <form onSubmit={handleSubmit} className="bg-card rounded-xl shadow-sm border border-border p-8">
+          <form onSubmit={handleSubmit} className="bg-card rounded-xl shadow-sm border border-border p-5">
             {/* Error Message */}
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -201,7 +201,7 @@ export default function CreateClassPage() {
               </div>
             )}
 
-            <div className="space-y-6">
+            <div className="space-y-4">
               {/* Nama Kelas */}
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-2">
@@ -214,7 +214,7 @@ export default function CreateClassPage() {
                   onChange={handleInputChange}
                   onBlur={generateClassCode}
                   placeholder="Contoh: X-A, XI-MIPA-1, XII-IPS-2"
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -233,7 +233,7 @@ export default function CreateClassPage() {
                   value={formData.code}
                   onChange={handleInputChange}
                   placeholder="CLS-X-A"
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -251,7 +251,7 @@ export default function CreateClassPage() {
                   value={formData.class_level_id}
                   onChange={handleInputChange}
                   onBlur={generateClassCode}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
                   <option value="">Pilih Tingkat Kelas</option>
@@ -273,7 +273,7 @@ export default function CreateClassPage() {
                   value={formData.department_id}
                   onChange={handleInputChange}
                   onBlur={generateClassCode}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Tanpa Jurusan</option>
                   {departments.map(dept => (
@@ -293,7 +293,7 @@ export default function CreateClassPage() {
                   name="academic_year_id"
                   value={formData.academic_year_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 >
                   <option value="">Pilih Tahun Akademik</option>
@@ -314,7 +314,7 @@ export default function CreateClassPage() {
                   name="home_room_id"
                   value={formData.home_room_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Pilih Ruang Base</option>
                   {rooms.map(room => (
@@ -334,7 +334,7 @@ export default function CreateClassPage() {
                   name="wali_kelas_id"
                   value={formData.wali_kelas_id}
                   onChange={handleInputChange}
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="">Pilih Wali Kelas</option>
                   {teachers.map(teacher => (
@@ -357,7 +357,7 @@ export default function CreateClassPage() {
                   onChange={handleInputChange}
                   min="1"
                   max="50"
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
@@ -376,7 +376,7 @@ export default function CreateClassPage() {
                   onChange={handleInputChange}
                   rows={3}
                   placeholder="Deskripsi tambahan tentang kelas..."
-                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
                 />
               </div>
 
@@ -397,11 +397,11 @@ export default function CreateClassPage() {
             </div>
 
             {/* Actions */}
-            <div className="mt-8 flex items-center justify-end gap-3 pt-6 border-t border-border">
+            <div className="mt-6 flex items-center justify-end gap-2.5 pt-4 border-t border-border">
               <button
                 type="button"
                 onClick={() => router.back()}
-                className="px-6 py-2.5 border border-slate-300 text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
+                className="h-8 px-4 border border-slate-300 text-foreground rounded-md text-xs font-medium hover:bg-accent transition-colors"
                 disabled={submitting}
               >
                 Batal
@@ -409,7 +409,7 @@ export default function CreateClassPage() {
               <button
                 type="submit"
                 disabled={submitting}
-                className="px-6 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="h-8 px-4 bg-blue-600 text-white rounded-md text-xs font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 {submitting ? (
                   <>

@@ -246,9 +246,9 @@ export default function AdminDashboardPage() {
 
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
-      <div className="flex-1 overflow-y-auto p-8">
+      <div className="flex-1 overflow-y-auto p-5">
         <motion.div 
-          className="max-w-7xl mx-auto flex flex-col gap-8"
+          className="max-w-7xl mx-auto flex flex-col gap-4"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
@@ -257,7 +257,7 @@ export default function AdminDashboardPage() {
           {/* Header Section */}
           {/* Header Section with RoleGreetingCard */}
           {loading ? (
-            <div className="h-24 w-full bg-muted animate-pulse rounded-2xl mb-8" />
+            <div className="h-16 w-full bg-muted animate-pulse rounded-2xl mb-3" />
           ) : (
             <RoleGreetingCard 
               userName={userProfile?.full_name || "Administrator"} 
@@ -268,24 +268,24 @@ export default function AdminDashboardPage() {
 
 
           {/* Stats Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Card 1 - Total Students */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-3.5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5">
                   <div className="flex justify-between items-start">
-                    <div className="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                      <Users className="w-6 h-6" />
+                    <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                      <Users className="w-4 h-4" />
                     </div>
                     <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full gap-1">
                       <TrendingUp className="w-3 h-3" /> +5%
                     </span>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.totalStudents')}</p>
-                    <h3 className="text-foreground text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-xs font-medium">{t('admin.db.totalStudents')}</p>
+                    <h3 className="text-foreground text-xl font-bold mt-0.5">
                       {stats.totalStudents.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -294,22 +294,22 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 2 - Total Teachers */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-3.5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5">
                   <div className="flex justify-between items-start">
-                    <div className="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                      <UserCheck className="w-6 h-6" />
+                    <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                      <UserCheck className="w-4 h-4" />
                     </div>
                     <span className="flex items-center text-xs font-semibold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-full gap-1">
                       <TrendingUp className="w-3 h-3" /> +2%
                     </span>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.totalTeachers')}</p>
-                    <h3 className="text-foreground text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-xs font-medium">{t('admin.db.totalTeachers')}</p>
+                    <h3 className="text-foreground text-xl font-bold mt-0.5">
                       {stats.totalTeachers.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -318,22 +318,22 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 3 - Active Classes */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-3.5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5">
                   <div className="flex justify-between items-start">
-                    <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
-                      <School className="w-6 h-6" />
+                    <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
+                      <School className="w-4 h-4" />
                     </div>
                     <span className="flex items-center text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full gap-1">
                       0%
                     </span>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.activeClasses')}</p>
-                    <h3 className="text-foreground text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-xs font-medium">{t('admin.db.activeClasses')}</p>
+                    <h3 className="text-foreground text-xl font-bold mt-0.5">
                       {stats.activeClasses.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -342,22 +342,22 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 4 - Unpaid Bills */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-3.5 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-2.5">
                   <div className="flex justify-between items-start">
-                    <div className="w-10 h-10 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
-                      <DollarSign className="w-6 h-6" />
+                    <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center">
+                      <DollarSign className="w-4 h-4" />
                     </div>
                     <span className="flex items-center text-xs font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full gap-1">
                       <TrendingUp className="w-3 h-3" /> +{Math.floor(financialStats.unpaidCount / 10)}
                     </span>
                   </div>
                   <div>
-                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.unpaidBills')}</p>
-                    <h3 className="text-foreground text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-xs font-medium">{t('admin.db.unpaidBills')}</p>
+                    <h3 className="text-foreground text-xl font-bold mt-0.5">
                       {financialStats.unpaidCount.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -367,9 +367,9 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Chart & Status Section */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-border p-6 shadow-sm">
-              <div className="flex flex-col gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-border p-4 shadow-sm">
+              <div className="flex flex-col gap-3">
                 <div className="flex justify-between items-start">
                   <div>
                     <h3 className="text-foreground text-lg font-bold">{t('admin.db.attendanceTrend')}</h3>
@@ -387,7 +387,7 @@ export default function AdminDashboardPage() {
                 </div>
                 
                 {/* Custom Interactive Chart */}
-                <div className="h-64 w-full">
+                <div className="h-56 w-full">
                   {renderAttendanceChart()}
                 </div>
               </div>
@@ -395,8 +395,8 @@ export default function AdminDashboardPage() {
 
             {/* Student Status Widget */}
             <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-4">
-              <div className="bg-card rounded-xl border border-border p-6 shadow-sm flex-1">
-                <div className="flex items-center justify-between mb-4">
+              <div className="bg-card rounded-xl border border-border p-5 shadow-sm flex-1">
+                <div className="flex items-center justify-between mb-3">
                   <h3 className="text-foreground text-lg font-bold">{t('admin.db.studentStatus')}</h3>
                   <Users className="w-5 h-5 text-muted-foreground" />
                 </div>
@@ -406,7 +406,7 @@ export default function AdminDashboardPage() {
                     {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} variant="text" />)}
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {/* Active */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
@@ -490,7 +490,7 @@ export default function AdminDashboardPage() {
 
           {/* Outstanding Fees Table Section */}
           <motion.div variants={itemVariants} className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-border/60 flex justify-between items-center">
+            <div className="p-5 border-b border-border/60 flex justify-between items-center">
               <div>
                 <h3 className="text-foreground text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
                 <p className="text-muted-foreground text-sm">{t('admin.db.outstandingFeesDesc')}</p>
@@ -515,12 +515,12 @@ export default function AdminDashboardPage() {
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider font-semibold border-b border-border/60">
-                      <th className="px-6 py-4">{t('admin.db.table.studentName')}</th>
-                      <th className="px-6 py-4">{t('admin.db.table.class')}</th>
-                      <th className="px-6 py-4">{t('admin.db.table.month')}</th>
-                      <th className="px-6 py-4">{t('admin.db.table.amount')}</th>
-                      <th className="px-6 py-4">{t('admin.db.table.status')}</th>
-                      <th className="px-6 py-4 text-right">{t('admin.db.table.action')}</th>
+                      <th className="px-4 py-3">{t('admin.db.table.studentName')}</th>
+                      <th className="px-4 py-3">{t('admin.db.table.class')}</th>
+                      <th className="px-4 py-3">{t('admin.db.table.month')}</th>
+                      <th className="px-4 py-3">{t('admin.db.table.amount')}</th>
+                      <th className="px-4 py-3">{t('admin.db.table.status')}</th>
+                      <th className="px-4 py-3 text-right">{t('admin.db.table.action')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -534,7 +534,7 @@ export default function AdminDashboardPage() {
                           transition={{ delay: index * 0.05 }}
                           className="hover:bg-slate-50/50 transition-colors"
                         >
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-3">
                             <div className="flex items-center gap-3">
                               <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
                                 index % 3 === 0 ? 'bg-purple-100 text-purple-600' : 
@@ -549,19 +549,19 @@ export default function AdminDashboardPage() {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-muted-foreground">{inv.className}</td>
-                          <td className="px-6 py-4 text-sm text-muted-foreground">{inv.month}</td>
-                          <td className="px-6 py-4 font-medium text-foreground text-sm">
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{inv.className}</td>
+                          <td className="px-4 py-3 text-sm text-muted-foreground">{inv.month}</td>
+                          <td className="px-4 py-3 font-medium text-foreground text-sm">
                             {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(inv.amount)}
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-4 py-3">
                             <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                               inv.status === 'ARREARS' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
                             }`}>
                               {inv.status === 'ARREARS' ? t('admin.db.status.arrears') : t('admin.db.status.pending')}
                             </span>
                           </td>
-                          <td className="px-6 py-4 text-right">
+                          <td className="px-4 py-3 text-right">
                             <button className="text-muted-foreground hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
                               <MoreVertical className="h-4 w-4" />
                             </button>
