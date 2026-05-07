@@ -132,7 +132,7 @@ export function EmptyTableState({
         <div className="w-24 h-24 rounded-3xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300">
           {isFiltering ? <FileSearch className="w-12 h-12" /> : config.icon}
         </div>
-        <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/30 flex items-center justify-center text-white border-4 border-white">
+        <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-white border-4 border-white">
           {isFiltering ? <Search className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
         </div>
       </div>

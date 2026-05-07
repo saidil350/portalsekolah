@@ -31,6 +31,7 @@ export async function GET(request: Request) {
       const { data: monthData, error: monthError } = await supabase
         .from('attendances')
         .select('status')
+        .eq('organization_id', auth.user.organization_id)
         .gte('date', format(start, 'yyyy-MM-dd'))
         .lte('date', format(end, 'yyyy-MM-dd'))
       

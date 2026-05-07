@@ -52,7 +52,7 @@ export default function SchedulePage() {
 
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Top Header Bar */}
       <div className="bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between shrink-0">
         <div>
@@ -105,7 +105,7 @@ export default function SchedulePage() {
                       <option>Semester 1 (Fall)</option>
                     </select>
                   </div>
-                  <button className="bg-primary text-white py-2.5 rounded-lg text-base font-medium flex items-center justify-center gap-2 hover:bg-primary-dark transition-colors cursor-pointer mt-2">
+                  <button className="bg-primary text-white py-2.5 rounded-lg text-base font-medium flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors cursor-pointer mt-2">
                     <Download className="w-3.5 h-2.5" />
                     {t('student.performance.period.apply')}
                   </button>

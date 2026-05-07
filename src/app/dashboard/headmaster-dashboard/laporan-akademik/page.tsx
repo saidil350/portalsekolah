@@ -84,7 +84,7 @@ export default function LaporanAkademikPage() {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-12">
         <div className="max-w-[1280px] mx-auto flex flex-col gap-6">
 
@@ -117,7 +117,7 @@ export default function LaporanAkademikPage() {
               </div>
               {/* Export Button */}
               <div className="flex items-center border-l border-slate-200 pl-3">
-                <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark shadow-sm transition-all cursor-pointer">
+                <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 shadow-sm transition-all cursor-pointer">
                   <Download className="w-3 h-3" />
                   {t('headmaster.academicReport.export')}
                 </button>

@@ -52,7 +52,7 @@ export default function PenilaianPage() {
   const { t } = useLanguage();
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
       <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
@@ -69,7 +69,7 @@ export default function PenilaianPage() {
               className="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 px-4 py-2 outline-none transition-colors"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all cursor-pointer">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             {t('teacher.grading.newAssignment')}
           </button>
@@ -102,7 +102,7 @@ export default function PenilaianPage() {
                 <div key={assignment.id} className="px-6 py-4 flex items-center justify-between hover:bg-slate-50/50 transition-colors cursor-pointer">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <h4 className="text-sm font-semibold text-text-main truncate">{t(assignment.titleKey as TranslationKey)}</h4>
+                      <h4 className="text-sm font-semibold text-foreground truncate">{t(assignment.titleKey as TranslationKey)}</h4>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${statusBadge[assignment.status]}`}>
                         {t(`teacher.grading.status.${assignment.status}` as TranslationKey)}
                       </span>
@@ -118,7 +118,7 @@ export default function PenilaianPage() {
                   <div className="flex items-center gap-6 shrink-0 ml-4">
                     <div className="text-right">
                       <p className="text-xs text-slate-400">{t('teacher.grading.submitted')}</p>
-                      <p className="text-sm font-semibold text-text-main">{assignment.submitted}/{assignment.total}</p>
+                      <p className="text-sm font-semibold text-foreground">{assignment.submitted}/{assignment.total}</p>
                     </div>
                     {assignment.avgScore > 0 && (
                       <div className="text-right">
@@ -148,7 +148,7 @@ export default function PenilaianPage() {
           <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
             <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <h3 className="text-base font-semibold text-text-main">{t('teacher.grading.tab.gradeBook')}</h3>
+                <h3 className="text-base font-semibold text-foreground">{t('teacher.grading.tab.gradeBook')}</h3>
                 <span className="text-xs text-slate-400">{t('teacher.subject.mathematics')} - {t('teacher.class.10a')}</span>
               </div>
               <div className="flex items-center gap-2">
@@ -156,7 +156,7 @@ export default function PenilaianPage() {
                   <Calculator className="w-3.5 h-3.5" />
                   {t('teacher.grading.autoCalculate')}
                 </button>
-                <button className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary-dark transition-all cursor-pointer">
+                <button className="flex items-center gap-2 px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-medium hover:bg-primary/90 transition-all cursor-pointer">
                   <Send className="w-3.5 h-3.5" />
                   {t('teacher.grading.publishGrades')}
                 </button>
@@ -179,7 +179,7 @@ export default function PenilaianPage() {
                   {gradeBook.map((student, idx) => (
                     <tr key={student.id} className="border-b border-slate-50 last:border-b-0 hover:bg-slate-50/50 transition-colors">
                       <td className="px-6 py-3 text-sm text-slate-500">{idx + 1}</td>
-                      <td className="px-6 py-3 text-sm font-medium text-text-main">{student.name}</td>
+                      <td className="px-6 py-3 text-sm font-medium text-foreground">{student.name}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment1)}`}>{student.assignment1}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment2)}`}>{student.assignment2}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment3)}`}>{student.assignment3}</td>

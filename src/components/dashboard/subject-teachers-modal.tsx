@@ -238,7 +238,7 @@ export default function SubjectTeachersModal({
                   <button
                     onClick={handleAssignTeacher}
                     disabled={!selectedTeacherId || loading}
-                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" />
                     Tambah Guru

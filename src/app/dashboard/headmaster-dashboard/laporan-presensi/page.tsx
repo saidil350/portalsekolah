@@ -42,7 +42,7 @@ export default function LaporanPresensiPage() {
   const { t } = useLanguage();
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-12">
         <div className="max-w-[1280px] mx-auto flex flex-col gap-8">
 

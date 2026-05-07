@@ -131,11 +131,11 @@ export function ToastProvider({
                 {icons[toast.type]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-text-primary">
+                <p className="text-sm font-semibold text-foreground">
                   {toast.title}
                 </p>
                 {toast.message && (
-                  <p className="text-sm text-text-secondary mt-1">
+                  <p className="text-sm text-muted-foreground mt-1">
                     {toast.message}
                   </p>
                 )}
@@ -150,7 +150,7 @@ export function ToastProvider({
               </div>
               <button
                 onClick={() => removeToast(toast.id)}
-                className="shrink-0 text-text-tertiary hover:text-text-secondary transition-colors cursor-pointer"
+                className="shrink-0 text-muted-foreground hover:text-muted-foreground transition-colors cursor-pointer"
                 aria-label="Close notification"
               >
                 <X className="w-4 h-4" />

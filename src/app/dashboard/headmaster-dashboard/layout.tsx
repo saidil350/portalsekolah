@@ -19,7 +19,7 @@ export default async function HeadmasterDashboardLayout({
   const { user } = authResult;
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background-light text-text-main font-display antialiased">
+    <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-display antialiased">
       <HeadmasterSidebar headmaster={user as any} />
       {children}
     </div>

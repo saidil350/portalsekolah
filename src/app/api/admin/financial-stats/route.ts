@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     const { data: activeAY } = await supabase
       .from('academic_years')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .single()
 
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
     let unpaidQuery = supabase
       .from('student_invoices')
       .select('*', { count: 'exact', head: true })
+      .eq('organization_id', auth.user.organization_id)
       .in('status', ['PENDING', 'ARREARS'])
 
     if (academicYearId) {
@@ -54,6 +56,7 @@ export async function GET(request: Request) {
           registration_number
         )
       `)
+      .eq('organization_id', auth.user.organization_id)
       .in('status', ['PENDING', 'ARREARS'])
       .order('due_date', { ascending: true })
       .limit(10)
@@ -83,6 +86,7 @@ export async function GET(request: Request) {
             name
           )
         `)
+        .eq('organization_id', auth.user.organization_id)
         .in('student_id', studentIds)
         .eq('academic_year_id', academicYearId)
       

@@ -66,7 +66,7 @@ export default function KeuanganPage() {
   };
 
   return (
-      <main className="flex-1 flex flex-col h-full bg-background-light relative min-w-0">
+      <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
         <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
           <div className="flex flex-col">
             <h2 className="text-slate-900 text-[20px] font-bold">{t('admin.finance.title')}</h2>
@@ -77,7 +77,7 @@ export default function KeuanganPage() {
               <CalendarClock className="w-4 h-4" />
               {t('admin.finance.btn.billingHistory')}
             </button>
-            <button type="button" className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark active:scale-[0.97] transition-all shadow-sm">
+            <button type="button" className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 active:scale-[0.97] transition-all shadow-sm">
               <Banknote className="w-4 h-4" />
               {t('admin.finance.btn.generateBills')}
             </button>
@@ -129,7 +129,7 @@ export default function KeuanganPage() {
                       <h3 className="text-slate-900 text-lg font-bold">{t('admin.finance.rates.title')}</h3>
                       <p className="text-slate-500 text-sm">{t('admin.finance.rates.description')}</p>
                     </div>
-                    <button type="button" className="flex items-center gap-1.5 text-primary text-sm font-medium hover:text-primary-dark transition-colors active:scale-[0.97]">
+                    <button type="button" className="flex items-center gap-1.5 text-primary text-sm font-medium hover:text-primary/80 transition-colors active:scale-[0.97]">
                       <Plus className="w-4 h-4" />
                       {t('admin.finance.rates.btn.addSpecial')}
                     </button>
@@ -366,7 +366,7 @@ export default function KeuanganPage() {
                       </div>
                       <div className="px-4 py-3"><span className="text-slate-500 text-sm whitespace-nowrap">{student.lastPayment}</span></div>
                       <div className="px-4 py-3 flex justify-end">
-                        <button type="button" className="text-primary text-sm font-medium hover:text-primary-dark active:scale-[0.95] transition-all whitespace-nowrap">{t('admin.finance.incomplete.action.assign')}</button>
+                        <button type="button" className="text-primary text-sm font-medium hover:text-primary/80 active:scale-[0.95] transition-all whitespace-nowrap">{t('admin.finance.incomplete.action.assign')}</button>
                       </div>
                     </div>
                   ))}

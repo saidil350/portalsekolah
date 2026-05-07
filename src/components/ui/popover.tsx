@@ -67,7 +67,7 @@ export function DropdownMenu({ trigger, items, align = 'end', side = 'bottom' }:
               "disabled:opacity-50 disabled:cursor-not-allowed",
               item.variant === 'danger' && "hover:bg-error-50 text-error-600",
               item.variant === 'warning' && "hover:bg-warning-50 text-warning-600",
-              (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-text-primary"
+              (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-foreground"
             )}
           >
             {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}
@@ -129,7 +129,7 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
                   "disabled:opacity-50 disabled:cursor-not-allowed",
                   item.variant === 'danger' && "hover:bg-error-50 text-error-600",
                   item.variant === 'warning' && "hover:bg-warning-50 text-warning-600",
-                  (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-text-primary"
+                  (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-foreground"
                 )}
               >
                 {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}

@@ -85,7 +85,7 @@ export default function TeachingDashboardPage() {
       accentColor: 'bg-slate-300',
       isActive: false,
       actionLabel: t('schedule.viewDetails'),
-      actionStyle: 'bg-white border border-slate-200 text-text-main',
+      actionStyle: 'bg-white border border-slate-200 text-foreground',
     },
     {
       id: 3,
@@ -100,7 +100,7 @@ export default function TeachingDashboardPage() {
       accentColor: 'bg-slate-300',
       isActive: false,
       actionLabel: t('schedule.viewDetails'),
-      actionStyle: 'bg-white border border-slate-200 text-text-main',
+      actionStyle: 'bg-white border border-slate-200 text-foreground',
     },
   ];
 
@@ -157,15 +157,15 @@ export default function TeachingDashboardPage() {
       ];
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-7xl mx-auto flex flex-col gap-8">
 
           {/* Header Section */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div>
-              <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('db.title')}</h2>
-              <p className="text-text-sub mt-1">{t('db.subtitle')}</p>
+              <h2 className="text-foreground text-3xl font-bold tracking-tight">{t('db.title')}</h2>
+              <p className="text-muted-foreground mt-1">{t('db.subtitle')}</p>
             </div>
             <div className="flex gap-3">
               <Button
@@ -222,44 +222,44 @@ export default function TeachingDashboardPage() {
               {/* Total Students */}
               <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-text-sub">{t('stat.totalStudents')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('stat.totalStudents')}</p>
                   <Users className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <h3 className="text-2xl font-bold text-text-main">{stats.totalStudents}</h3>
+                  <h3 className="text-2xl font-bold text-foreground">{stats.totalStudents}</h3>
                   <span className="text-xs font-medium text-emerald-600">+2 {t('stat.new')}</span>
                 </div>
               </div>
               {/* Classes Today */}
               <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-text-sub">{t('stat.classesToday')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('stat.classesToday')}</p>
                   <BookOpen className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <h3 className="text-2xl font-bold text-text-main">4</h3>
-                  <span className="text-xs font-medium text-text-sub">2 {t('stat.remaining')}</span>
+                  <h3 className="text-2xl font-bold text-foreground">4</h3>
+                  <span className="text-xs font-medium text-muted-foreground">2 {t('stat.remaining')}</span>
                 </div>
               </div>
               {/* Pending Reviews */}
               <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-text-sub">{t('stat.pendingReviews')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('stat.pendingReviews')}</p>
                   <ClipboardCheck className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <h3 className="text-2xl font-bold text-text-main">{stats.pendingReviews}</h3>
+                  <h3 className="text-2xl font-bold text-foreground">{stats.pendingReviews}</h3>
                   <span className="text-xs font-medium text-orange-600">{t('stat.highPriority')}</span>
                 </div>
               </div>
               {/* Avg. Attendance */}
               <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-text-sub">{t('stat.avgAttendance')}</p>
+                  <p className="text-sm font-medium text-muted-foreground">{t('stat.avgAttendance')}</p>
                   <TrendingUp className="w-5 h-5 text-slate-400" />
                 </div>
                 <div className="flex items-baseline gap-2 mt-1">
-                  <h3 className="text-2xl font-bold text-text-main">94%</h3>
+                  <h3 className="text-2xl font-bold text-foreground">94%</h3>
                   <span className="text-xs font-medium text-emerald-600">+1.2%</span>
                 </div>
               </div>
@@ -271,10 +271,10 @@ export default function TeachingDashboardPage() {
             {/* Left Column: Today's Schedule */}
             <div className="flex-2 flex flex-col gap-6 min-w-0">
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-text-main">{t('schedule.title')}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('schedule.title')}</h3>
                 <Link
                   href="/dashboard/teaching-dashboard/jadwal-mengajar"
-                  className="text-sm font-medium text-primary hover:text-primary-dark transition-colors cursor-pointer"
+                  className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer"
                 >
                   {t('schedule.viewFull')}
                 </Link>
@@ -305,18 +305,18 @@ export default function TeachingDashboardPage() {
                             {cls.status}
                           </span>
                         )}
-                        <h4 className="text-lg font-semibold text-text-main">{cls.subject}</h4>
+                        <h4 className="text-lg font-semibold text-foreground">{cls.subject}</h4>
                       </div>
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5">
-                        <span className="flex items-center gap-1.5 text-sm text-text-sub">
+                        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <Clock className="w-3.5 h-3.5" />
                           {cls.time}
                         </span>
-                        <span className="flex items-center gap-1.5 text-sm text-text-sub">
+                        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <MapPin className="w-3.5 h-3.5" />
                           {cls.room}
                         </span>
-                        <span className="flex items-center gap-1.5 text-sm text-text-sub">
+                        <span className="flex items-center gap-1.5 text-sm text-muted-foreground">
                           <Users className="w-3.5 h-3.5" />
                           {cls.students} {t('schedule.students')}
                         </span>
@@ -337,7 +337,7 @@ export default function TeachingDashboardPage() {
             <div className="w-[320px] shrink-0 flex flex-col gap-6">
               {/* Recent Grading */}
               <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-text-main">{t('grading.title')}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('grading.title')}</h3>
                 <button title="More Options" className="p-1 text-slate-400 hover:text-slate-600 transition-colors cursor-pointer">
                   <MoreHorizontal className="w-4 h-4" />
                 </button>
@@ -347,12 +347,12 @@ export default function TeachingDashboardPage() {
                 {/* Header with grade progress */}
                 <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                   <div>
-                    <p className="text-base font-semibold text-text-main">{t('teacher.exam.midtermCalc')}</p>
-                    <p className="text-xs text-text-sub">{t('grading.due')} {t('teacher.date.oct20_2023')}</p>
+                    <p className="text-base font-semibold text-foreground">{t('teacher.exam.midtermCalc')}</p>
+                    <p className="text-xs text-muted-foreground">{t('grading.due')} {t('teacher.date.oct20_2023')}</p>
                   </div>
                   <div className="text-right">
                     <p className="text-lg font-semibold text-primary">18/32</p>
-                    <p className="text-xs text-text-sub">{t('grading.graded')}</p>
+                    <p className="text-xs text-muted-foreground">{t('grading.graded')}</p>
                   </div>
                 </div>
 
@@ -364,8 +364,8 @@ export default function TeachingDashboardPage() {
                         {getInitials(student.name)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-text-main">{student.name}</p>
-                        <p className="text-xs text-text-sub">{student.submitted}</p>
+                        <p className="text-sm font-medium text-foreground">{student.name}</p>
+                        <p className="text-xs text-muted-foreground">{student.submitted}</p>
                       </div>
                       {student.needsGrade ? (
                         <button className="px-3 py-1.5 bg-primary/10 text-primary rounded-lg text-xs font-medium hover:bg-primary/20 transition-colors cursor-pointer">
@@ -384,7 +384,7 @@ export default function TeachingDashboardPage() {
                 </div>
 
                 {/* View All button */}
-                <button className="w-full flex items-center justify-center px-4 py-2.5 border border-slate-200 rounded-lg text-sm font-medium text-text-main hover:bg-slate-50 transition-all cursor-pointer">
+                <button className="w-full flex items-center justify-center px-4 py-2.5 border border-slate-200 rounded-lg text-sm font-medium text-foreground hover:bg-slate-50 transition-all cursor-pointer">
                   {t('grading.viewAll')}
                 </button>
               </div>

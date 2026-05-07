@@ -177,7 +177,7 @@ export default function PengaturanSistemPage() {
 
   if (loading) {
     return (
-      <main className="flex-1 flex flex-col h-full bg-background-light relative min-w-0">
+      <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
         <div className="flex-1 overflow-y-auto flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -186,7 +186,7 @@ export default function PengaturanSistemPage() {
   }
 
   return (
-      <main className="flex-1 flex flex-col h-full bg-background-light relative min-w-0">
+      <main className="flex-1 flex flex-col h-full bg-background relative min-w-0">
         {/* Toast Message */}
         {message && (
           <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
@@ -317,7 +317,7 @@ export default function PengaturanSistemPage() {
                      <button
                        type="submit"
                        disabled={profileSaving}
-                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${profileSaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary-dark'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${profileSaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
                      >
                         {profileSaving ? (
                           <>
@@ -429,7 +429,7 @@ export default function PengaturanSistemPage() {
                            <span className="text-slate-500 text-xs mb-2">{t('admin.settings.identity.logoDesc')}</span>
                            <button
                              type="button"
-                             className="text-primary text-sm font-medium hover:text-primary-dark transition-colors self-start"
+                             className="text-primary text-sm font-medium hover:text-primary/80 transition-colors self-start"
                              onClick={() => fileInputRef.current?.click()}
                            >
                              {t('admin.settings.identity.logoChange')}
@@ -443,7 +443,7 @@ export default function PengaturanSistemPage() {
                      <button
                        type="submit"
                        disabled={updating}
-                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${identitySaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary-dark'} disabled:opacity-50 disabled:cursor-not-allowed`}
+                       className={`px-6 py-2 rounded-lg text-sm font-medium transition-all shadow-sm flex items-center gap-2 ${identitySaved ? 'bg-emerald-500 text-white' : 'bg-primary text-white hover:bg-primary/90'} disabled:opacity-50 disabled:cursor-not-allowed`}
                      >
                         {updating ? (
                           <>
@@ -544,7 +544,7 @@ export default function PengaturanSistemPage() {
                <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden flex flex-col lg:h-[750px] w-full">
                   <div className="border-b border-slate-100 p-6 flex items-center justify-between shrink-0">
                     <h3 className="text-slate-900 text-lg font-bold">{t('admin.settings.audit.title')}</h3>
-                    <button type="button" className="text-primary text-sm font-medium hover:text-primary-dark transition-colors">{t('admin.settings.audit.viewAll')}</button>
+                    <button type="button" className="text-primary text-sm font-medium hover:text-primary/80 transition-colors">{t('admin.settings.audit.viewAll')}</button>
                   </div>
                   <div className="flex-1 overflow-y-auto w-full relative">
                      <div className="flex flex-col w-full">

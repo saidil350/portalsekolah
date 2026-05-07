@@ -1,23 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
+import { authorizeApi } from '@/lib/auth/authorization'
 
 export async function GET(request: Request) {
   try {
-    const userClient = await createClient()
-    const { data: { user }, error: userError } = await userClient.auth.getUser()
-
-    if (userError || !user) {
-      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
-    }
-
-    // Role check
-    const { data: profile, error: profileError } = await userClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profileError || !profile || profile.role !== 'ADMIN_IT') {
-      return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return Response.json({ success: false, error: auth.error }, { status: auth.statusCode })
     }
 
     const supabase = await createClient()
@@ -25,6 +13,7 @@ export async function GET(request: Request) {
     const { data, error } = await supabase
       .from('rooms')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('name')
 

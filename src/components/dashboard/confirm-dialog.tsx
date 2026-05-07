@@ -1,8 +1,19 @@
-'use client'
+"use client"
 
-import React from 'react'
-import { AlertTriangle, Loader2 } from 'lucide-react'
-import { useLanguage } from '@/contexts/LanguageContext'
+import { AlertTriangle, Info, Loader2 } from "lucide-react"
+
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { useLanguage } from "@/contexts/LanguageContext"
+import { cn } from "@/lib/utils"
 
 interface ConfirmDialogProps {
   isOpen: boolean
@@ -12,7 +23,7 @@ interface ConfirmDialogProps {
   message: string
   confirmText?: string
   cancelText?: string
-  type?: 'danger' | 'warning' | 'info'
+  type?: "danger" | "warning" | "info"
   loading?: boolean
 }
 
@@ -24,96 +35,57 @@ export default function ConfirmDialog({
   message,
   confirmText,
   cancelText,
-  type = 'danger',
-  loading = false
+  type = "danger",
+  loading = false,
 }: ConfirmDialogProps) {
   const { t } = useLanguage()
-  const handleConfirm = async () => {
-    await onConfirm()
-  }
 
-  if (!isOpen) return null
-
-  const getTypeStyles = () => {
-    switch (type) {
-      case 'danger':
-        return {
-          iconBg: 'bg-red-100',
-          iconColor: 'text-red-600',
-          buttonBg: 'bg-red-600',
-          buttonHover: 'hover:bg-red-700'
-        }
-      case 'warning':
-        return {
-          iconBg: 'bg-amber-100',
-          iconColor: 'text-amber-600',
-          buttonBg: 'bg-amber-600',
-          buttonHover: 'hover:bg-amber-700'
-        }
-      case 'info':
-        return {
-          iconBg: 'bg-blue-100',
-          iconColor: 'text-blue-600',
-          buttonBg: 'bg-blue-600',
-          buttonHover: 'hover:bg-blue-700'
-        }
-      default:
-        return {
-          iconBg: 'bg-red-100',
-          iconColor: 'text-red-600',
-          buttonBg: 'bg-red-600',
-          buttonHover: 'hover:bg-red-700'
-        }
-    }
-  }
-
-  const styles = getTypeStyles()
+  const icon =
+    type === "info" ? (
+      <Info className="size-6 text-info-500" />
+    ) : (
+      <AlertTriangle className={cn("size-6", type === "warning" ? "text-warning-500" : "text-destructive")} />
+    )
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md">
-        {/* Header with Icon */}
-        <div className="p-6">
-          <div className="flex items-start gap-4">
-            <div className={`shrink-0 w-12 h-12 rounded-full ${styles.iconBg} flex items-center justify-center`}>
-              <AlertTriangle className={`w-6 h-6 ${styles.iconColor}`} />
+    <AlertDialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <div className="flex items-start gap-4 text-left">
+            <div className="flex size-12 shrink-0 items-center justify-center rounded-full bg-muted">
+              {icon}
             </div>
-            <div className="flex-1">
-              <h3 className="text-lg font-bold text-text-main mb-2">
-                {title}
-              </h3>
-              <p className="text-sm text-slate-600 leading-relaxed">
+            <div className="min-w-0 flex-1">
+              <AlertDialogTitle>{title}</AlertDialogTitle>
+              <AlertDialogDescription className="mt-2 leading-relaxed">
                 {message}
-              </p>
+              </AlertDialogDescription>
             </div>
           </div>
-        </div>
-
-        {/* Actions */}
-        <div className="px-6 pb-6 flex gap-3">
-          <button
-            onClick={onClose}
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel disabled={loading}>
+            {cancelText || t("admin.userManagement.dialog.cancel")}
+          </AlertDialogCancel>
+          <AlertDialogAction
             disabled={loading}
-            className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {cancelText || t('admin.userManagement.dialog.cancel')}
-          </button>
-          <button
-            onClick={handleConfirm}
-            disabled={loading}
-            className={`flex-1 px-4 py-2.5 ${styles.buttonBg} text-white rounded-lg ${styles.buttonHover} transition-all font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed`}
+            onClick={(event) => {
+              event.preventDefault()
+              void onConfirm()
+            }}
+            className={cn(type === "danger" && "bg-destructive text-white hover:bg-destructive/90")}
           >
             {loading ? (
               <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                {t('admin.userManagement.dialog.processing')}
+                <Loader2 className="animate-spin" />
+                {t("admin.userManagement.dialog.processing")}
               </>
             ) : (
-              confirmText || t('admin.userManagement.dialog.syncConfirm')
+              confirmText || t("admin.userManagement.dialog.syncConfirm")
             )}
-          </button>
-        </div>
-      </div>
-    </div>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

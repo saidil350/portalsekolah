@@ -14,6 +14,8 @@ export interface AuthenticatedUser {
   role: UserRole
   full_name: string
   organization_id: string
+  is_active?: boolean
+  status?: string
   [key: string]: unknown
 }
 
@@ -42,7 +44,7 @@ async function getProfileForAuthorization(userId: string) {
 
   const primaryResult = await supabase
     .from('profiles')
-    .select('id, email, role, full_name, organization_id')
+    .select('id, email, role, full_name, organization_id, is_active, status')
     .eq('id', userId)
     .single()
 
@@ -59,7 +61,7 @@ async function getProfileForAuthorization(userId: string) {
   const adminClient = await createAdminClient()
   const fallbackResult = await adminClient
     .from('profiles')
-    .select('id, email, role, full_name, organization_id')
+    .select('id, email, role, full_name, organization_id, is_active, status')
     .eq('id', userId)
     .single()
 
@@ -93,6 +95,23 @@ export class AuthError {
       statusCode: 500
     } as const
   }
+}
+
+function validateTenantProfile(profile: {
+  role?: string | null
+  organization_id?: string | null
+  is_active?: boolean | null
+  status?: string | null
+}) {
+  if (!profile.organization_id) {
+    return AuthError.forbidden('Akun belum terhubung ke organization sekolah.')
+  }
+
+  if (profile.is_active === false || profile.status === 'INACTIVE') {
+    return AuthError.forbidden('Akun sedang tidak aktif.')
+  }
+
+  return null
 }
 
 /**
@@ -145,6 +164,11 @@ export async function authorizeApi(
     // Step 3: Validate role
     if (!profile.role || !allowedRoles.includes(profile.role as UserRole)) {
       return AuthError.forbidden()
+    }
+
+    const tenantError = validateTenantProfile(profile)
+    if (tenantError) {
+      return tenantError
     }
 
     return {
@@ -207,6 +231,11 @@ export async function authorizeAction(
       return AuthError.forbidden()
     }
 
+    const tenantError = validateTenantProfile(profile)
+    if (tenantError) {
+      return tenantError
+    }
+
     return {
       success: true,
       user: profile as AuthenticatedUser
@@ -219,6 +248,9 @@ export async function authorizeAction(
     return AuthError.serverError('Authorization check failed')
   }
 }
+
+export const requireTenantAction = authorizeAction
+export const requireTenantApi = authorizeApi
 
 /**
  * Authorize dashboard layout access
@@ -292,6 +324,15 @@ export async function authorizeDashboard(
         profileRole: profile.role,
         allowedRole,
         hasRole: !!profile.role
+      })
+      return null
+    }
+
+    const tenantError = validateTenantProfile(profile)
+    if (tenantError) {
+      console.log('[AUTH] Dashboard authorization - Tenant profile invalid:', {
+        userId: profile.id,
+        reason: tenantError.error,
       })
       return null
     }

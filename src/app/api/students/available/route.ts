@@ -1,4 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
+import { authorizeApi } from '@/lib/auth/authorization'
 import { detectProfilesHasColumn, detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
 
 export async function GET(request: Request) {
@@ -14,14 +15,34 @@ export async function GET(request: Request) {
   }
 
   try {
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return Response.json({ success: false, data: [], error: auth.error }, { status: auth.statusCode })
+    }
+
     const supabase = await createClient()
     const hasIsActive = await detectProfilesHasIsActive(supabase)
     const hasNisn = await detectProfilesHasColumn(supabase, 'nisn')
+
+    const { data: classData } = await supabase
+      .from('classes')
+      .select('id')
+      .eq('id', classId)
+      .eq('organization_id', auth.user.organization_id)
+      .maybeSingle()
+
+    if (!classData) {
+      return Response.json(
+        { success: false, data: [], error: 'Kelas tidak ditemukan di sekolah ini' },
+        { status: 404 }
+      )
+    }
 
     // Get enrolled student IDs
     const { data: enrollmentsData, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select('student_id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('status', 'ACTIVE')
 
@@ -37,6 +58,7 @@ export async function GET(request: Request) {
     let query = supabase
       .from('profiles')
       .select(selectFields.join(', '))
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'SISWA')
       .order('full_name')
 

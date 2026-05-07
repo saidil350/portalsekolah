@@ -24,7 +24,7 @@ export function Calendar({
         months: "flex flex-col sm:flex-row gap-2",
         month: "flex flex-col gap-4",
         month_caption: "flex justify-center pt-1 relative items-center",
-        caption_label: "text-sm font-medium text-text-primary",
+        caption_label: "text-sm font-medium text-foreground",
         nav: "flex items-center gap-1",
         button_previous: cn(
           "flex h-7 w-7 items-center justify-center rounded-md hover:bg-slate-100 transition-colors cursor-pointer",
@@ -36,14 +36,14 @@ export function Calendar({
         ),
         month_grid: "w-full border-collapse space-x-1",
         weekdays: "flex",
-        weekday: "text-[0.8rem] font-medium text-text-secondary w-9",
+        weekday: "text-[0.8rem] font-medium text-muted-foreground w-9",
         week: "flex w-full mt-2",
         day: cn(
-          "relative h-9 w-9 p-0 text-sm font-normal text-text-primary transition-colors",
+          "relative h-9 w-9 p-0 text-sm font-normal text-foreground transition-colors",
           "hover:bg-slate-100 hover:rounded-md cursor-pointer",
           "selected:bg-primary-500 selected:text-white selected:hover:bg-primary-600",
-          "disabled:text-text-tertiary disabled:hover:bg-transparent disabled:cursor-not-allowed",
-          "outside-month:text-text-tertiary"
+          "disabled:text-muted-foreground disabled:hover:bg-transparent disabled:cursor-not-allowed",
+          "outside-month:text-muted-foreground"
         ),
         day_button: "h-9 w-9 p-0 font-normal",
         range_start: "rounded-l-md",
@@ -307,7 +307,7 @@ export function DateRangePickerWithPresets({
           <div className="absolute top-full right-0 z-20 mt-1">
             <div className="bg-white rounded-lg border border-slate-200 shadow-lg p-4 flex gap-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium text-text-secondary">Preset</p>
+                <p className="text-sm font-medium text-muted-foreground">Preset</p>
                 {presets.map((preset, index) => (
                   <button
                     key={index}

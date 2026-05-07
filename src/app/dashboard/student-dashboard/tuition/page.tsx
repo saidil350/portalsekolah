@@ -47,7 +47,7 @@ export default function TuitionPage() {
       amount: '$450.00',
       dueLabel: t('student.tuition.bills.dueDate'),
       dueValue: t('month.nov') + ' 10, 2024',
-      dueColor: 'text-text-main',
+      dueColor: 'text-foreground',
       status: t('student.tuition.bills.status.pending'),
       statusBg: 'bg-amber-100',
       statusColor: 'text-amber-600',
@@ -98,14 +98,14 @@ export default function TuitionPage() {
   ];
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1280px] p-10 flex flex-col gap-8">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
-              <h2 className="text-3xl font-bold text-text-main tracking-tight">{t('student.tuition.title')}</h2>
-              <p className="text-base text-text-sub">{t('student.tuition.subtitle')}</p>
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.tuition.title')}</h2>
+              <p className="text-base text-muted-foreground">{t('student.tuition.subtitle')}</p>
             </div>
           </div>
 
@@ -114,9 +114,9 @@ export default function TuitionPage() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <CreditCard className="w-5 h-5 text-slate-600" />
-                <h3 className="text-xl font-semibold text-text-main">{t('student.tuition.bills.title')}</h3>
+                <h3 className="text-xl font-semibold text-foreground">{t('student.tuition.bills.title')}</h3>
               </div>
-              <p className="text-sm text-text-sub">{t('student.tuition.bills.year').replace('{value}', '2024/2025')}</p>
+              <p className="text-sm text-muted-foreground">{t('student.tuition.bills.year').replace('{value}', '2024/2025')}</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -135,24 +135,24 @@ export default function TuitionPage() {
                   {/* Bill Info */}
                   <div>
                     <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{bill.period}</p>
-                    <h4 className="text-xl font-semibold text-text-main">{bill.title}</h4>
+                    <h4 className="text-xl font-semibold text-foreground">{bill.title}</h4>
                   </div>
 
                   {/* Details */}
                   <div className="flex flex-col gap-2 pb-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-text-sub">{t('student.tuition.bills.amount')}</span>
-                      <span className="text-sm font-semibold text-text-main">{bill.amount}</span>
+                      <span className="text-sm text-muted-foreground">{t('student.tuition.bills.amount')}</span>
+                      <span className="text-sm font-semibold text-foreground">{bill.amount}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-sm text-text-sub">{bill.dueLabel}</span>
+                      <span className="text-sm text-muted-foreground">{bill.dueLabel}</span>
                       <span className={`text-sm font-medium ${bill.dueColor}`}>{bill.dueValue}</span>
                     </div>
                   </div>
 
                   {/* Action Button */}
                   {bill.buttonType === 'pay' && (
-                    <button className="bg-primary text-white rounded-lg py-2.5 flex items-center justify-center gap-2 text-base font-medium hover:bg-primary-dark transition-colors cursor-pointer">
+                    <button className="bg-primary text-white rounded-lg py-2.5 flex items-center justify-center gap-2 text-base font-medium hover:bg-primary/90 transition-colors cursor-pointer">
                       {t('student.tuition.bills.payNow')}
                       <ArrowRight className="w-4 h-3" />
                     </button>
@@ -178,7 +178,7 @@ export default function TuitionPage() {
             <div className="flex items-center justify-between px-6 py-6 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-slate-600" />
-                <h3 className="text-lg font-semibold text-text-main">{t('student.tuition.history.title')}</h3>
+                <h3 className="text-lg font-semibold text-foreground">{t('student.tuition.history.title')}</h3>
               </div>
               <button className="flex items-center gap-1 text-primary text-sm font-medium hover:underline cursor-pointer">
                 <Filter className="w-3 h-2" />
@@ -201,14 +201,14 @@ export default function TuitionPage() {
                 <tbody>
                   {paymentHistory.map((tx, i) => (
                     <tr key={i} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
-                      <td className="pl-6 pr-4 py-5 text-sm font-medium text-text-main">{tx.id}</td>
-                      <td className="px-4 py-5 text-sm text-text-sub">{tx.date}</td>
-                      <td className="px-4 py-5 text-sm font-medium text-text-main">{tx.description}</td>
-                      <td className="px-4 py-5 text-sm font-semibold text-text-main">{tx.amount}</td>
+                      <td className="pl-6 pr-4 py-5 text-sm font-medium text-foreground">{tx.id}</td>
+                      <td className="px-4 py-5 text-sm text-muted-foreground">{tx.date}</td>
+                      <td className="px-4 py-5 text-sm font-medium text-foreground">{tx.description}</td>
+                      <td className="px-4 py-5 text-sm font-semibold text-foreground">{tx.amount}</td>
                       <td className="px-4 py-5">
                         <div className="flex items-center gap-1">
                           {getMethodIcon(tx.methodIcon)}
-                          <span className="text-sm text-text-sub">{tx.method}</span>
+                          <span className="text-sm text-muted-foreground">{tx.method}</span>
                         </div>
                       </td>
                       <td className="px-4 py-4">
@@ -223,7 +223,7 @@ export default function TuitionPage() {
             </div>
 
             <div className="border-t border-slate-100 bg-slate-50/30 py-4 flex items-center justify-center">
-              <button className="text-sm font-medium text-text-sub hover:text-text-main transition-colors cursor-pointer">
+              <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                 {t('student.tuition.history.showAll')}
               </button>
             </div>
@@ -247,10 +247,10 @@ export default function TuitionPage() {
 
           {/* Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200">
-            <p className="text-sm text-text-sub">{t('student.db.footer')}</p>
+            <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.help')}</Link>
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.privacy')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.privacy')}</Link>
             </div>
           </div>
         </div>

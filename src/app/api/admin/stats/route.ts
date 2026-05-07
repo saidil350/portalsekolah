@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     const { data: activeAY } = await supabase
       .from('academic_years')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .single()
 
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
     const { count: totalStudents } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'SISWA')
       .eq('is_active', true)
 
@@ -37,6 +39,7 @@ export async function GET(request: Request) {
     const { count: totalTeachers } = await supabase
       .from('profiles')
       .select('*', { count: 'exact', head: true })
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'GURU')
       .eq('is_active', true)
 
@@ -46,6 +49,7 @@ export async function GET(request: Request) {
       const { count } = await supabase
         .from('classes')
         .select('*', { count: 'exact', head: true })
+        .eq('organization_id', auth.user.organization_id)
         .eq('academic_year_id', academicYearId)
         .eq('is_active', true)
 

@@ -132,7 +132,7 @@ export default function PengaturanPage() {
 
   if (loading) {
     return (
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
         <div className="flex-1 overflow-y-auto flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -141,7 +141,7 @@ export default function PengaturanPage() {
   }
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Toast Message */}
       {message && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
@@ -205,7 +205,7 @@ export default function PengaturanPage() {
               {/* Personal Information Section */}
               <form onSubmit={handleProfileUpdate} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100">
-                  <h3 className="text-base font-semibold text-text-main">{t('teacher.settings.personal.photoTitle')}</h3>
+                  <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.personal.photoTitle')}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.photoDesc')}</p>
                 </div>
                 <div className="px-6 py-6 flex items-center gap-6">
@@ -213,24 +213,24 @@ export default function PengaturanPage() {
                     <div className="w-20 h-20 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xl font-bold border-4 border-primary/10">
                       {profile ? getInitials(profile.full_name) : 'AJ'}
                     </div>
-                    <button type="button" title="Upload Picture" className="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary-dark transition-colors cursor-pointer">
+                    <button type="button" title="Upload Picture" className="absolute bottom-0 right-0 w-8 h-8 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-primary/90 transition-colors cursor-pointer">
                       <Camera className="w-4 h-4" />
                     </button>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-text-main">{profile?.full_name || t('teacher.settings.personal.teacherNameFallback')}</p>
+                    <p className="text-sm font-medium text-foreground">{profile?.full_name || t('teacher.settings.personal.teacherNameFallback')}</p>
                     <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.photoFormat')}</p>
                   </div>
                 </div>
 
                 <div className="px-6 py-4 border-b border-slate-100">
-                  <h3 className="text-base font-semibold text-text-main">{t('teacher.settings.personal.detailsTitle')}</h3>
+                  <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.personal.detailsTitle')}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.detailsDesc')}</p>
                 </div>
                 <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Full Name */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="fullName" className="text-sm font-medium text-text-main">{t('teacher.settings.personal.fullName')}</label>
+                    <label htmlFor="fullName" className="text-sm font-medium text-foreground">{t('teacher.settings.personal.fullName')}</label>
                     <input
                       id="fullName"
                       name="fullName"
@@ -242,7 +242,7 @@ export default function PengaturanPage() {
                   </div>
                   {/* NIP */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="nip" className="text-sm font-medium text-text-main">NIP</label>
+                    <label htmlFor="nip" className="text-sm font-medium text-foreground">NIP</label>
                     <input
                       id="nip"
                       name="nip"
@@ -255,7 +255,7 @@ export default function PengaturanPage() {
                   </div>
                   {/* Email */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="email" className="text-sm font-medium text-text-main">{t('teacher.settings.personal.email')}</label>
+                    <label htmlFor="email" className="text-sm font-medium text-foreground">{t('teacher.settings.personal.email')}</label>
                     <input
                       id="email"
                       name="email"
@@ -268,7 +268,7 @@ export default function PengaturanPage() {
                   </div>
                   {/* Phone */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="phone" className="text-sm font-medium text-text-main">{t('teacher.settings.personal.phone')}</label>
+                    <label htmlFor="phone" className="text-sm font-medium text-foreground">{t('teacher.settings.personal.phone')}</label>
                     <input
                       id="phone"
                       name="phone"
@@ -280,7 +280,7 @@ export default function PengaturanPage() {
                   </div>
                   {/* Join Date */}
                   <div className="flex flex-col gap-1.5">
-                    <label htmlFor="joinDate" className="text-sm font-medium text-text-main">{t('teacher.settings.personal.joinDate')}</label>
+                    <label htmlFor="joinDate" className="text-sm font-medium text-foreground">{t('teacher.settings.personal.joinDate')}</label>
                     <input
                       id="joinDate"
                       name="joinDate"
@@ -299,7 +299,7 @@ export default function PengaturanPage() {
                   <button
                     type="submit"
                     disabled={updating}
-                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {updating && <Loader2 className="w-4 h-4 animate-spin" />}
                     <Save className="w-4 h-4" />
@@ -315,13 +315,13 @@ export default function PengaturanPage() {
               {/* Security Section */}
               <form onSubmit={handlePasswordChange} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100">
-                  <h3 className="text-base font-semibold text-text-main">{t('teacher.settings.security.changePassword')}</h3>
+                  <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.security.changePassword')}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.security.changePasswordDesc')}</p>
                 </div>
                 <div className="px-6 py-6 flex flex-col gap-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="flex flex-col gap-1.5">
-                      <label htmlFor="currentPassword" className="text-sm font-medium text-text-main">{t('teacher.settings.security.currentPassword')}</label>
+                      <label htmlFor="currentPassword" className="text-sm font-medium text-foreground">{t('teacher.settings.security.currentPassword')}</label>
                       <input
                         id="currentPassword"
                         name="currentPassword"
@@ -333,7 +333,7 @@ export default function PengaturanPage() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label htmlFor="newPassword" className="text-sm font-medium text-text-main">{t('teacher.settings.security.newPassword')}</label>
+                      <label htmlFor="newPassword" className="text-sm font-medium text-foreground">{t('teacher.settings.security.newPassword')}</label>
                       <input
                         id="newPassword"
                         name="newPassword"
@@ -346,7 +346,7 @@ export default function PengaturanPage() {
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label htmlFor="confirmPassword" className="text-sm font-medium text-text-main">{t('teacher.settings.security.confirmPassword')}</label>
+                      <label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">{t('teacher.settings.security.confirmPassword')}</label>
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
@@ -366,7 +366,7 @@ export default function PengaturanPage() {
                         <Smartphone className="w-5 h-5 text-primary" />
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-text-main">{t('teacher.settings.security.twoFactor')}</p>
+                        <p className="text-sm font-medium text-foreground">{t('teacher.settings.security.twoFactor')}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.security.twoFactorDesc')}</p>
                       </div>
                     </div>
@@ -396,7 +396,7 @@ export default function PengaturanPage() {
               {/* Notifications Section */}
               <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-100">
-                  <h3 className="text-base font-semibold text-text-main">{t('teacher.settings.notifications.preferences')}</h3>
+                  <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.notifications.preferences')}</h3>
                   <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.notifications.preferencesDesc')}</p>
                 </div>
                 <div className="px-6 py-4 divide-y divide-slate-100">
@@ -439,7 +439,7 @@ export default function PengaturanPage() {
                   ].map((notif) => (
                     <div key={notif.key} className="flex items-center justify-between py-4 first:pt-2 last:pb-2">
                       <div>
-                        <p className="text-sm font-medium text-text-main">{t(notif.labelKey as TranslationKey)}</p>
+                        <p className="text-sm font-medium text-foreground">{t(notif.labelKey as TranslationKey)}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{t(notif.descKey as TranslationKey)}</p>
                       </div>
                       {/* Toggle Switch */}
@@ -450,12 +450,19 @@ export default function PengaturanPage() {
                         onClick={() => {
                           const newValue = !notif.checked;
                           notif.setter(newValue);
+                          const nextPreferences = {
+                            email: notif.key === 'email' ? newValue : emailNotif,
+                            schedule_reminders: notif.key === 'schedule' ? newValue : scheduleReminders,
+                            assignment_submissions: notif.key === 'assignments' ? newValue : assignmentSubmissions,
+                            attendance_alerts: notif.key === 'attendance' ? newValue : attendanceAlerts,
+                            system_updates: notif.key === 'system' ? newValue : systemUpdates,
+                          };
                           updateNotificationPreferences(
-                            emailNotif,
-                            scheduleReminders,
-                            assignmentSubmissions,
-                            attendanceAlerts,
-                            systemUpdates
+                            nextPreferences.email,
+                            nextPreferences.schedule_reminders,
+                            nextPreferences.assignment_submissions,
+                            nextPreferences.attendance_alerts,
+                            nextPreferences.system_updates
                           );
                         }}
                         className={`relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer ${notif.checked ? 'bg-primary' : 'bg-slate-200'}`}

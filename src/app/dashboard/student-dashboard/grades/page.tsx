@@ -28,7 +28,7 @@ export default function GradesPage() {
     { name: t('student.performance.sub.history'), code: 'ART-101 • Dr. Da Vinci', credits: 3, midterm: 75, final: 81, grade: 'B-', gradeColor: 'text-amber-700', gradeBg: 'bg-yellow-100', point: '2.75' },
   ];
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1280px] p-10 flex flex-col gap-8">
           {/* Header */}
@@ -38,22 +38,22 @@ export default function GradesPage() {
                 <ChevronLeft className="w-2.5 h-2.5" />
                 {t('student.grades.back')}
               </Link>
-              <h2 className="text-3xl font-bold text-text-main tracking-tight">{t('student.grades.title')}</h2>
-              <p className="text-base text-text-sub">{t('student.grades.subtitle')}</p>
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.grades.title')}</h2>
+              <p className="text-base text-muted-foreground">{t('student.grades.subtitle')}</p>
             </div>
 
             {/* Filter Tabs */}
             <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-2.5 flex items-center gap-3">
               <div className="px-3 flex flex-col">
                 <span className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">{t('student.grades.period.year')}</span>
-                <span className="text-sm font-medium text-text-main">2023/2024</span>
+                <span className="text-sm font-medium text-foreground">2023/2024</span>
               </div>
               <div className="w-px h-8 bg-slate-200" />
               <div className="px-3 flex flex-col">
                 <span className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">{t('student.grades.period.semester')}</span>
-                <span className="text-sm font-medium text-text-main">{t('student.grades.period.even')}</span>
+                <span className="text-sm font-medium text-foreground">{t('student.grades.period.even')}</span>
               </div>
-              <button title="Download" className="bg-primary text-white p-2.5 rounded-xl hover:bg-primary-dark transition-colors cursor-pointer ml-2">
+              <button title="Download" className="bg-primary text-white p-2.5 rounded-xl hover:bg-primary/90 transition-colors cursor-pointer ml-2">
                 <Download className="w-4 h-3" />
               </button>
             </div>
@@ -63,12 +63,12 @@ export default function GradesPage() {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <div className="flex items-center justify-between mb-8">
               <div>
-                <h3 className="text-lg font-semibold text-text-main">{t('student.grades.overview.title')}</h3>
-                <p className="text-sm text-text-sub">{t('student.grades.overview.subtitle')}</p>
+                <h3 className="text-lg font-semibold text-foreground">{t('student.grades.overview.title')}</h3>
+                <p className="text-sm text-muted-foreground">{t('student.grades.overview.subtitle')}</p>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full bg-primary" />
-                <span className="text-xs text-text-sub">{t('student.grades.overview.score')}</span>
+                <span className="text-xs text-muted-foreground">{t('student.grades.overview.score')}</span>
               </div>
             </div>
 
@@ -98,7 +98,7 @@ export default function GradesPage() {
           {/* Subject Breakdown Table */}
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="flex items-center justify-between px-6 py-6 border-b border-slate-200">
-              <h3 className="text-lg font-semibold text-text-main">{t('student.grades.table.title')}</h3>
+              <h3 className="text-lg font-semibold text-foreground">{t('student.grades.table.title')}</h3>
               <button className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
                 <Download className="w-3.5 h-3.5" />
                 {t('student.grades.table.export')}
@@ -119,25 +119,25 @@ export default function GradesPage() {
                 {subjectData.map((item, i) => (
                   <tr key={i} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
                     <td className="pl-6 pr-4 py-6">
-                      <p className="text-sm font-semibold text-text-main">{item.name}</p>
-                      <p className="text-xs text-text-sub">{item.code}</p>
+                      <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                      <p className="text-xs text-muted-foreground">{item.code}</p>
                     </td>
-                    <td className="text-center px-4 py-6 text-sm font-medium text-text-main">{item.credits}</td>
-                    <td className="text-center px-4 py-6 text-sm font-medium text-text-main">{item.midterm}</td>
-                    <td className="text-center px-4 py-6 text-sm font-medium text-text-main">{item.final}</td>
+                    <td className="text-center px-4 py-6 text-sm font-medium text-foreground">{item.credits}</td>
+                    <td className="text-center px-4 py-6 text-sm font-medium text-foreground">{item.midterm}</td>
+                    <td className="text-center px-4 py-6 text-sm font-medium text-foreground">{item.final}</td>
                     <td className="text-center px-4 py-5">
                       <span className={`inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold ${item.gradeBg} ${item.gradeColor}`}>
                         {item.grade}
                       </span>
                     </td>
-                    <td className="text-right pr-6 pl-4 py-6 text-sm font-semibold text-text-main">{item.point}</td>
+                    <td className="text-right pr-6 pl-4 py-6 text-sm font-semibold text-foreground">{item.point}</td>
                   </tr>
                 ))}
               </tbody>
               <tfoot>
                 <tr className="bg-slate-50/80">
-                  <td className="pl-6 pr-4 py-9 text-sm font-semibold text-text-main">{t('student.grades.summary.total')}</td>
-                  <td className="text-center px-4 py-9 text-sm font-semibold text-text-main">18</td>
+                  <td className="pl-6 pr-4 py-9 text-sm font-semibold text-foreground">{t('student.grades.summary.total')}</td>
+                  <td className="text-center px-4 py-9 text-sm font-semibold text-foreground">18</td>
                   <td colSpan={3}></td>
                   <td className="text-right pr-6 pl-4 py-4">
                     <p className="text-2xl font-bold text-primary">3.58</p>
@@ -152,9 +152,9 @@ export default function GradesPage() {
           <div className="grid grid-cols-3 gap-6">
             {/* Cumulative GPA */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.grades.summary.cumulative')}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.cumulative')}</p>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-text-main">3.85</span>
+                <span className="text-2xl font-bold text-foreground">3.85</span>
                 <span className="bg-green-100 rounded-full px-2 py-1 text-xs font-medium text-green-700">
                   {t('student.grades.summary.cumulativeTrend').replace('{value}', '+0.2')}
                 </span>
@@ -163,9 +163,9 @@ export default function GradesPage() {
 
             {/* Total Credits */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.grades.summary.credits')}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.credits')}</p>
               <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-text-main">84 / 144</span>
+                <span className="text-2xl font-bold text-foreground">84 / 144</span>
                 <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
                   <div className="h-full bg-primary rounded-full w-[58%]" />
                 </div>
@@ -174,9 +174,9 @@ export default function GradesPage() {
 
             {/* Rank */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.grades.summary.rank')}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.rank')}</p>
               <div className="flex items-center gap-1">
-                <span className="text-2xl font-bold text-text-main">#12 </span>
+                <span className="text-2xl font-bold text-foreground">#12 </span>
                 <span className="text-lg text-slate-400">{t('student.grades.summary.rankOf').replace('{total}', '120')}</span>
                 <TrendingUp className="w-2.5 h-5 text-green-500 ml-3" />
               </div>
@@ -185,10 +185,10 @@ export default function GradesPage() {
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-6 border-t border-slate-200">
-            <p className="text-sm text-text-sub">{t('student.db.footer')}</p>
+            <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.help')}</Link>
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.privacy')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.privacy')}</Link>
             </div>
           </div>
         </div>

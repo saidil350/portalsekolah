@@ -58,32 +58,19 @@ export function validateNISN(nisn: string): { valid: boolean; message?: string }
 }
 
 /**
- * Generate kode organisasi unik dari nama sekolah
+ * Generate kode organisasi deterministik dari nama sekolah
  * Contoh: "SMA Negeri 1 Jakarta" → "SMAN1JAK-A3F2"
  * @param name - Nama sekolah/organisasi
- * @returns Kode organisasi (max 20 karakter)
+ * @returns Kode organisasi berbasis nama sekolah
  */
 export function generateOrgCode(name: string): string {
-  // Bersihkan dan uppercase
-  const clean = name
+  return name
     .trim()
     .toUpperCase()
-    // Hapus kata-kata umum
-    .replace(/\b(SEKOLAH|NEGERI|SWASTA|YAYASAN|PONDOK|PESANTREN)\b/gi, '')
-    // Hapus karakter non-alfanumerik
-    .replace(/[^A-Z0-9]/g, '')
-
-  // Ambil 10 karakter pertama
-  const prefix = clean.substring(0, 10)
-
-  // Generate 4 karakter random
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
-  let suffix = ''
-  for (let i = 0; i < 4; i++) {
-    suffix += chars.charAt(Math.floor(Math.random() * chars.length))
-  }
-
-  return `${prefix}-${suffix}`
+    .replace(/[^A-Z0-9 ]/g, '')
+    .replace(/\s+/g, ' ')
+    .substring(0, 32)
+    .trim()
 }
 
 /**

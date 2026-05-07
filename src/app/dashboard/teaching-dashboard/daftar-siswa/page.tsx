@@ -33,7 +33,7 @@ export default function DaftarSiswaPage() {
   const { t } = useLanguage();
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
       <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
@@ -92,7 +92,7 @@ export default function DaftarSiswaPage() {
                   {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-semibold text-text-main truncate">{student.name}</h4>
+                      <h4 className="text-sm font-semibold text-foreground truncate">{student.name}</h4>
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         student.status === 'Active'
                           ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'

@@ -48,7 +48,7 @@ export default function LaporanKeuanganPage() {
   };
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-12">
         <div className="max-w-[1280px] mx-auto flex flex-col gap-8">
 
@@ -67,7 +67,7 @@ export default function LaporanKeuanganPage() {
                 <FileText className="w-3.5 h-3.5" />
                 {t('headmaster.financialReport.export.pdf')}
               </button>
-              <button className="flex items-center gap-2 px-4 py-2.5 bg-primary border border-primary text-white rounded-lg text-sm font-semibold hover:bg-primary-dark shadow-sm transition-all cursor-pointer">
+              <button className="flex items-center gap-2 px-4 py-2.5 bg-primary border border-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 shadow-sm transition-all cursor-pointer">
                 <FileSpreadsheet className="w-4 h-4" />
                 {t('headmaster.financialReport.export.excel')}
               </button>

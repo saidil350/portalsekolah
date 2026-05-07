@@ -85,7 +85,7 @@ export default function HeadmasterDashboardPage() {
   return (
 
   // Removing previous data variable definitions that we moved up
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-12">
         <div className="max-w-[1280px] mx-auto flex flex-col gap-8">
 
@@ -216,7 +216,7 @@ export default function HeadmasterDashboardPage() {
                   <h3 className="text-lg font-bold text-slate-900">{t('headmaster.db.attendanceTitle')}</h3>
                   <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.db.attendanceDesc')}</p>
                 </div>
-                <button className="text-sm font-medium text-primary hover:text-primary-dark transition-colors cursor-pointer">
+                <button className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer">
                   {t('headmaster.db.viewDetail')}
                 </button>
               </div>

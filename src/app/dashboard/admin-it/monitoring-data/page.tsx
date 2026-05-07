@@ -333,7 +333,7 @@ export default function MonitoringDataPage() {
                       } else if (item.status === 'I') {
                         badge = <span className="mt-1.5 bg-amber-100 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">IZ</span>
                       } else if (item.status === 'TODAY') {
-                        boxStyle = "bg-primary text-white shadow-md border border-primary-dark"
+                        boxStyle = "bg-primary text-white shadow-md border border-primary/80"
                         badge = <span className="mt-1.5 bg-white/20 text-white px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">HARI INI</span>
                       } else {
                         // Future days
@@ -396,7 +396,7 @@ export default function MonitoringDataPage() {
                         onChange={(e) => setNewDocName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddRequest()}
                       />
-                      <button onClick={handleAddRequest} className="bg-primary text-white px-3 py-2 rounded-lg text-xs font-extrabold tracking-wide hover:bg-primary-dark shadow-sm">Kirim</button>
+                      <button onClick={handleAddRequest} className="bg-primary text-white px-3 py-2 rounded-lg text-xs font-extrabold tracking-wide hover:bg-primary/90 shadow-sm">Kirim</button>
                       <button onClick={() => {setNewDocPrompt(false); setNewDocName('');}} className="text-slate-400 hover:bg-slate-200 hover:text-slate-600 p-1.5 rounded-md transition-colors" title="Batal tambah dokumen"><X className="w-4 h-4"/></button>
                     </div>
                   )}
@@ -449,7 +449,7 @@ export default function MonitoringDataPage() {
 
   // --- MAIN TABLE VIEW ---
   return (
-    <div className="flex w-full h-full relative overflow-hidden bg-background-light">
+    <div className="flex w-full h-full relative overflow-hidden bg-background">
       <main className="flex-1 flex flex-col h-full relative transition-all duration-300 ease-in-out">
         
         <header className="h-[72px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10">

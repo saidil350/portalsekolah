@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
 
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-8">
         <motion.div 
           className="max-w-7xl mx-auto flex flex-col gap-8"
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1 - Total Students */}
-            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -284,8 +284,8 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-text-sub text-sm font-medium">{t('admin.db.totalStudents')}</p>
-                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.totalStudents')}</p>
+                    <h3 className="text-foreground text-3xl font-bold mt-1">
                       {stats.totalStudents.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -294,7 +294,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 2 - Total Teachers */}
-            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -308,8 +308,8 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-text-sub text-sm font-medium">{t('admin.db.totalTeachers')}</p>
-                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.totalTeachers')}</p>
+                    <h3 className="text-foreground text-3xl font-bold mt-1">
                       {stats.totalTeachers.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 3 - Active Classes */}
-            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -332,8 +332,8 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-text-sub text-sm font-medium">{t('admin.db.activeClasses')}</p>
-                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.activeClasses')}</p>
+                    <h3 className="text-foreground text-3xl font-bold mt-1">
                       {stats.activeClasses.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -342,7 +342,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 4 - Unpaid Bills */}
-            <motion.div variants={itemVariants} className="bg-surface-light rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -356,8 +356,8 @@ export default function AdminDashboardPage() {
                     </span>
                   </div>
                   <div>
-                    <p className="text-text-sub text-sm font-medium">{t('admin.db.unpaidBills')}</p>
-                    <h3 className="text-text-main text-3xl font-bold mt-1">
+                    <p className="text-muted-foreground text-sm font-medium">{t('admin.db.unpaidBills')}</p>
+                    <h3 className="text-foreground text-3xl font-bold mt-1">
                       {financialStats.unpaidCount.toLocaleString('id-ID')}
                     </h3>
                   </div>
@@ -368,15 +368,15 @@ export default function AdminDashboardPage() {
 
           {/* Chart & Status Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div variants={itemVariants} className="lg:col-span-2 bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm">
+            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-slate-200 p-6 shadow-sm">
               <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="text-text-main text-lg font-bold">{t('admin.db.attendanceTrend')}</h3>
-                    <p className="text-text-sub text-sm">{t('admin.db.attendanceDesc')}</p>
+                    <h3 className="text-foreground text-lg font-bold">{t('admin.db.attendanceTrend')}</h3>
+                    <p className="text-muted-foreground text-sm">{t('admin.db.attendanceDesc')}</p>
                   </div>
                   <div className="flex flex-col items-end">
-                    <span className="text-2xl font-bold text-text-main">
+                    <span className="text-2xl font-bold text-foreground">
                       {loading ? '...' : `${attendanceStats.overall}%`}
                     </span>
                     <span className="text-xs font-medium text-emerald-600 flex items-center gap-1">
@@ -395,9 +395,9 @@ export default function AdminDashboardPage() {
 
             {/* Student Status Widget */}
             <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-4">
-              <div className="bg-surface-light rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
+              <div className="bg-card rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
                 <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-text-main text-lg font-bold">{t('admin.db.studentStatus')}</h3>
+                  <h3 className="text-foreground text-lg font-bold">{t('admin.db.studentStatus')}</h3>
                   <Users className="w-5 h-5 text-slate-400" />
                 </div>
                 
@@ -410,7 +410,7 @@ export default function AdminDashboardPage() {
                     {/* Active */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.status.active')}</span>
+                        <span className="text-muted-foreground">{t('admin.db.status.active')}</span>
                         <span className="font-medium">{studentStats.active.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
@@ -425,7 +425,7 @@ export default function AdminDashboardPage() {
                     {/* Graduated */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.status.graduated')}</span>
+                        <span className="text-muted-foreground">{t('admin.db.status.graduated')}</span>
                         <span className="font-medium">{studentStats.graduated.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
@@ -440,7 +440,7 @@ export default function AdminDashboardPage() {
                     {/* Transferred */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.status.transferred')}</span>
+                        <span className="text-muted-foreground">{t('admin.db.status.transferred')}</span>
                         <span className="font-medium">{studentStats.transferred.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
@@ -455,7 +455,7 @@ export default function AdminDashboardPage() {
                     {/* Dropout */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.status.dropout')}</span>
+                        <span className="text-muted-foreground">{t('admin.db.status.dropout')}</span>
                         <span className="font-medium">{studentStats.dropout.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
@@ -470,7 +470,7 @@ export default function AdminDashboardPage() {
                     {/* Inactive */}
                     <div>
                       <div className="flex justify-between text-sm mb-1">
-                        <span className="text-text-sub">{t('admin.db.status.inactive')}</span>
+                        <span className="text-muted-foreground">{t('admin.db.status.inactive')}</span>
                         <span className="font-medium">{studentStats.inactive.toLocaleString('id-ID')}</span>
                       </div>
                       <div className="w-full bg-slate-100 rounded-full h-2">
@@ -489,11 +489,11 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Outstanding Fees Table Section */}
-          <motion.div variants={itemVariants} className="bg-surface-light rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <motion.div variants={itemVariants} className="bg-card rounded-xl border border-slate-200 shadow-sm overflow-hidden">
             <div className="p-6 border-b border-slate-100 flex justify-between items-center">
               <div>
-                <h3 className="text-text-main text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
-                <p className="text-text-sub text-sm">{t('admin.db.outstandingFeesDesc')}</p>
+                <h3 className="text-foreground text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
+                <p className="text-muted-foreground text-sm">{t('admin.db.outstandingFeesDesc')}</p>
               </div>
               <a className="text-primary text-sm font-medium hover:underline flex items-center gap-1" href="#/financials">
                 {t('admin.db.viewAll')}
@@ -509,12 +509,12 @@ export default function AdminDashboardPage() {
                   <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 text-slate-400 mb-4">
                     <DollarSign className="w-8 h-8" />
                   </div>
-                  <p className="text-text-sub font-medium">Tidak ada tunggakan biaya saat ini.</p>
+                  <p className="text-muted-foreground font-medium">Tidak ada tunggakan biaya saat ini.</p>
                 </div>
               ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/50 text-text-sub text-xs uppercase tracking-wider font-semibold border-b border-slate-100">
+                    <tr className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider font-semibold border-b border-slate-100">
                       <th className="px-6 py-4">{t('admin.db.table.studentName')}</th>
                       <th className="px-6 py-4">{t('admin.db.table.class')}</th>
                       <th className="px-6 py-4">{t('admin.db.table.month')}</th>
@@ -544,14 +544,14 @@ export default function AdminDashboardPage() {
                                 {inv.studentName.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase()}
                               </div>
                               <div>
-                                <p className="font-medium text-text-main text-sm">{inv.studentName}</p>
-                                <p className="text-text-sub text-xs">NISN: {inv.nisn}</p>
+                                <p className="font-medium text-foreground text-sm">{inv.studentName}</p>
+                                <p className="text-muted-foreground text-xs">NISN: {inv.nisn}</p>
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 text-sm text-text-sub">{inv.className}</td>
-                          <td className="px-6 py-4 text-sm text-text-sub">{inv.month}</td>
-                          <td className="px-6 py-4 font-medium text-text-main text-sm">
+                          <td className="px-6 py-4 text-sm text-muted-foreground">{inv.className}</td>
+                          <td className="px-6 py-4 text-sm text-muted-foreground">{inv.month}</td>
+                          <td className="px-6 py-4 font-medium text-foreground text-sm">
                             {new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(inv.amount)}
                           </td>
                           <td className="px-6 py-4">

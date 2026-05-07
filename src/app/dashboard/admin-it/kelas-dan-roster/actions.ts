@@ -24,6 +24,26 @@ import type { User } from '@/types/user'
 import { detectScheduleColumnMode, getScheduleColumns, getScheduleSelect } from '@/utils/supabase/schedule-columns'
 import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
 
+async function ensureTenantRecord(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  table: string,
+  id: string | null | undefined,
+  organizationId: string
+) {
+  if (!id) return true
+
+  const { data, error } = await supabase
+    .from(table as any)
+    .select('id')
+    .eq('id', id)
+    .eq('organization_id', organizationId)
+    .maybeSingle()
+
+  if (error) throw error
+
+  return !!data
+}
+
 // =====================================================
 // CLASSES ACTIONS
 // =====================================================
@@ -59,6 +79,7 @@ export async function fetchClasses(
         home_room:rooms(*),
         wali_kelas:profiles!classes_wali_kelas_id_fkey(id, full_name, email, role, nip)
       `, { count: 'exact' })
+      .eq('organization_id', auth.user.organization_id)
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
@@ -172,8 +193,9 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
     const { data: existingCode, error: checkError } = await supabase
       .from('classes')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('code', formData.code.trim())
-      .single()
+      .maybeSingle()
 
     console.log('Existing code check result:', { existingCode, checkError })
 
@@ -185,6 +207,21 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
     if (existingCode) {
       console.log('Code already exists')
       return { success: false, error: 'Kode kelas sudah terdaftar' }
+    }
+
+    const tenantChecks = [
+      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+      ['class_levels', formData.class_level_id, 'Tingkat kelas tidak valid untuk sekolah ini'],
+      ['semesters', formData.semester_id, 'Semester tidak valid untuk sekolah ini'],
+      ['departments', formData.department_id, 'Jurusan tidak valid untuk sekolah ini'],
+      ['rooms', formData.home_room_id, 'Ruangan tidak valid untuk sekolah ini'],
+      ['profiles', formData.wali_kelas_id, 'Wali kelas tidak valid untuk sekolah ini'],
+    ] as const
+
+    for (const [table, recordId, message] of tenantChecks) {
+      if (!(await ensureTenantRecord(supabase, table, recordId, auth.user.organization_id))) {
+        return { success: false, error: message }
+      }
     }
 
     console.log('Preparing to insert class')
@@ -201,6 +238,7 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
       is_active: formData.is_active !== undefined ? formData.is_active : true,
       description: formData.description || null,
       current_enrollment: 0,
+      organization_id: auth.user.organization_id,
     }
     console.log('Insert data:', JSON.stringify(insertData, null, 2))
 
@@ -263,9 +301,10 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
       const { data: existingCode } = await supabase
         .from('classes')
         .select('id')
+        .eq('organization_id', auth.user.organization_id)
         .eq('code', formData.code.trim())
         .neq('id', id)
-        .single()
+        .maybeSingle()
 
       if (existingCode) {
         return { success: false, error: 'Kode kelas sudah terdaftar' }
@@ -284,10 +323,26 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
     if (formData.description !== undefined) updateData.description = formData.description || null
 
+    const updateTenantChecks = [
+      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+      ['class_levels', formData.class_level_id, 'Tingkat kelas tidak valid untuk sekolah ini'],
+      ['semesters', formData.semester_id, 'Semester tidak valid untuk sekolah ini'],
+      ['departments', formData.department_id, 'Jurusan tidak valid untuk sekolah ini'],
+      ['rooms', formData.home_room_id, 'Ruangan tidak valid untuk sekolah ini'],
+      ['profiles', formData.wali_kelas_id, 'Wali kelas tidak valid untuk sekolah ini'],
+    ] as const
+
+    for (const [table, recordId, message] of updateTenantChecks) {
+      if (!(await ensureTenantRecord(supabase, table, recordId, auth.user.organization_id))) {
+        return { success: false, error: message }
+      }
+    }
+
     const { data, error } = await supabase
       .from('classes')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select()
       .single()
 
@@ -322,7 +377,11 @@ export async function deleteClass(id: string): Promise<{ success: boolean; error
   try {
     const supabase = await createClient()
 
-    const { error } = await supabase.from('classes').delete().eq('id', id)
+    const { error } = await supabase
+      .from('classes')
+      .delete()
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -366,6 +425,7 @@ export async function fetchEnrollments(classId: string): Promise<EnrollmentRespo
         *,
         student:profiles!enrollments_student_id_fkey(*)
       `)
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('status', 'ACTIVE')
       .order('created_at', { ascending: true })
@@ -407,6 +467,7 @@ export async function fetchAvailableStudents(
     const { data: enrollmentsData, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select('student_id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('status', 'ACTIVE')
 
@@ -419,6 +480,7 @@ export async function fetchAvailableStudents(
     let query = supabase
       .from('profiles')
       .select('id, full_name, email, nisn, role')
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'SISWA')
       .order('full_name')
 
@@ -461,10 +523,23 @@ export async function enrollStudent(
   try {
     const supabase = await createClient()
 
+    if (!(await ensureTenantRecord(supabase, 'classes', classId, auth.user.organization_id))) {
+      return { success: false, error: 'Kelas tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'profiles', studentId, auth.user.organization_id))) {
+      return { success: false, error: 'Siswa tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'academic_years', academicYearId, auth.user.organization_id))) {
+      return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
     // Check if student is already enrolled
     const { data: existing } = await supabase
       .from('enrollments')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('student_id', studentId)
       .eq('status', 'ACTIVE')
@@ -479,6 +554,7 @@ export async function enrollStudent(
       .from('classes')
       .select('capacity, current_enrollment')
       .eq('id', classId)
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     if (classData && classData.current_enrollment >= classData.capacity) {
@@ -493,6 +569,7 @@ export async function enrollStudent(
         student_id: studentId,
         academic_year_id: academicYearId || null,
         status: 'ACTIVE',
+        organization_id: auth.user.organization_id,
       })
       .select()
       .single()
@@ -536,6 +613,7 @@ export async function withdrawStudent(enrollmentId: string): Promise<{ success: 
       .from('enrollments')
       .select('class_id')
       .eq('id', enrollmentId)
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     // Always delete the enrollment (instead of updating status)
@@ -544,6 +622,7 @@ export async function withdrawStudent(enrollmentId: string): Promise<{ success: 
       .from('enrollments')
       .delete()
       .eq('id', enrollmentId)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -644,6 +723,7 @@ export async function fetchClassSchedules(
         room:rooms(*),
         academic_year:academic_years(*)
       `))
+      .eq('organization_id', auth.user.organization_id)
 
     // Apply filters
     if (filters.class_id) {
@@ -724,6 +804,20 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       return { success: false, error: 'Waktu mulai dan selesai wajib diisi' }
     }
 
+    const scheduleTenantChecks = [
+      ['classes', formData.class_id, 'Kelas tidak valid untuk sekolah ini'],
+      ['subjects', formData.subject_id, 'Mata pelajaran tidak valid untuk sekolah ini'],
+      ['profiles', formData.teacher_id, 'Guru tidak valid untuk sekolah ini'],
+      ['rooms', formData.room_id, 'Ruangan tidak valid untuk sekolah ini'],
+      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+    ] as const
+
+    for (const [table, recordId, message] of scheduleTenantChecks) {
+      if (!(await ensureTenantRecord(supabase, table, recordId, auth.user.organization_id))) {
+        return { success: false, error: message }
+      }
+    }
+
     const insertData: any = {
       class_id: formData.class_id,
       subject_id: formData.subject_id,
@@ -734,6 +828,7 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       semester: formData.semester || null,
       is_active: formData.is_active !== undefined ? formData.is_active : true,
       notes: formData.notes || null,
+      organization_id: auth.user.organization_id,
     }
 
     insertData[scheduleColumns.start] = formData.start_time
@@ -800,10 +895,25 @@ export async function updateClassSchedule(
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
     if (formData.notes !== undefined) updateData.notes = formData.notes || null
 
+    const updateScheduleTenantChecks = [
+      ['classes', formData.class_id, 'Kelas tidak valid untuk sekolah ini'],
+      ['subjects', formData.subject_id, 'Mata pelajaran tidak valid untuk sekolah ini'],
+      ['profiles', formData.teacher_id, 'Guru tidak valid untuk sekolah ini'],
+      ['rooms', formData.room_id, 'Ruangan tidak valid untuk sekolah ini'],
+      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+    ] as const
+
+    for (const [table, recordId, message] of updateScheduleTenantChecks) {
+      if (!(await ensureTenantRecord(supabase, table, recordId, auth.user.organization_id))) {
+        return { success: false, error: message }
+      }
+    }
+
     const { data, error } = await supabase
       .from('class_schedules')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select(getScheduleSelect(scheduleMode, ''))
       .single()
 
@@ -850,9 +960,14 @@ export async function deleteClassSchedule(
       .from('class_schedules')
       .select('class_id')
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
-    const { error } = await supabase.from('class_schedules').delete().eq('id', id)
+    const { error } = await supabase
+      .from('class_schedules')
+      .delete()
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -909,6 +1024,7 @@ export async function fetchClassRosterView(classId: string): Promise<{
         wali_kelas:profiles!classes_wali_kelas_id_fkey(*)
       `)
       .eq('id', classId)
+      .eq('organization_id', auth.user.organization_id)
       .single()
 
     if (classError) throw classError
@@ -917,6 +1033,7 @@ export async function fetchClassRosterView(classId: string): Promise<{
     const { data: enrollmentsData, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select('id, student_id, status, student:profiles!enrollments_student_id_fkey(*)')
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('status', 'ACTIVE')
       .order('created_at', { ascending: true })
@@ -939,6 +1056,7 @@ export async function fetchClassRosterView(classId: string): Promise<{
         teacher:profiles!class_schedules_teacher_id_fkey(*),
         room:rooms(*)
       `))
+      .eq('organization_id', auth.user.organization_id)
       .eq('class_id', classId)
       .eq('is_active', true)
       .order('day_of_week')
@@ -1029,15 +1147,21 @@ export async function checkScheduleAvailability(
     const { data: teachers } = await supabase
       .from('profiles')
       .select('id, full_name')
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'GURU')
 
     // Get all rooms
-    const { data: rooms } = await supabase.from('rooms').select('id, name').eq('is_active', true)
+    const { data: rooms } = await supabase
+      .from('rooms')
+      .select('id, name')
+      .eq('organization_id', auth.user.organization_id)
+      .eq('is_active', true)
 
     // Get existing schedules for this day/time (check for overlapping time ranges)
     const { data: existingSchedules } = await supabase
       .from('class_schedules')
       .select('teacher_id, room_id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('day_of_week', dayOfWeek)
       .or(`and(${scheduleColumns.start}.lte.${endTime},${scheduleColumns.end}.gte.${startTime})`)
 
@@ -1107,6 +1231,7 @@ export async function fetchClassDropdownData() {
     const { data: levelsData, error: levelsError } = await supabase
       .from('class_levels')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('level_order')
 
@@ -1116,6 +1241,7 @@ export async function fetchClassDropdownData() {
     const { data: deptData, error: deptError } = await supabase
       .from('departments')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('name')
 
@@ -1125,6 +1251,7 @@ export async function fetchClassDropdownData() {
     const { data: roomsData, error: roomsError } = await supabase
       .from('rooms')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('name')
 
@@ -1134,6 +1261,7 @@ export async function fetchClassDropdownData() {
     const { data: teachersData, error: teachersError } = await supabase
       .from('profiles')
       .select('id, full_name')
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'GURU')
       .order('full_name')
 
@@ -1143,6 +1271,7 @@ export async function fetchClassDropdownData() {
     const { data: yearsData, error: yearsError } = await supabase
       .from('academic_years')
       .select('id, name, is_active')
+      .eq('organization_id', auth.user.organization_id)
       .order('start_date', { ascending: false })
 
     if (yearsError) throw yearsError
@@ -1206,6 +1335,7 @@ export async function fetchFilterDropdownData() {
     const { data: levelsData, error: levelsError } = await supabase
       .from('class_levels')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('level_order')
 
@@ -1215,6 +1345,7 @@ export async function fetchFilterDropdownData() {
     const { data: deptData, error: deptError } = await supabase
       .from('departments')
       .select('id, name, code')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('name')
 

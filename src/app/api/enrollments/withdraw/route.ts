@@ -1,4 +1,5 @@
-import { createAdminClient, createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/server-admin'
+import { authorizeApi } from '@/lib/auth/authorization'
 
 type WithdrawRequest = {
   enrollmentId?: string | null
@@ -22,24 +23,12 @@ export async function POST(request: Request) {
       )
     }
 
-    // Auth check
-    const userClient = await createClient()
-    const { data: { user }, error: userError } = await userClient.auth.getUser()
-    if (userError || !user) {
-      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return Response.json({ success: false, error: auth.error }, { status: auth.statusCode })
     }
 
-    // Role check
-    const { data: profile, error: profileError } = await userClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profileError || !profile || profile.role !== 'ADMIN_IT') {
-      return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
-    }
-
+    const organizationId = auth.user.organization_id
     const adminClient = await createAdminClient()
 
     let targetId = enrollmentId
@@ -47,6 +36,7 @@ export async function POST(request: Request) {
       const { data: existing, error: existingError } = await adminClient
         .from('enrollments')
         .select('id')
+        .eq('organization_id', organizationId)
         .eq('class_id', classId as string)
         .eq('student_id', studentId as string)
         .in('status', ACTIVE_STATUS_CANDIDATES)
@@ -76,6 +66,7 @@ export async function POST(request: Request) {
       .from('enrollments')
       .delete()
       .eq('id', targetId)
+      .eq('organization_id', organizationId)
       .select()
       .single()
 

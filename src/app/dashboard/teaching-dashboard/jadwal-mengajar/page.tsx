@@ -64,7 +64,7 @@ const dayKeys = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'] as cons
 
 export default function JadwalMengajarPage() {
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
       <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
@@ -75,7 +75,7 @@ export default function JadwalMengajarPage() {
             <Filter className="w-4 h-4" />
             Filter
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all cursor-pointer">
             <Plus className="w-4 h-4 stroke-[2.5]" />
             Add Schedule
           </button>
@@ -109,7 +109,7 @@ export default function JadwalMengajarPage() {
               <ChevronLeft className="w-4 h-4" />
               Previous Week
             </button>
-            <h3 className="text-text-main text-lg font-semibold">Jan 20 - Jan 24, 2025</h3>
+            <h3 className="text-foreground text-lg font-semibold">Jan 20 - Jan 24, 2025</h3>
             <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">
               Next Week
               <ChevronRight className="w-4 h-4" />

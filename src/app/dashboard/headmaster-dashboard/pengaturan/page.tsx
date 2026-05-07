@@ -121,7 +121,7 @@ export default function PengaturanPage() {
 
   if (loading) {
     return (
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
         <div className="flex-1 overflow-y-auto flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -130,7 +130,7 @@ export default function PengaturanPage() {
   }
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Toast Message */}
       {message && (
         <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg ${
@@ -165,7 +165,7 @@ export default function PengaturanPage() {
                         {profile ? getInitials(profile.full_name) : 'PB'}
                       </span>
                     </div>
-                    <button type="button" title={t('headmaster.settings.changePhoto')} className="absolute -bottom-2 -right-2 w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary-dark transition-colors">
+                    <button type="button" title={t('headmaster.settings.changePhoto')} className="absolute -bottom-2 -right-2 w-8 h-8 bg-primary rounded-lg flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary/90 transition-colors">
                       <Camera className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
@@ -257,7 +257,7 @@ export default function PengaturanPage() {
                     </div>
                   </div>
                   <div className="flex gap-3">
-                    <button type="button" className="flex-1 bg-primary text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary-dark transition-colors cursor-pointer text-center">
+                    <button type="button" className="flex-1 bg-primary text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer text-center">
                       {t('headmaster.settings.changeSpecimen')}
                     </button>
                     <button type="button" className="border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
@@ -404,7 +404,7 @@ export default function PengaturanPage() {
                     <button
                       type="submit"
                       disabled={updating}
-                      className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-primary-dark transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                      className="bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                     >
                       {updating && <Loader2 className="w-4 h-4 animate-spin" />}
                       {t('headmaster.settings.savePassword')}
@@ -439,7 +439,7 @@ export default function PengaturanPage() {
                 if (form) form.requestSubmit();
               }}
               disabled={updating}
-              className="bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-[0px_10px_15px_-3px_rgba(19,127,236,0.2),0px_4px_6px_-4px_rgba(19,127,236,0.2)] hover:bg-primary-dark transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-[0px_10px_15px_-3px_rgba(19,127,236,0.2),0px_4px_6px_-4px_rgba(19,127,236,0.2)] hover:bg-primary/90 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {updating && <Loader2 className="w-4 h-4 animate-spin" />}
               {t('headmaster.settings.saveProfile')}

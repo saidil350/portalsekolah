@@ -1,4 +1,5 @@
-import { createAdminClient, createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/server-admin'
+import { authorizeApi } from '@/lib/auth/authorization'
 import { NextRequest } from 'next/server'
 
 const WITHDRAW_STATUS_CANDIDATES = ['WITHDRAWN', 'NONAKTIF', 'PINDAH']
@@ -7,7 +8,7 @@ const isCheckConstraintError = (error: any) =>
   (error?.message || '').toLowerCase().includes('check constraint')
 
 export async function DELETE(
-  _request: NextRequest,
+  request: NextRequest,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -19,25 +20,12 @@ export async function DELETE(
       )
     }
 
-    // Auth check
-    const userClient = await createClient()
-    const { data: { user }, error: userError } = await userClient.auth.getUser()
-    if (userError || !user) {
-      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return Response.json({ success: false, error: auth.error }, { status: auth.statusCode })
     }
 
-    // Role check
-    const { data: profile, error: profileError } = await userClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profileError || !profile || profile.role !== 'ADMIN_IT') {
-      return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
-    }
-
-    // Use service role to bypass RLS for update
+    const organizationId = auth.user.organization_id
     const adminClient = await createAdminClient()
 
     for (const statusValue of WITHDRAW_STATUS_CANDIDATES) {
@@ -45,6 +33,7 @@ export async function DELETE(
         .from('enrollments')
         .update({ status: statusValue })
         .eq('id', enrollmentId)
+        .eq('organization_id', organizationId)
         .select()
         .single()
 
@@ -64,6 +53,7 @@ export async function DELETE(
       .from('enrollments')
       .delete()
       .eq('id', enrollmentId)
+      .eq('organization_id', organizationId)
       .select()
       .single()
 

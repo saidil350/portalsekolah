@@ -256,7 +256,7 @@ export default function UserManagementPage() {
   }
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto p-8">
         <motion.div 
           className="max-w-7xl mx-auto flex flex-col gap-6"
@@ -277,7 +277,7 @@ export default function UserManagementPage() {
           {/* Header */}
           <motion.div variants={itemVariants} className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="flex flex-col gap-1">
-              <h2 className="text-text-main text-3xl font-bold tracking-tight">{t('admin.userManagement.title')}</h2>
+              <h2 className="text-foreground text-3xl font-bold tracking-tight">{t('admin.userManagement.title')}</h2>
               <p className="text-slate-500 text-base">{t('admin.userManagement.description')}</p>
             </div>
             <div className="flex gap-3">
@@ -295,7 +295,7 @@ export default function UserManagementPage() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setShowAddModal(true)}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary-dark shadow-sm shadow-primary/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={actionLoading}
               >
                 <UserPlus className="w-4 h-4" />

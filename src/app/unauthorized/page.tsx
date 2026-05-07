@@ -42,7 +42,7 @@ function UnauthorizedContent() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background-light px-4">
+    <div className="min-h-screen flex items-center justify-center bg-background px-4">
       <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8">
         <div className="text-center">
           {/* Lock Icon */}
@@ -110,7 +110,7 @@ function UnauthorizedContent() {
 export default function UnauthorizedPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-background-light px-4">
+      <div className="min-h-screen flex items-center justify-center bg-background px-4">
         <p>Memuat...</p>
       </div>
     }>

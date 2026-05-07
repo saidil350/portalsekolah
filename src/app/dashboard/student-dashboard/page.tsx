@@ -52,19 +52,19 @@ export default function StudentDashboardPage() {
   ];
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
         <div className="p-10">
           {/* Header */}
           <div className="flex items-center justify-between mb-8">
             <div className="flex flex-col gap-1">
-              <h2 className="text-text-main text-[30px] font-bold tracking-tight">{t('student.db.welcome')}</h2>
-              <p className="text-text-sub mt-1">{t('student.db.subtitle')}</p>
+              <h2 className="text-foreground text-[30px] font-bold tracking-tight">{t('student.db.welcome')}</h2>
+              <p className="text-muted-foreground mt-1">{t('student.db.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
               <div className="bg-white border border-slate-200 rounded-full shadow-sm px-3 py-1.5 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
-                <span className="text-sm font-medium text-text-sub">{t('student.db.activeStatus')}</span>
+                <span className="text-sm font-medium text-muted-foreground">{t('student.db.activeStatus')}</span>
               </div>
               <div className="w-10 h-10 rounded-full bg-slate-200 overflow-hidden shadow-[0px_0px_0px_2px_white,0px_4px_6px_-1px_rgba(0,0,0,0.1)]">
                 <div className="w-full h-full bg-linear-to-br from-blue-300 to-indigo-400 flex items-center justify-center text-white font-bold text-sm">
@@ -87,8 +87,8 @@ export default function StudentDashboardPage() {
                   <span className="text-xs font-medium text-green-700">+0.2</span>
                 </div>
               </div>
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.db.gpa')}</p>
-              <p className="text-[30px] font-bold text-text-main leading-9">3.85</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.gpa')}</p>
+              <p className="text-[30px] font-bold text-foreground leading-9">3.85</p>
               <p className="text-xs text-slate-400 mt-2">{t('student.db.scale')}</p>
             </div>
 
@@ -102,9 +102,9 @@ export default function StudentDashboardPage() {
                   <span className="text-xs font-medium text-slate-600">{t('student.db.overall')}</span>
                 </div>
               </div>
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.db.attendanceRate')}</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.attendanceRate')}</p>
               <div className="flex items-end gap-2">
-                <p className="text-[30px] font-bold text-text-main leading-9">92%</p>
+                <p className="text-[30px] font-bold text-foreground leading-9">92%</p>
                 <p className="text-sm font-medium text-green-600 pb-1">{t('student.db.good')}</p>
               </div>
               <div className="mt-3 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
@@ -119,8 +119,8 @@ export default function StudentDashboardPage() {
                   <span className="text-xl">📚</span>
                 </div>
               </div>
-              <p className="text-sm font-medium text-text-sub mb-1">{t('student.db.creditsLabel')}</p>
-              <p className="text-[30px] font-bold text-text-main leading-9">84</p>
+              <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.creditsLabel')}</p>
+              <p className="text-[30px] font-bold text-foreground leading-9">84</p>
               <p className="text-xs text-slate-400 mt-2">{t('student.db.creditsThisSem')}</p>
             </div>
           </div>
@@ -173,8 +173,8 @@ export default function StudentDashboardPage() {
               {/* Today's Schedule */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-text-main">{t('student.db.todaySchedule')}</h3>
-                  <Link href="/dashboard/student-dashboard/schedule" className="text-sm font-medium text-primary hover:text-primary-dark transition-colors cursor-pointer">
+                  <h3 className="text-lg font-semibold text-foreground">{t('student.db.todaySchedule')}</h3>
+                  <Link href="/dashboard/student-dashboard/schedule" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer">
                     {t('student.db.viewFullSchedule')}
                   </Link>
                 </div>
@@ -206,8 +206,8 @@ export default function StudentDashboardPage() {
                                 <span className="text-lg">📖</span>
                               </div>
                               <div>
-                                <h4 className="text-base font-semibold text-text-main">{item.subject}</h4>
-                                <p className="text-sm text-text-sub">{item.time}</p>
+                                <h4 className="text-base font-semibold text-foreground">{item.subject}</h4>
+                                <p className="text-sm text-muted-foreground">{item.time}</p>
                               </div>
                             </div>
                             <span className={`text-xs font-semibold px-3 py-1 rounded-full ${badge.className}`}>
@@ -227,7 +227,7 @@ export default function StudentDashboardPage() {
               {/* Recent Grades */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex-1">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-lg font-semibold text-text-main">{t('student.db.recentGrades')}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('student.db.recentGrades')}</h3>
                   <button title="More Options" className="p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
                     <MoreHorizontal className="w-4 h-1 text-slate-400" />
                   </button>
@@ -241,17 +241,17 @@ export default function StudentDashboardPage() {
                           <span className={`text-base font-bold ${item.gradeColor}`}>{item.grade}</span>
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-text-main">{item.subject}</p>
-                          <p className="text-xs text-text-sub">{item.type}</p>
+                          <p className="text-sm font-medium text-foreground">{item.subject}</p>
+                          <p className="text-xs text-muted-foreground">{item.type}</p>
                         </div>
                       </div>
-                      <span className="text-base font-semibold text-text-main">{item.score}</span>
+                      <span className="text-base font-semibold text-foreground">{item.score}</span>
                     </div>
                   ))}
                 </div>
 
                 <div className="border-t border-slate-100 mt-4 pt-4">
-                  <Link href="/dashboard/student-dashboard/grades" className="block text-sm font-medium text-text-sub text-center hover:text-primary cursor-pointer">
+                  <Link href="/dashboard/student-dashboard/grades" className="block text-sm font-medium text-muted-foreground text-center hover:text-primary cursor-pointer">
                     {t('student.db.viewAllGrades')}
                   </Link>
                 </div>
@@ -259,7 +259,7 @@ export default function StudentDashboardPage() {
 
               {/* Tuition Status */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <h3 className="text-lg font-semibold text-text-main mb-4">{t('student.db.tuitionStatus')}</h3>
+                <h3 className="text-lg font-semibold text-foreground mb-4">{t('student.db.tuitionStatus')}</h3>
                 <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                     <CheckCircle2 className="w-5 h-5 text-green-600" />
@@ -275,10 +275,10 @@ export default function StudentDashboardPage() {
 
           {/* Footer */}
           <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
-            <p className="text-sm text-text-sub">{t('student.db.footer')}</p>
+            <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.help')}</Link>
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.privacy')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.privacy')}</Link>
             </div>
           </div>
         </div>

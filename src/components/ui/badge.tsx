@@ -101,7 +101,7 @@ export function StatusIndicator({ status, showLabel = false, label }: StatusIndi
   return (
     <div className="inline-flex items-center gap-2">
       <span className={cn("w-2 h-2 rounded-full", statusColors[status])} />
-      {showLabel && <span className="text-sm text-text-secondary">{label || status}</span>}
+      {showLabel && <span className="text-sm text-muted-foreground">{label || status}</span>}
     </div>
   )
 }

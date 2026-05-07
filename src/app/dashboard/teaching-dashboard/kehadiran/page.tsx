@@ -52,7 +52,7 @@ export default function KehadiranPage() {
   const absentCount = studentsData.filter(s => s.status === 'Absent').length;
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
       <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
@@ -97,7 +97,7 @@ export default function KehadiranPage() {
                   <span className="text-lg">👥</span>
                 </div>
               </div>
-              <h3 className="text-2xl font-bold text-text-main mt-2">{studentsData.length}</h3>
+              <h3 className="text-2xl font-bold text-foreground mt-2">{studentsData.length}</h3>
             </div>
             <div className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
               <div className="flex items-center justify-between">
@@ -151,7 +151,7 @@ export default function KehadiranPage() {
                           <div className="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-slate-100 relative">
                             <Image src={student.photo} alt={student.name} fill className="object-cover" />
                           </div>
-                          <span className="text-sm font-medium text-text-main">{student.name}</span>
+                          <span className="text-sm font-medium text-foreground">{student.name}</span>
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-slate-500 font-mono">{student.nisn}</td>

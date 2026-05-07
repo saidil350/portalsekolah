@@ -2,15 +2,18 @@ import * as React from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react'
+import { Card } from './card'
+import { Badge } from './badge'
+import { Skeleton } from './skeleton'
 
 const metricCardVariants = cva(
-  "bg-white rounded-xl p-5 transition-all duration-200",
+  "p-5 transition-all duration-200",
   {
     variants: {
       variant: {
-        default: "border border-slate-200 shadow-sm",
-        elevated: "shadow-sm hover:shadow-md",
-        compact: "border border-slate-200 p-4",
+        default: "",
+        elevated: "shadow-md",
+        compact: "p-4",
       },
     },
     defaultVariants: {
@@ -51,23 +54,20 @@ export function MetricCard({
 }: MetricCardProps) {
   if (loading) {
     return (
-      <div className={cn(metricCardVariants({ variant }), className)} {...props}>
+      <Card className={cn(metricCardVariants({ variant }), className)} {...props}>
         <div className="flex items-start justify-between mb-10">
-          <div className={cn("w-[46px] h-[42px] rounded-xl", iconBg)}>
-            <div className="w-full h-full bg-slate-200 animate-pulse" />
-          </div>
+          <Skeleton className={cn("h-[42px] w-[46px] rounded-xl", iconBg)} />
         </div>
-        <div className="space-y-2">
-          <div className="h-4 bg-slate-200 rounded w-1/3 animate-pulse" />
-          <div className="h-8 bg-slate-200 rounded w-1/2 animate-pulse" />
+        <div className="flex flex-col gap-2">
+          <Skeleton className="h-4 w-1/3" />
+          <Skeleton className="h-8 w-1/2" />
         </div>
-      </div>
+      </Card>
     )
   }
 
   const trendValue = trend?.value || 0
   const isPositive = trendValue > 0
-  const isNeutral = trendValue === 0
   const isNegative = trendValue < 0
 
   const trendColor = isPositive ? 'text-green-600' : isNegative ? 'text-error-600' : 'text-slate-600'
@@ -75,7 +75,7 @@ export function MetricCard({
   const trendIcon = isPositive ? <TrendingUp className="w-3 h-2" /> : isNegative ? <TrendingDown className="w-3 h-2" /> : <Minus className="w-3 h-2" />
 
   return (
-    <div className={cn(metricCardVariants({ variant }), className)} {...props}>
+    <Card className={cn(metricCardVariants({ variant }), className)} {...props}>
       <div className="flex items-start justify-between mb-10">
         {icon && (
           <div className={cn("w-[46px] h-[42px] rounded-xl flex items-center justify-center", iconBg)}>
@@ -83,35 +83,33 @@ export function MetricCard({
           </div>
         )}
         {trend && (
-          <div className={cn("rounded-full px-2 py-1 flex items-center gap-1", trendBg, trendColor)}>
+          <Badge className={cn(trendBg, trendColor)}>
             {trendIcon}
-            <span className="text-xs font-medium">
-              {isPositive ? '+' : ''}{trendValue}%
-            </span>
-          </div>
+            {isPositive ? '+' : ''}{trendValue}%
+          </Badge>
         )}
       </div>
 
-      <div className="space-y-1">
-        <p className="text-sm font-medium text-text-secondary">{title}</p>
+      <div className="flex flex-col gap-1">
+        <p className="text-sm font-medium text-muted-foreground">{title}</p>
         <div className="flex items-baseline gap-1">
-          <p className="text-[30px] font-bold text-text-primary leading-9">
+          <p className="text-[30px] font-bold text-foreground leading-9">
             {value}
           </p>
           {unit && (
-            <span className="text-sm text-text-secondary">{unit}</span>
+            <span className="text-sm text-muted-foreground">{unit}</span>
           )}
         </div>
         {description && (
-          <p className="text-xs text-text-tertiary mt-1">{description}</p>
+          <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
         {trend?.period && (
-          <p className="text-xs text-text-tertiary mt-1">
+          <p className="text-xs text-muted-foreground mt-1">
             vs {trend.period}
           </p>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -134,20 +132,20 @@ export function MetricCardCompact({
   const changeColor = change && change > 0 ? 'text-green-600' : change && change < 0 ? 'text-error-600' : 'text-slate-600'
 
   return (
-    <div className={cn("bg-white rounded-lg p-4 border border-slate-200", className)}>
+    <Card className={cn("rounded-lg p-4", className)}>
       <div className="flex items-center justify-between mb-2">
-        <p className="text-xs font-medium text-text-secondary">{title}</p>
+        <p className="text-xs font-medium text-muted-foreground">{title}</p>
         {icon && <div className="text-slate-400">{icon}</div>}
       </div>
       <div className="flex items-baseline gap-2">
-        <p className="text-2xl font-bold text-text-primary">{value}</p>
+        <p className="text-2xl font-bold text-foreground">{value}</p>
         {change !== undefined && (
           <span className={cn("text-xs font-medium", changeColor)}>
             {change > 0 ? '+' : ''}{change}%
           </span>
         )}
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -178,13 +176,13 @@ export function StatCard({
   }
 
   return (
-    <div className={cn("bg-white rounded-xl p-5 shadow-sm", className)}>
+    <Card className={cn("p-5", className)}>
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-text-secondary">{label}</p>
+        <p className="text-sm font-medium text-muted-foreground">{label}</p>
         {icon && <div className="text-slate-400">{icon}</div>}
       </div>
       <div className="flex items-baseline gap-2 mt-1">
-        <p className="text-2xl font-bold text-text-primary">{value}</p>
+        <p className="text-2xl font-bold text-foreground">{value}</p>
         {trend && (
           <span className={cn("text-xs font-medium px-2 py-1 rounded-full", trendColors[trendColor])}>
             {trend}
@@ -192,8 +190,8 @@ export function StatCard({
         )}
       </div>
       {description && (
-        <p className="text-xs text-text-tertiary mt-2">{description}</p>
+        <p className="text-xs text-muted-foreground mt-2">{description}</p>
       )}
-    </div>
+    </Card>
   )
 }

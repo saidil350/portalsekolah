@@ -126,7 +126,7 @@ export default function LevelModal({
             {/* Header: Sticky */}
             <div className="flex items-center justify-between p-7 pb-5 border-b border-slate-100 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-md z-10">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary-dark flex items-center justify-center text-white shadow-lg shadow-primary/20">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-primary to-primary/90 flex items-center justify-center text-white shadow-lg shadow-primary/20">
                   <GraduationCap className="w-6 h-6" />
                 </div>
                 <div>
@@ -277,7 +277,7 @@ export default function LevelModal({
                 </button>
                 <button
                   type="submit"
-                  className="flex-[1.5] h-12 px-6 bg-linear-to-r from-primary to-primary-dark text-white rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all font-bold text-sm flex items-center justify-center gap-2 group disabled:opacity-50 disabled:translate-y-0"
+                  className="flex-[1.5] h-12 px-6 bg-linear-to-r from-primary to-primary/90 text-white rounded-2xl shadow-xl shadow-primary/20 hover:shadow-primary/40 hover:-translate-y-0.5 active:translate-y-0 transition-all font-bold text-sm flex items-center justify-center gap-2 group disabled:opacity-50 disabled:translate-y-0"
                   disabled={loading}
                 >
                   {loading ? (

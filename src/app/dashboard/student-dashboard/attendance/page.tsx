@@ -85,7 +85,7 @@ export default function AttendancePage() {
     { date: t('month.may' as any) + ' 07, 2024', subject: t('student.performance.sub.cs'), status: t('student.attendance.legend.late'), statusBg: 'bg-amber-100', statusColor: 'text-amber-700', time: '08:15 AM', note: 'Traffic delay' },
   ];
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[1280px] p-10 flex flex-col gap-8">
           {/* Header */}
@@ -94,13 +94,13 @@ export default function AttendancePage() {
               <div className="flex items-center gap-2 mb-1">
                 <Link href="/dashboard/student-dashboard" className="text-sm font-medium text-primary hover:underline cursor-pointer">{t('student.nav.dashboard')}</Link>
                 <ChevronRight className="w-2.5 h-2 text-slate-400" />
-                <span className="text-sm font-medium text-text-sub">{t('student.nav.attendance')}</span>
+                <span className="text-sm font-medium text-muted-foreground">{t('student.nav.attendance')}</span>
               </div>
-              <h2 className="text-3xl font-bold text-text-main tracking-tight">{t('student.attendance.title')}</h2>
-              <p className="text-base text-text-sub">{t('student.attendance.subtitle')}</p>
+              <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.attendance.title')}</h2>
+              <p className="text-base text-muted-foreground">{t('student.attendance.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-text-main hover:bg-slate-50 transition-colors cursor-pointer shadow-sm">
+              <button className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-slate-50 transition-colors cursor-pointer shadow-sm">
                 <Download className="w-3 h-3" />
                 {t('student.attendance.export')}
               </button>
@@ -118,7 +118,7 @@ export default function AttendancePage() {
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
                   <div className="flex items-center gap-4">
-                    <h3 className="text-xl font-bold text-text-main">{t('month.may')} 2024</h3>
+                    <h3 className="text-xl font-bold text-foreground">{t('month.may')} 2024</h3>
                     <div className="flex items-center gap-1">
                       <button title="Previous Month" className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
                         <ChevronLeft className="w-3 h-3 text-slate-500" />
@@ -137,7 +137,7 @@ export default function AttendancePage() {
                     ].map((item, i) => (
                       <div key={i} className="flex items-center gap-2">
                         <div className={`w-3 h-3 rounded-full ${item.color}`} />
-                        <span className="text-xs font-medium text-text-sub">{item.label}</span>
+                        <span className="text-xs font-medium text-muted-foreground">{item.label}</span>
                       </div>
                     ))}
                   </div>
@@ -179,7 +179,7 @@ export default function AttendancePage() {
               {/* Detailed Log */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
                 <div className="px-6 py-5 border-b border-slate-100">
-                  <h3 className="text-lg font-semibold text-text-main">{t('student.attendance.log.title')}</h3>
+                  <h3 className="text-lg font-semibold text-foreground">{t('student.attendance.log.title')}</h3>
                 </div>
                 <table className="w-full">
                   <thead>
@@ -194,15 +194,15 @@ export default function AttendancePage() {
                   <tbody>
                     {logData.map((item, i) => (
                       <tr key={i} className="border-t border-slate-50 hover:bg-slate-50/50 transition-colors">
-                        <td className="pl-6 pr-4 py-4 text-sm font-medium text-text-main">{item.date}</td>
-                        <td className="px-4 py-4 text-sm font-medium text-text-main">{item.subject}</td>
+                        <td className="pl-6 pr-4 py-4 text-sm font-medium text-foreground">{item.date}</td>
+                        <td className="px-4 py-4 text-sm font-medium text-foreground">{item.subject}</td>
                         <td className="px-4 py-4">
                           <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${item.statusBg} ${item.statusColor}`}>
                             {item.status}
                           </span>
                         </td>
-                        <td className="px-4 py-4 text-sm text-text-sub">{item.time}</td>
-                        <td className="px-4 py-4 text-sm text-text-sub">{item.note}</td>
+                        <td className="px-4 py-4 text-sm text-muted-foreground">{item.time}</td>
+                        <td className="px-4 py-4 text-sm text-muted-foreground">{item.note}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -226,7 +226,7 @@ export default function AttendancePage() {
 
               {/* Breakdown */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <h4 className="text-sm font-semibold text-text-main mb-4">{t('student.attendance.stats.thisMonth')}</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-4">{t('student.attendance.stats.thisMonth')}</h4>
                 <div className="flex flex-col gap-3">
                   {[
                     { label: t('student.attendance.legend.present'), count: 14, color: 'bg-green-500' },
@@ -237,9 +237,9 @@ export default function AttendancePage() {
                     <div key={i} className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className={`w-2 h-2 rounded-full ${item.color}`} />
-                        <span className="text-sm text-text-sub">{item.label}</span>
+                        <span className="text-sm text-muted-foreground">{item.label}</span>
                       </div>
-                      <span className="text-sm font-semibold text-text-main">{item.count}</span>
+                      <span className="text-sm font-semibold text-foreground">{item.count}</span>
                     </div>
                   ))}
                 </div>
@@ -247,7 +247,7 @@ export default function AttendancePage() {
 
               {/* Alerts */}
               <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <h4 className="text-sm font-semibold text-text-main mb-4">{t('student.attendance.stats.streakTitle')}</h4>
+                <h4 className="text-sm font-semibold text-foreground mb-4">{t('student.attendance.stats.streakTitle')}</h4>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3 bg-green-50 rounded-xl p-3">
                     <Clock className="w-4 h-4 text-green-600" />
@@ -270,10 +270,10 @@ export default function AttendancePage() {
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-6 border-t border-slate-200">
-            <p className="text-sm text-text-sub">{t('student.db.footer')}</p>
+            <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.help')}</Link>
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.privacy')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.privacy')}</Link>
             </div>
           </div>
         </div>

@@ -102,7 +102,7 @@ export default function DepartmentModal({
       <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h3 className="text-xl font-bold text-text-main">
+          <h3 className="text-xl font-bold text-foreground">
             {mode === 'create' ? 'Tambah Jurusan' : 'Edit Jurusan'}
           </h3>
           <button
@@ -211,7 +211,7 @@ export default function DepartmentModal({
             </button>
             <button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary-dark transition-all font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary/30"
+              className="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary/20"
               disabled={loading}
             >
               {loading ? (

@@ -93,7 +93,7 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
               {getInitials(displayName)}
             </div>
             <div className="flex flex-col">
-              <h1 className="text-text-main text-sm font-semibold leading-tight">{displayName}</h1>
+              <h1 className="text-foreground text-sm font-semibold leading-tight">{displayName}</h1>
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wide mt-0.5">{roleLabel}</p>
             </div>
           </div>

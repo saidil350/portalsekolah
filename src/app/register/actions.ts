@@ -55,25 +55,23 @@ export async function registerAdmin(formData: FormData) {
   }
 
   // ============================================
-  // 3. GENERATE KODE ORGANISASI UNIK
+  // 3. GENERATE KODE ORGANISASI DARI NAMA SEKOLAH
   // ============================================
-  let orgCode = generateOrgCode(organizationName)
+  const orgCode = generateOrgCode(organizationName)
 
-  // Pastikan kode unik, retry jika perlu (max 5x)
-  for (let attempt = 0; attempt < 5; attempt++) {
-    const { data: existingOrg } = await adminClient
-      .from('organizations')
-      .select('id')
-      .eq('code', orgCode)
-      .maybeSingle()
+  if (!orgCode) {
+    return { error: 'Nama sekolah harus memiliki huruf atau angka untuk membuat kode sekolah.' }
+  }
 
-    if (!existingOrg) break // Kode unik, lanjut
+  const { data: existingOrg } = await adminClient
+    .from('organizations')
+    .select('id')
+    .eq('code', orgCode)
+    .maybeSingle()
 
-    // Jika duplikat, generate ulang
-    orgCode = generateOrgCode(organizationName)
-
-    if (attempt === 4) {
-      return { error: 'Gagal membuat kode organisasi unik. Silakan coba lagi.' }
+  if (existingOrg) {
+    return {
+      error: `Kode sekolah ${orgCode} sudah digunakan. Pakai nama sekolah yang lebih spesifik, misalnya tambahkan kota atau cabang.`
     }
   }
 

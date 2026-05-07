@@ -80,7 +80,7 @@ export default function StudentSidebar({ }: StudentSidebarProps) {
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col">
-              <h1 className="text-text-main text-lg font-semibold leading-7">SIAKAD</h1>
+              <h1 className="text-foreground text-lg font-semibold leading-7">SIAKAD</h1>
               <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wide">{t('student.portal')}</p>
             </div>
           )}

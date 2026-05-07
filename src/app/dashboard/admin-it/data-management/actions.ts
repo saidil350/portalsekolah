@@ -26,6 +26,28 @@ import type {
   TeacherRankCode
 } from '@/types'
 
+async function ensureTenantRecord(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  table: string,
+  id: string | null | undefined,
+  organizationId: string
+) {
+  if (!id) return true
+
+  const { data, error } = await supabase
+    .from(table as any)
+    .select('id')
+    .eq('id', id)
+    .eq('organization_id', organizationId)
+    .maybeSingle()
+
+  if (error) {
+    throw error
+  }
+
+  return !!data
+}
+
 // =====================================================
 // ROOMS ACTIONS
 // =====================================================
@@ -51,6 +73,7 @@ export async function fetchRooms(
     let query = supabase
       .from('rooms')
       .select('*', { count: 'exact' })
+      .eq('organization_id', auth.user.organization_id)
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
@@ -125,8 +148,9 @@ export async function createRoom(
     const { data: existingCode } = await supabase
       .from('rooms')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('code', formData.code.trim())
-      .single()
+      .maybeSingle()
 
     if (existingCode) {
       return { success: false, error: 'Kode ruangan sudah terdaftar' }
@@ -143,7 +167,8 @@ export async function createRoom(
         building: formData.building || null,
         facilities: formData.facilities || null,
         description: formData.description || null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        organization_id: auth.user.organization_id
       })
       .select()
       .single()
@@ -186,9 +211,10 @@ export async function updateRoom(
       const { data: existingCode } = await supabase
         .from('rooms')
         .select('id')
+        .eq('organization_id', auth.user.organization_id)
         .eq('code', formData.code.trim())
         .neq('id', id)
-        .single()
+        .maybeSingle()
 
       if (existingCode) {
         return { success: false, error: 'Kode ruangan sudah terdaftar' }
@@ -210,6 +236,7 @@ export async function updateRoom(
       .from('rooms')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select()
       .single()
 
@@ -247,6 +274,7 @@ export async function deleteRoom(id: string): Promise<DeleteResponse> {
       .from('rooms')
       .delete()
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -287,6 +315,7 @@ export async function fetchSubjects(
     let query = supabase
       .from('subjects')
       .select('*', { count: 'exact' })
+      .eq('organization_id', auth.user.organization_id)
 
     // Apply search filter
     if (filters.search && filters.search.trim() !== '') {
@@ -362,11 +391,20 @@ export async function createSubject(
     const { data: existingCode } = await supabase
       .from('subjects')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('code', formData.code.trim())
-      .single()
+      .maybeSingle()
 
     if (existingCode) {
       return { success: false, error: 'Kode mata pelajaran sudah terdaftar' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'departments', formData.department_id, auth.user.organization_id))) {
+      return { success: false, error: 'Jurusan tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
+      return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
     }
 
     const { data, error } = await supabase
@@ -380,7 +418,8 @@ export async function createSubject(
         academic_year_id: formData.academic_year_id || null,
         description: formData.description || null,
         prerequisites: formData.prerequisites || null,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        organization_id: auth.user.organization_id
       })
       .select()
       .single()
@@ -423,9 +462,10 @@ export async function updateSubject(
       const { data: existingCode } = await supabase
         .from('subjects')
         .select('id')
+        .eq('organization_id', auth.user.organization_id)
         .eq('code', formData.code.trim())
         .neq('id', id)
-        .single()
+        .maybeSingle()
 
       if (existingCode) {
         return { success: false, error: 'Kode mata pelajaran sudah terdaftar' }
@@ -443,10 +483,19 @@ export async function updateSubject(
     if (formData.prerequisites !== undefined) updateData.prerequisites = formData.prerequisites || null
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
 
+    if (!(await ensureTenantRecord(supabase, 'departments', formData.department_id, auth.user.organization_id))) {
+      return { success: false, error: 'Jurusan tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
+      return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
     const { data, error } = await supabase
       .from('subjects')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select()
       .single()
 
@@ -484,6 +533,7 @@ export async function deleteSubject(id: string): Promise<DeleteResponse> {
       .from('subjects')
       .delete()
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -535,6 +585,7 @@ export async function fetchSubjectDropdownData(): Promise<DropdownDataResponse> 
     const { data: deptData, error: deptError } = await supabase
       .from('departments')
       .select('id, name')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('name')
 
@@ -544,6 +595,7 @@ export async function fetchSubjectDropdownData(): Promise<DropdownDataResponse> 
     const { data: yearData, error: yearError } = await supabase
       .from('academic_years')
       .select('id, name')
+      .eq('organization_id', auth.user.organization_id)
       .order('name', { ascending: false })
 
     if (yearError) throw yearError
@@ -595,6 +647,7 @@ export async function fetchSemesters(
         *,
         academic_year:academic_years(id, name)
       `, { count: 'exact' })
+      .eq('organization_id', auth.user.organization_id)
 
     if (filters.search && filters.search.trim() !== '') {
       query = query.or(`name.ilike.%${filters.search}%`)
@@ -655,6 +708,10 @@ export async function createSemester(formData: SemesterFormData): Promise<Create
       return { success: false, error: 'Tanggal mulai dan selesai wajib diisi' }
     }
 
+    if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
+      return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
     const { data, error } = await supabase
       .from('semesters')
       .insert({
@@ -663,7 +720,8 @@ export async function createSemester(formData: SemesterFormData): Promise<Create
         semester_number: formData.semester_number,
         start_date: formData.start_date,
         end_date: formData.end_date,
-        is_active: formData.is_active
+        is_active: formData.is_active,
+        organization_id: auth.user.organization_id
       })
       .select()
       .single()
@@ -702,10 +760,15 @@ export async function updateSemester(id: string, formData: Partial<SemesterFormD
     if (formData.end_date) updateData.end_date = formData.end_date
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
 
+    if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
+      return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
     const { data, error } = await supabase
       .from('semesters')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select()
       .single()
 
@@ -740,6 +803,7 @@ export async function deleteSemester(id: string): Promise<DeleteResponse> {
       .from('semesters')
       .delete()
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 
@@ -791,6 +855,7 @@ export async function fetchSubjectTeachers(subjectId: string): Promise<SubjectTe
         ),
         teacher_rank:teacher_ranks(*)
       `)
+      .eq('organization_id', auth.user.organization_id)
       .eq('subject_id', subjectId)
       .order('created_at', { ascending: true })
 
@@ -837,6 +902,7 @@ export async function fetchTeachersForDropdown(): Promise<any> {
     const { data, error } = await supabase
       .from('profiles')
       .select('id, full_name, email, nip')
+      .eq('organization_id', auth.user.organization_id)
       .eq('role', 'GURU')
       .order('full_name', { ascending: true })
 
@@ -874,6 +940,7 @@ export async function fetchTeacherRanks(): Promise<any> {
     const { data, error } = await supabase
       .from('teacher_ranks')
       .select('*')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .order('level_order', { ascending: true })
 
@@ -909,13 +976,26 @@ export async function assignTeacherToSubject(
   try {
     const supabase = await createClient()
 
+    if (!(await ensureTenantRecord(supabase, 'subjects', subjectId, auth.user.organization_id))) {
+      return { success: false, error: 'Mata pelajaran tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'profiles', teacherId, auth.user.organization_id))) {
+      return { success: false, error: 'Guru tidak valid untuk sekolah ini' }
+    }
+
+    if (!(await ensureTenantRecord(supabase, 'teacher_ranks', teacherRankId, auth.user.organization_id))) {
+      return { success: false, error: 'Tingkat guru tidak valid untuk sekolah ini' }
+    }
+
     // Check if already assigned
     const { data: existing } = await supabase
       .from('subject_teachers')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('subject_id', subjectId)
       .eq('teacher_id', teacherId)
-      .single()
+      .maybeSingle()
 
     if (existing) {
       return {
@@ -929,7 +1009,8 @@ export async function assignTeacherToSubject(
       .insert({
         subject_id: subjectId,
         teacher_id: teacherId,
-        teacher_rank_id: teacherRankId
+        teacher_rank_id: teacherRankId,
+        organization_id: auth.user.organization_id
       })
       .select(`
         *,
@@ -979,6 +1060,7 @@ export async function removeTeacherFromSubject(
     const { error } = await supabase
       .from('subject_teachers')
       .delete()
+      .eq('organization_id', auth.user.organization_id)
       .eq('subject_id', subjectId)
       .eq('teacher_id', teacherId)
 
@@ -1016,6 +1098,7 @@ export async function updateTeacherRank(
     const { data, error } = await supabase
       .from('subject_teachers')
       .update({ teacher_rank_id: teacherRankId })
+      .eq('organization_id', auth.user.organization_id)
       .eq('subject_id', subjectId)
       .eq('teacher_id', teacherId)
       .select(`

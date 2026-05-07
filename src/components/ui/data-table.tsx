@@ -15,11 +15,25 @@ import {
   PaginationState,
 } from '@tanstack/react-table'
 import { cn } from '@/lib/utils'
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Search, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal, Search, ChevronLeft, ChevronRight } from 'lucide-react'
 import { Button } from './button'
 import { TableSkeleton } from './skeleton'
 import { EmptyTableState } from './empty-table-state'
 import { Input } from './input'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './dropdown-menu'
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from './table'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -109,7 +123,7 @@ export function DataTable<TData, TValue>({
       {searchKey && (
         <div className="flex items-center py-4 gap-2">
           <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder={searchPlaceholder || 'Cari...'}
@@ -124,22 +138,22 @@ export function DataTable<TData, TValue>({
       )}
 
       {/* Table */}
-      <div className="rounded-md border border-slate-200 bg-white">
-        <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+      <div className="rounded-md border bg-card">
+        <Table>
+          <TableHeader className="bg-muted/50">
             {table.getHeaderGroups().map((headerGroup) => (
-              <tr key={headerGroup.id}>
+              <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <th
+                    <TableHead
                       key={header.id}
-                      className="h-12 px-4 text-left align-middle font-medium text-text-primary [&:has([role=checkbox])]:pr-0"
+                      className="h-12 px-4"
                     >
                       {header.isPlaceholder ? null : (
                         <div
                           className={cn(
                             "flex items-center gap-2",
-                            header.column.getCanSort() && "cursor-pointer select-none hover:bg-slate-100 -mx-2 px-2 py-1 rounded transition-colors"
+                            header.column.getCanSort() && "cursor-pointer select-none hover:bg-accent -mx-2 px-2 py-1 rounded transition-colors"
                           )}
                           onClick={header.column.getToggleSortingHandler()}
                         >
@@ -148,54 +162,53 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                           {header.column.getCanSort() && (
-                            <ArrowUpDown className="ml-2 h-4 w-4 text-text-tertiary" />
+                            <ArrowUpDown className="ml-2 h-4 w-4 text-muted-foreground" />
                           )}
                         </div>
                       )}
-                    </th>
+                    </TableHead>
                   )
                 })}
-              </tr>
+              </TableRow>
             ))}
-          </thead>
-          <tbody className="divide-y divide-slate-100">
+          </TableHeader>
+          <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <tr
+                <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="hover:bg-slate-50/50 transition-colors"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <td
+                    <TableCell
                       key={cell.id}
-                      className="p-4 align-middle [&:has([role=checkbox])]:pr-0"
+                      className="p-4"
                     >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()
                       )}
-                    </td>
+                    </TableCell>
                   ))}
-                </tr>
+                </TableRow>
               ))
             ) : (
-              <tr>
-                <td
+              <TableRow>
+                <TableCell
                   colSpan={columns.length}
-                  className="h-24 text-center text-text-secondary"
+                  className="h-24 text-center text-muted-foreground"
                 >
                   Tidak ada hasil.
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             )}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="text-sm text-text-secondary flex-1">
+      <div className="flex items-center justify-end gap-2 py-4">
+        <div className="text-sm text-muted-foreground flex-1">
           Halaman {table.getState().pagination.pageIndex + 1} dari{' '}
           {table.getPageCount()} ({table.getFilteredRowModel().rows.length} data)
         </div>
@@ -230,30 +243,18 @@ export interface TableRowActionsProps {
 }
 
 export function TableRowActions({ children }: TableRowActionsProps) {
-  const [isOpen, setIsOpen] = React.useState(false)
-
   return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="h-8 w-8 flex items-center justify-center rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
-      >
-        <MoreHorizontal className="h-4 w-4" />
-      </button>
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-10"
-            onClick={() => setIsOpen(false)}
-          />
-          <div className="absolute right-0 z-20 w-48 rounded-md border border-slate-200 bg-white shadow-lg">
-            <div className="py-1">
-              {children}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon" className="size-8">
+          <MoreHorizontal />
+          <span className="sr-only">Open menu</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        {children}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -266,15 +267,11 @@ export interface TableRowActionItemProps {
 
 export function TableRowActionItem({ onClick, children, variant = 'default' }: TableRowActionItemProps) {
   return (
-    <button
+    <DropdownMenuItem
       onClick={onClick}
-      className={cn(
-        "w-full text-left px-4 py-2 text-sm transition-colors cursor-pointer",
-        variant === 'default' && 'hover:bg-slate-50',
-        variant === 'danger' && 'hover:bg-error-50 text-error-600'
-      )}
+      variant={variant === 'danger' ? 'destructive' : 'default'}
     >
       {children}
-    </button>
+    </DropdownMenuItem>
   )
 }

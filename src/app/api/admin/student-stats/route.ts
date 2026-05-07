@@ -21,6 +21,7 @@ export async function GET(request: Request) {
     const { data: activeAY } = await supabase
       .from('academic_years')
       .select('id')
+      .eq('organization_id', auth.user.organization_id)
       .eq('is_active', true)
       .single()
 
@@ -30,6 +31,7 @@ export async function GET(request: Request) {
     let enrollmentsQuery = supabase
       .from('enrollments')
       .select('status')
+      .eq('organization_id', auth.user.organization_id)
 
     if (academicYearId) {
       enrollmentsQuery = enrollmentsQuery.eq('academic_year_id', academicYearId)

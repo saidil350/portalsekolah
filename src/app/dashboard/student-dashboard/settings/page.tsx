@@ -77,6 +77,9 @@ export default function SettingsPage() {
 
     try {
       const formData = new FormData(e.currentTarget);
+      formData.append('emailNotifications', emailNotif ? 'on' : 'off');
+      formData.append('tuitionNotifications', tuitionNotif ? 'on' : 'off');
+      formData.append('pushNotifications', pushNotif ? 'on' : 'off');
       const result = await updateStudentProfile(formData);
 
       if (result.success) {
@@ -141,7 +144,7 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+      <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
         <div className="flex-1 overflow-y-auto flex items-center justify-center">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
@@ -150,7 +153,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background-light">
+    <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-[896px] mx-auto p-10 flex flex-col gap-8">
           {/* Toast Message */}
@@ -164,15 +167,15 @@ export default function SettingsPage() {
 
           {/* Header */}
           <div className="flex flex-col gap-1">
-            <h2 className="text-3xl font-bold text-text-main tracking-tight">{t('student.settings.title')}</h2>
-            <p className="text-base text-text-sub">{t('student.settings.subtitle')}</p>
+            <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.settings.title')}</h2>
+            <p className="text-base text-muted-foreground">{t('student.settings.subtitle')}</p>
           </div>
 
           {/* Profile Information */}
           <form onSubmit={handleProfileUpdate} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="px-6 py-6 border-b border-slate-100">
-              <h3 className="text-lg font-semibold text-text-main">{t('student.settings.profile.title')}</h3>
-              <p className="text-sm text-text-sub">{t('student.settings.profile.desc')}</p>
+              <h3 className="text-lg font-semibold text-foreground">{t('student.settings.profile.title')}</h3>
+              <p className="text-sm text-muted-foreground">{t('student.settings.profile.desc')}</p>
             </div>
 
             <div className="p-6 flex flex-col gap-8">
@@ -182,7 +185,7 @@ export default function SettingsPage() {
                   <div className="w-24 h-24 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold shadow-[0px_0px_0px_4px_#f1f5f9]">
                     {profile ? getInitials(profile.full_name) : 'AJ'}
                   </div>
-                  <button type="button" title={t('student.settings.profile.upload')} className="absolute bottom-0 right-0 w-8 h-8 bg-primary border-2 border-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary-dark transition-colors">
+                  <button type="button" title={t('student.settings.profile.upload')} className="absolute bottom-0 right-0 w-8 h-8 bg-primary border-2 border-white rounded-full flex items-center justify-center shadow-lg cursor-pointer hover:bg-primary/90 transition-colors">
                     <Camera className="w-4 h-4 text-white" />
                   </button>
                 </div>
@@ -203,7 +206,7 @@ export default function SettingsPage() {
                     defaultValue={profile?.full_name || ''}
                     placeholder="e.g. Ahmad Junaidi"
                     required
-                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -226,7 +229,7 @@ export default function SettingsPage() {
                     type="tel"
                     defaultValue={profile?.phone || ''}
                     placeholder="08123456789"
-                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -250,7 +253,7 @@ export default function SettingsPage() {
               <button type="button" className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer">
                 {t('student.settings.profile.discard')}
               </button>
-              <button type="submit" disabled={updating} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:bg-primary-dark transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
+              <button type="submit" disabled={updating} className="bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium shadow-sm hover:bg-primary/90 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2">
                 {updating && <Loader2 className="w-4 h-4 animate-spin" />}
                 {t('student.settings.profile.save')}
               </button>
@@ -262,8 +265,8 @@ export default function SettingsPage() {
             {/* Security */}
             <form onSubmit={handlePasswordChange} className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="px-6 py-6 border-b border-slate-100">
-                <h3 className="text-lg font-semibold text-text-main">{t('student.settings.security.title')}</h3>
-                <p className="text-sm text-text-sub">{t('student.settings.security.desc')}</p>
+                <h3 className="text-lg font-semibold text-foreground">{t('student.settings.security.title')}</h3>
+                <p className="text-sm text-muted-foreground">{t('student.settings.security.desc')}</p>
               </div>
 
               <div className="p-6 flex flex-col gap-4">
@@ -275,7 +278,7 @@ export default function SettingsPage() {
                     type="password"
                     placeholder="••••••••"
                     required
-                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -288,7 +291,7 @@ export default function SettingsPage() {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
 
@@ -301,7 +304,7 @@ export default function SettingsPage() {
                     placeholder="••••••••"
                     required
                     minLength={6}
-                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-text-main outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
+                    className="bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-base text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 transition-colors"
                   />
                 </div>
               </div>
@@ -317,15 +320,15 @@ export default function SettingsPage() {
             {/* Notifications */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="px-6 py-6 border-b border-slate-100">
-                <h3 className="text-lg font-semibold text-text-main">{t('student.settings.notif.title')}</h3>
-                <p className="text-sm text-text-sub">{t('student.settings.notif.desc')}</p>
+                <h3 className="text-lg font-semibold text-foreground">{t('student.settings.notif.title')}</h3>
+                <p className="text-sm text-muted-foreground">{t('student.settings.notif.desc')}</p>
               </div>
 
               <div className="p-6 flex flex-col gap-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-text-main">{t('student.settings.notif.email.title')}</p>
-                    <p className="text-xs text-text-sub">{t('student.settings.notif.email.desc')}</p>
+                    <p className="text-sm font-medium text-foreground">{t('student.settings.notif.email.title')}</p>
+                    <p className="text-xs text-muted-foreground">{t('student.settings.notif.email.desc')}</p>
                   </div>
                   <Toggle
                     checked={emailNotif}
@@ -336,8 +339,8 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-text-main">{t('student.settings.notif.billing.title')}</p>
-                    <p className="text-xs text-text-sub">{t('student.settings.notif.billing.desc')}</p>
+                    <p className="text-sm font-medium text-foreground">{t('student.settings.notif.billing.title')}</p>
+                    <p className="text-xs text-muted-foreground">{t('student.settings.notif.billing.desc')}</p>
                   </div>
                   <Toggle
                     checked={tuitionNotif}
@@ -348,8 +351,8 @@ export default function SettingsPage() {
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-text-main">{t('student.settings.notif.push.title')}</p>
-                    <p className="text-xs text-text-sub">{t('student.settings.notif.push.desc')}</p>
+                    <p className="text-sm font-medium text-foreground">{t('student.settings.notif.push.title')}</p>
+                    <p className="text-xs text-muted-foreground">{t('student.settings.notif.push.desc')}</p>
                   </div>
                   <Toggle
                     checked={pushNotif}
@@ -363,10 +366,10 @@ export default function SettingsPage() {
 
           {/* Footer */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200">
-            <p className="text-sm text-text-sub">{t('student.db.footer')}</p>
+            <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.help')}</Link>
-              <Link href="#" className="text-sm text-text-sub hover:text-text-main cursor-pointer">{t('student.db.privacy')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>
+              <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.privacy')}</Link>
             </div>
           </div>
         </div>

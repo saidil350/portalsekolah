@@ -4,9 +4,8 @@ import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { authorizeAction } from '@/lib/auth/authorization'
 
-/**
- * Get current teacher profile data
- */
+const SETTINGS_PATH = '/dashboard/teaching-dashboard/pengaturan'
+
 export async function getTeacherProfile() {
   const auth = await authorizeAction(['GURU'])
   if (!auth.success) {
@@ -14,7 +13,6 @@ export async function getTeacherProfile() {
   }
 
   const supabase = await createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
@@ -35,9 +33,6 @@ export async function getTeacherProfile() {
   return profile
 }
 
-/**
- * Update teacher profile information
- */
 export async function updateTeacherProfile(formData: FormData) {
   const auth = await authorizeAction(['GURU'])
   if (!auth.success) {
@@ -45,50 +40,32 @@ export async function updateTeacherProfile(formData: FormData) {
   }
 
   const supabase = await createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
     return { success: false, error: 'Not authenticated' }
   }
 
-  const fullName = formData.get('fullName') as string
-  const phone = formData.get('phone') as string
-  // address column doesn't exist in database yet - skipping for now
-  // const address = formData.get('address') as string
-  const emailNotifications = formData.get('emailNotifications') === 'on'
-  const scheduleReminders = formData.get('scheduleReminders') === 'on'
-  const assignmentSubmissions = formData.get('assignmentSubmissions') === 'on'
-  const attendanceAlerts = formData.get('attendanceAlerts') === 'on'
-  const systemUpdates = formData.get('systemUpdates') === 'on'
+  const fullName = (formData.get('fullName') as string | null)?.trim()
+  const phone = (formData.get('phone') as string | null)?.trim() || null
+  const notificationPreferences = {
+    email: formData.get('emailNotifications') === 'on',
+    schedule_reminders: formData.get('scheduleReminders') === 'on',
+    assignment_submissions: formData.get('assignmentSubmissions') === 'on',
+    attendance_alerts: formData.get('attendanceAlerts') === 'on',
+    system_updates: formData.get('systemUpdates') === 'on',
+  }
 
-  if (!fullName || fullName.trim() === '') {
+  if (!fullName) {
     return { success: false, error: 'Nama lengkap wajib diisi' }
   }
 
   try {
-    console.log('📝 Updating teacher profile:', {
-      full_name: fullName.trim(),
-      phone: phone?.trim() || null,
-      user_id: user.id
-    })
-
-    const updateData: any = {
-      full_name: fullName.trim(),
-      // notification_preferences ditiadakan sementara agar tidak error PGRST204
-      // notification_preferences: {
-      //   email: emailNotifications,
-      //   schedule_reminders: scheduleReminders,
-      //   assignment_submissions: assignmentSubmissions,
-      //   attendance_alerts: attendanceAlerts,
-      //   system_updates: systemUpdates
-      // },
-      updated_at: new Date().toISOString()
-    }
-
-    // Only include phone if it's provided (to avoid errors if column doesn't exist)
-    if (phone && phone.trim()) {
-      updateData.phone = phone.trim()
+    const updateData = {
+      full_name: fullName,
+      phone,
+      notification_preferences: notificationPreferences,
+      updated_at: new Date().toISOString(),
     }
 
     const { data, error } = await supabase
@@ -96,44 +73,36 @@ export async function updateTeacherProfile(formData: FormData) {
       .update(updateData)
       .eq('id', user.id)
       .select()
+      .single()
 
     if (error) {
-      console.error('❌ Error updating profile:', error)
-      console.error('Error details:', JSON.stringify(error, null, 2))
+      console.error('Error updating teacher profile:', error)
       return {
         success: false,
-        error: `Gagal mengupdate profile: ${error.message || 'Unknown database error'}`
+        error: `Gagal mengupdate profile: ${error.message || 'Unknown database error'}`,
       }
     }
 
-    // Sync to Supabase Auth Users (native credential & metadata)
     const { error: authError } = await supabase.auth.updateUser({
-      phone: updateData.phone || null, // Native Phone Credential
+      ...(phone ? { phone } : {}),
       data: {
-        full_name: updateData.full_name,
-        phone: updateData.phone || null
-      }
+        full_name: fullName,
+        phone,
+      },
     })
 
     if (authError) {
-      console.warn('⚠️ Warning: Profile updated but failed to sync to Auth User:', authError.message)
-    } else {
-      console.log('✅ Sync to Auth metadata successful')
+      console.warn('Profile updated but failed to sync Auth metadata:', authError.message)
     }
 
-    console.log('✅ Profile updated successfully:', data)
-
-    revalidatePath('/dashboard/teaching-dashboard/pengaturan')
+    revalidatePath(SETTINGS_PATH)
     return { success: true, message: 'Profile berhasil diupdate', data }
   } catch (error: any) {
-    console.error('Error updating profile:', error)
+    console.error('Error updating teacher profile:', error)
     return { success: false, error: error.message || 'Terjadi kesalahan' }
   }
 }
 
-/**
- * Change teacher password
- */
 export async function changeTeacherPassword(formData: FormData) {
   const auth = await authorizeAction(['GURU'])
   if (!auth.success) {
@@ -141,7 +110,6 @@ export async function changeTeacherPassword(formData: FormData) {
   }
 
   const supabase = await createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
@@ -152,7 +120,6 @@ export async function changeTeacherPassword(formData: FormData) {
   const newPassword = formData.get('newPassword') as string
   const confirmPassword = formData.get('confirmPassword') as string
 
-  // Validation
   if (!currentPassword || !newPassword || !confirmPassword) {
     return { success: false, error: 'Semua field wajib diisi' }
   }
@@ -166,19 +133,17 @@ export async function changeTeacherPassword(formData: FormData) {
   }
 
   try {
-    // Verify current password by attempting to sign in
     const { data: { user: currentUser }, error: signInError } = await supabase.auth.signInWithPassword({
       email: user.email!,
-      password: currentPassword
+      password: currentPassword,
     })
 
     if (signInError || !currentUser) {
       return { success: false, error: 'Password saat ini salah' }
     }
 
-    // Update password
     const { error } = await supabase.auth.updateUser({
-      password: newPassword
+      password: newPassword,
     })
 
     if (error) {
@@ -193,9 +158,6 @@ export async function changeTeacherPassword(formData: FormData) {
   }
 }
 
-/**
- * Update notification preferences
- */
 export async function updateNotificationPreferences(
   email: boolean,
   schedule_reminders: boolean,
@@ -209,7 +171,6 @@ export async function updateNotificationPreferences(
   }
 
   const supabase = await createClient()
-
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
@@ -217,30 +178,29 @@ export async function updateNotificationPreferences(
   }
 
   try {
-    // Bypass DB update karena kolom belum ada
-    // const { error } = await supabase
-    //   .from('profiles')
-    //   .update({
-    //     notification_preferences: {
-    //       email,
-    //       schedule_reminders,
-    //       assignment_submissions,
-    //       attendance_alerts,
-    //       system_updates
-    //     },
-    //     updated_at: new Date().toISOString()
-    //   })
-    //   .eq('id', user.id)
-    let error: any = null;
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        notification_preferences: {
+          email,
+          schedule_reminders,
+          assignment_submissions,
+          attendance_alerts,
+          system_updates,
+        },
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', user.id)
 
     if (error) {
       console.error('Error updating preferences:', error)
       return {
         success: false,
-        error: `Gagal mengupdate preferensi notifikasi: ${error.message || 'Unknown database error'}`
+        error: `Gagal mengupdate preferensi notifikasi: ${error.message || 'Unknown database error'}`,
       }
     }
 
+    revalidatePath(SETTINGS_PATH)
     return { success: true }
   } catch (error: any) {
     console.error('Error updating preferences:', error)

@@ -1,4 +1,5 @@
-import { createAdminClient, createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/server-admin'
+import { authorizeApi } from '@/lib/auth/authorization'
 
 type EnrollRequest = {
   studentId?: string
@@ -25,32 +26,35 @@ export async function POST(request: Request) {
       )
     }
 
-    // Auth check (must be logged in)
-    const userClient = await createClient()
-    const { data: { user }, error: userError } = await userClient.auth.getUser()
-    if (userError || !user) {
-      return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 })
+    const auth = await authorizeApi(request, ['ADMIN_IT'])
+    if (!auth.success) {
+      return Response.json({ success: false, error: auth.error }, { status: auth.statusCode })
     }
 
-    // Role check (ADMIN_IT)
-    const { data: profile, error: profileError } = await userClient
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single()
-
-    if (profileError || !profile || profile.role !== 'ADMIN_IT') {
-      return Response.json({ success: false, error: 'Forbidden' }, { status: 403 })
-    }
-
-    // Use service role to bypass RLS for insert
+    const organizationId = auth.user.organization_id
     const adminClient = await createAdminClient()
+
+    const [{ data: classData }, { data: studentData }, { data: academicYearData }] = await Promise.all([
+      adminClient.from('classes').select('id').eq('id', classId).eq('organization_id', organizationId).maybeSingle(),
+      adminClient.from('profiles').select('id').eq('id', studentId).eq('organization_id', organizationId).eq('role', 'SISWA').maybeSingle(),
+      academicYearId
+        ? adminClient.from('academic_years').select('id').eq('id', academicYearId).eq('organization_id', organizationId).maybeSingle()
+        : Promise.resolve({ data: { id: null } }),
+    ])
+
+    if (!classData || !studentData || (academicYearId && !academicYearData)) {
+      return Response.json(
+        { success: false, error: 'Kelas, siswa, atau tahun ajaran tidak valid untuk sekolah ini' },
+        { status: 403 }
+      )
+    }
 
     // Check for ANY existing enrollment (regardless of status)
     // This handles cases where there's a WITHDRAWN enrollment that would cause UNIQUE constraint violation
     const checkQuery = adminClient
       .from('enrollments')
       .select('id, status')
+      .eq('organization_id', organizationId)
       .eq('class_id', classId)
       .eq('student_id', studentId)
 
@@ -84,6 +88,7 @@ export async function POST(request: Request) {
         .from('enrollments')
         .delete()
         .eq('id', existingEnrollment.id)
+        .eq('organization_id', organizationId)
 
       if (deleteError) {
         return Response.json(
@@ -98,6 +103,7 @@ export async function POST(request: Request) {
       class_id: classId,
       academic_year_id: academicYearId,
       enrollment_date: new Date().toISOString().split('T')[0],
+      organization_id: organizationId,
     }
 
     for (const statusValue of ACTIVE_STATUS_CANDIDATES) {
