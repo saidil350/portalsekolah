@@ -22,13 +22,13 @@ interface CalendarDay {
 
 function getCellStyles(status: AttendanceStatus) {
   switch (status) {
-    case 'present': return { bg: 'bg-green-50 border border-slate-100', text: 'text-green-700', labelColor: 'text-green-600/60' };
-    case 'absent': return { bg: 'bg-red-50 border border-slate-100 shadow-[0px_0px_0px_2px_rgba(239,68,68,0.2)]', text: 'text-red-700', labelColor: 'text-red-600/60' };
-    case 'sick': return { bg: 'bg-blue-50 border border-slate-100', text: 'text-blue-700', labelColor: 'text-blue-600/60' };
-    case 'late': return { bg: 'bg-amber-50 border border-slate-100', text: 'text-amber-700', labelColor: 'text-amber-600/60' };
+    case 'present': return { bg: 'bg-green-50 border border-border/60', text: 'text-green-700', labelColor: 'text-green-600/60' };
+    case 'absent': return { bg: 'bg-red-50 border border-border/60 shadow-[0px_0px_0px_2px_rgba(239,68,68,0.2)]', text: 'text-red-700', labelColor: 'text-red-600/60' };
+    case 'sick': return { bg: 'bg-blue-50 border border-border/60', text: 'text-blue-700', labelColor: 'text-blue-600/60' };
+    case 'late': return { bg: 'bg-amber-50 border border-border/60', text: 'text-amber-700', labelColor: 'text-amber-600/60' };
     case 'today': return { bg: 'bg-primary/10 border-2 border-primary shadow-md', text: 'text-primary', labelColor: 'text-primary' };
-    case 'weekend': return { bg: 'bg-slate-50', text: 'text-slate-400', labelColor: '' };
-    case 'future': return { bg: 'bg-white border border-slate-200', text: 'text-slate-300', labelColor: '' };
+    case 'weekend': return { bg: 'bg-muted/50', text: 'text-muted-foreground', labelColor: '' };
+    case 'future': return { bg: 'bg-card border border-border', text: 'text-slate-300', labelColor: '' };
     default: return { bg: '', text: '', labelColor: '' };
   }
 }
@@ -93,14 +93,14 @@ export default function AttendancePage() {
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2 mb-1">
                 <Link href="/dashboard/student-dashboard" className="text-sm font-medium text-primary hover:underline cursor-pointer">{t('student.nav.dashboard')}</Link>
-                <ChevronRight className="w-2.5 h-2 text-slate-400" />
+                <ChevronRight className="w-2.5 h-2 text-muted-foreground" />
                 <span className="text-sm font-medium text-muted-foreground">{t('student.nav.attendance')}</span>
               </div>
               <h2 className="text-3xl font-bold text-foreground tracking-tight">{t('student.attendance.title')}</h2>
               <p className="text-base text-muted-foreground">{t('student.attendance.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-slate-50 transition-colors cursor-pointer shadow-sm">
+              <button className="bg-card border border-border rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-foreground hover:bg-accent transition-colors cursor-pointer shadow-sm">
                 <Download className="w-3 h-3" />
                 {t('student.attendance.export')}
               </button>
@@ -115,16 +115,16 @@ export default function AttendancePage() {
             {/* Left: Calendar + Detailed Log */}
             <div className="flex-1 flex flex-col gap-6">
               {/* Calendar */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+              <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-border/60">
                   <div className="flex items-center gap-4">
                     <h3 className="text-xl font-bold text-foreground">{t('month.may')} 2024</h3>
                     <div className="flex items-center gap-1">
-                      <button title="Previous Month" className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
-                        <ChevronLeft className="w-3 h-3 text-slate-500" />
+                      <button title="Previous Month" className="p-1.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                        <ChevronLeft className="w-3 h-3 text-muted-foreground" />
                       </button>
-                      <button title="Next Month" className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
-                        <ChevronRight className="w-3 h-3 text-slate-500" />
+                      <button title="Next Month" className="p-1.5 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                        <ChevronRight className="w-3 h-3 text-muted-foreground" />
                       </button>
                     </div>
                   </div>
@@ -148,7 +148,7 @@ export default function AttendancePage() {
                   <div className="grid grid-cols-7 gap-2 mb-2">
                     {[t('day.sun' as any), t('day.mon' as any), t('day.tue' as any), t('day.wed' as any), t('day.thu' as any), t('day.fri' as any), t('day.sat' as any)].map((d) => (
                       <div key={d} className="text-center py-2">
-                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{d}</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{d}</span>
                       </div>
                     ))}
                   </div>
@@ -177,18 +177,18 @@ export default function AttendancePage() {
               </div>
 
               {/* Detailed Log */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-                <div className="px-6 py-5 border-b border-slate-100">
+              <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+                <div className="px-6 py-5 border-b border-border/60">
                   <h3 className="text-lg font-semibold text-foreground">{t('student.attendance.log.title')}</h3>
                 </div>
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-slate-50">
-                      <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-slate-400 uppercase">{t('student.attendance.table.date')}</th>
-                      <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase">{t('student.attendance.table.subject')}</th>
-                      <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase">{t('student.attendance.table.status')}</th>
-                      <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase">{t('student.attendance.table.time')}</th>
-                      <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase">{t('student.attendance.table.note')}</th>
+                    <tr className="bg-muted/50">
+                      <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-muted-foreground uppercase">{t('student.attendance.table.date')}</th>
+                      <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase">{t('student.attendance.table.subject')}</th>
+                      <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase">{t('student.attendance.table.status')}</th>
+                      <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase">{t('student.attendance.table.time')}</th>
+                      <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase">{t('student.attendance.table.note')}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -217,7 +217,7 @@ export default function AttendancePage() {
                 <p className="text-sm font-medium text-blue-100 mb-1">{t('student.attendance.stats.average')}</p>
                 <p className="text-4xl font-bold mb-3">92%</p>
                 <div className="h-2 bg-white/20 rounded-full overflow-hidden mb-2">
-                  <div className="h-full bg-white rounded-full w-[92%]" />
+                  <div className="h-full bg-card rounded-full w-[92%]" />
                 </div>
                 <p className="text-sm text-blue-100">
                   {t('student.attendance.stats.standing')}
@@ -225,7 +225,7 @@ export default function AttendancePage() {
               </div>
 
               {/* Breakdown */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="bg-card rounded-xl border border-border shadow-sm p-6">
                 <h4 className="text-sm font-semibold text-foreground mb-4">{t('student.attendance.stats.thisMonth')}</h4>
                 <div className="flex flex-col gap-3">
                   {[
@@ -246,7 +246,7 @@ export default function AttendancePage() {
               </div>
 
               {/* Alerts */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="bg-card rounded-xl border border-border shadow-sm p-6">
                 <h4 className="text-sm font-semibold text-foreground mb-4">{t('student.attendance.stats.streakTitle')}</h4>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-3 bg-green-50 rounded-xl p-3">
@@ -269,7 +269,7 @@ export default function AttendancePage() {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+          <div className="flex items-center justify-between pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>

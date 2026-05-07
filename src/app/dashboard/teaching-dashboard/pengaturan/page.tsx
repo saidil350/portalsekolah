@@ -152,9 +152,9 @@ export default function PengaturanPage() {
       )}
 
       {/* Header */}
-      <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+      <header className="h-[64px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
-          <h2 className="text-slate-900 text-[20px] font-bold">{t('teacher.settings.title')}</h2>
+          <h2 className="text-foreground text-[20px] font-bold">{t('teacher.settings.title')}</h2>
         </div>
       </header>
 
@@ -162,14 +162,14 @@ export default function PengaturanPage() {
         <div className="max-w-4xl mx-auto flex flex-col gap-6">
 
           {/* Tabs */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-            <div className="border-b border-slate-100 px-6 flex items-center h-[56px]">
+          <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            <div className="border-b border-border/60 px-6 flex items-center h-[56px]">
               <button
                 onClick={() => setActiveTab('personal')}
                 className={`px-4 h-full flex items-center gap-2 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                   activeTab === 'personal'
                     ? 'text-primary border-primary'
-                    : 'text-slate-500 border-transparent hover:text-slate-900'
+                    : 'text-muted-foreground border-transparent hover:text-slate-900'
                 }`}
               >
                 <User className="w-4 h-4" />
@@ -180,7 +180,7 @@ export default function PengaturanPage() {
                 className={`px-4 h-full flex items-center gap-2 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                   activeTab === 'security'
                     ? 'text-primary border-primary'
-                    : 'text-slate-500 border-transparent hover:text-slate-900'
+                    : 'text-muted-foreground border-transparent hover:text-slate-900'
                 }`}
               >
                 <Shield className="w-4 h-4" />
@@ -191,7 +191,7 @@ export default function PengaturanPage() {
                 className={`px-4 h-full flex items-center gap-2 text-sm font-medium border-b-2 transition-colors cursor-pointer ${
                   activeTab === 'notifications'
                     ? 'text-primary border-primary'
-                    : 'text-slate-500 border-transparent hover:text-slate-900'
+                    : 'text-muted-foreground border-transparent hover:text-slate-900'
                 }`}
               >
                 <Bell className="w-4 h-4" />
@@ -203,10 +203,10 @@ export default function PengaturanPage() {
           {activeTab === 'personal' && (
             <>
               {/* Personal Information Section */}
-              <form onSubmit={handleProfileUpdate} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100">
+              <form onSubmit={handleProfileUpdate} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-border/60">
                   <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.personal.photoTitle')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.photoDesc')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.personal.photoDesc')}</p>
                 </div>
                 <div className="px-6 py-6 flex items-center gap-6">
                   <div className="relative">
@@ -219,13 +219,13 @@ export default function PengaturanPage() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-foreground">{profile?.full_name || t('teacher.settings.personal.teacherNameFallback')}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.photoFormat')}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.personal.photoFormat')}</p>
                   </div>
                 </div>
 
-                <div className="px-6 py-4 border-b border-slate-100">
+                <div className="px-6 py-4 border-b border-border/60">
                   <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.personal.detailsTitle')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.personal.detailsDesc')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.personal.detailsDesc')}</p>
                 </div>
                 <div className="px-6 py-6 grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Full Name */}
@@ -237,7 +237,7 @@ export default function PengaturanPage() {
                       title="Full Name"
                       type="text"
                       defaultValue={profile?.full_name || ''}
-                      className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
+                      className="w-full bg-card border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
                     />
                   </div>
                   {/* NIP */}
@@ -249,7 +249,7 @@ export default function PengaturanPage() {
                       title="NIP"
                       type="text"
                       defaultValue={profile?.nip || ''}
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-500 text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
+                      className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
                       readOnly
                     />
                   </div>
@@ -262,7 +262,7 @@ export default function PengaturanPage() {
                       title="Email"
                       type="email"
                       defaultValue={profile?.email || ''}
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-500 text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
+                      className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
                       readOnly
                     />
                   </div>
@@ -275,7 +275,7 @@ export default function PengaturanPage() {
                       title="Phone Number"
                       type="tel"
                       defaultValue={profile?.phone || ''}
-                      className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
+                      className="w-full bg-card border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
                     />
                   </div>
                   {/* Join Date */}
@@ -287,7 +287,7 @@ export default function PengaturanPage() {
                       title="Join Date"
                       type="text"
                       defaultValue={profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : ''}
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-500 text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
+                      className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
                       readOnly
                     />
                   </div>
@@ -295,7 +295,7 @@ export default function PengaturanPage() {
                 </div>
 
                 {/* Actions */}
-                <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+                <div className="px-6 py-5 border-t border-border/60 bg-slate-50/50 flex items-center justify-end gap-3">
                   <button
                     type="submit"
                     disabled={updating}
@@ -313,10 +313,10 @@ export default function PengaturanPage() {
           {activeTab === 'security' && (
             <>
               {/* Security Section */}
-              <form onSubmit={handlePasswordChange} className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100">
+              <form onSubmit={handlePasswordChange} className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-border/60">
                   <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.security.changePassword')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.security.changePasswordDesc')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.security.changePasswordDesc')}</p>
                 </div>
                 <div className="px-6 py-6 flex flex-col gap-5">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -329,7 +329,7 @@ export default function PengaturanPage() {
                         type="password"
                         placeholder={t('teacher.settings.security.currentPasswordPlaceholder')}
                         required
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
+                        className="w-full bg-card border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -342,7 +342,7 @@ export default function PengaturanPage() {
                         placeholder={t('teacher.settings.security.newPasswordPlaceholder')}
                         required
                         minLength={6}
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
+                        className="w-full bg-card border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
@@ -355,29 +355,29 @@ export default function PengaturanPage() {
                         placeholder={t('teacher.settings.security.confirmPasswordPlaceholder')}
                         required
                         minLength={6}
-                        className="w-full bg-white border border-slate-200 text-slate-900 text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
+                        className="w-full bg-card border border-border text-foreground text-sm rounded-lg focus:ring-primary focus:border-primary px-4 py-2.5 outline-none transition-colors"
                       />
                     </div>
                   </div>
                   {/* 2FA */}
-                  <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg border border-border/60">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                         <Smartphone className="w-5 h-5 text-primary" />
                       </div>
                       <div>
                         <p className="text-sm font-medium text-foreground">{t('teacher.settings.security.twoFactor')}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.security.twoFactorDesc')}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.security.twoFactorDesc')}</p>
                       </div>
                     </div>
-                    <button type="button" className="px-4 py-2 bg-white border border-slate-200 text-slate-600 rounded-lg text-sm font-medium hover:bg-slate-50 transition-colors cursor-pointer">
+                    <button type="button" className="px-4 py-2 bg-card border border-border text-muted-foreground rounded-lg text-sm font-medium hover:bg-accent transition-colors cursor-pointer">
                       {t('teacher.settings.security.comingSoon')}
                     </button>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="px-6 py-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end">
+                <div className="px-6 py-5 border-t border-border/60 bg-slate-50/50 flex items-center justify-end">
                   <button
                     type="submit"
                     disabled={updating}
@@ -394,10 +394,10 @@ export default function PengaturanPage() {
           {activeTab === 'notifications' && (
             <>
               {/* Notifications Section */}
-              <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100">
+              <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-border/60">
                   <h3 className="text-base font-semibold text-foreground">{t('teacher.settings.notifications.preferences')}</h3>
-                  <p className="text-xs text-slate-500 mt-0.5">{t('teacher.settings.notifications.preferencesDesc')}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('teacher.settings.notifications.preferencesDesc')}</p>
                 </div>
                 <div className="px-6 py-4 divide-y divide-slate-100">
                   {[
@@ -440,7 +440,7 @@ export default function PengaturanPage() {
                     <div key={notif.key} className="flex items-center justify-between py-4 first:pt-2 last:pb-2">
                       <div>
                         <p className="text-sm font-medium text-foreground">{t(notif.labelKey as TranslationKey)}</p>
-                        <p className="text-xs text-slate-500 mt-0.5">{t(notif.descKey as TranslationKey)}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{t(notif.descKey as TranslationKey)}</p>
                       </div>
                       {/* Toggle Switch */}
                       <button
@@ -467,7 +467,7 @@ export default function PengaturanPage() {
                         }}
                         className={`relative w-11 h-6 rounded-full transition-colors duration-200 cursor-pointer ${notif.checked ? 'bg-primary' : 'bg-slate-200'}`}
                       >
-                        <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform duration-200 ${notif.checked ? 'left-[22px] border border-white' : 'left-0.5 border border-gray-300'}`} />
+                        <div className={`absolute top-0.5 w-5 h-5 bg-card rounded-full shadow transition-transform duration-200 ${notif.checked ? 'left-[22px] border border-white' : 'left-0.5 border border-gray-300'}`} />
                       </button>
                     </div>
                   ))}

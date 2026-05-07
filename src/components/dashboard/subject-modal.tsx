@@ -145,20 +145,20 @@ export default function SubjectModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h3 className="text-xl font-bold text-foreground">
             {mode === 'create' ? 'Tambah Mata Pelajaran' : 'Edit Mata Pelajaran'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={loading}
             title="Tutup"
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -177,7 +177,7 @@ export default function SubjectModal({
           ) : (
             <>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Nama Mata Pelajaran <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -186,14 +186,14 @@ export default function SubjectModal({
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Contoh: Matematika"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                   required
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Kode <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -202,14 +202,14 @@ export default function SubjectModal({
                   value={formData.code}
                   onChange={handleChange}
                   placeholder="Contoh: MTK-101"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
                   required
                   disabled={loading}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Tipe Mata Pelajaran <span className="text-red-500">*</span>
                 </label>
                 <select
@@ -218,7 +218,7 @@ export default function SubjectModal({
                   onChange={handleChange}
                   aria-label="Tipe Mata Pelajaran"
                   title="Tipe Mata Pelajaran"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   required
                   disabled={loading}
                 >
@@ -231,7 +231,7 @@ export default function SubjectModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Jurusan
                 </label>
                 <select
@@ -240,7 +240,7 @@ export default function SubjectModal({
                   onChange={handleChange}
                   aria-label="Jurusan"
                   title="Jurusan"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   disabled={loading}
                 >
                   <option value="">Tidak ada jurusan</option>
@@ -253,7 +253,7 @@ export default function SubjectModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Tahun Akademik
                 </label>
                 <select
@@ -262,7 +262,7 @@ export default function SubjectModal({
                   onChange={handleChange}
                   aria-label="Tahun Akademik"
                   title="Tahun Akademik"
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   disabled={loading}
                 >
                   <option value="">Tidak ada tahun akademik</option>
@@ -275,7 +275,7 @@ export default function SubjectModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-foreground mb-1.5">
                   Deskripsi
                 </label>
                 <textarea
@@ -284,7 +284,7 @@ export default function SubjectModal({
                   onChange={handleChange}
                   placeholder="Deskripsi mata pelajaran"
                   rows={3}
-                  className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
+                  className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
                   disabled={loading}
                 />
               </div>
@@ -299,7 +299,7 @@ export default function SubjectModal({
                   className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary"
                   disabled={loading}
                 />
-                <label htmlFor="is_active" className="text-sm font-medium text-slate-700">
+                <label htmlFor="is_active" className="text-sm font-medium text-foreground">
                   Mata pelajaran aktif
                 </label>
               </div>
@@ -308,7 +308,7 @@ export default function SubjectModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={loading}
                 >
                   Batal

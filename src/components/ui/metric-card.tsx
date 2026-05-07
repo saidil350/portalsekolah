@@ -70,8 +70,8 @@ export function MetricCard({
   const isPositive = trendValue > 0
   const isNegative = trendValue < 0
 
-  const trendColor = isPositive ? 'text-green-600' : isNegative ? 'text-error-600' : 'text-slate-600'
-  const trendBg = isPositive ? 'bg-green-100' : isNegative ? 'bg-error-50' : 'bg-slate-100'
+  const trendColor = isPositive ? 'text-green-600' : isNegative ? 'text-error-600' : 'text-muted-foreground'
+  const trendBg = isPositive ? 'bg-green-100' : isNegative ? 'bg-error-50' : 'bg-muted'
   const trendIcon = isPositive ? <TrendingUp className="w-3 h-2" /> : isNegative ? <TrendingDown className="w-3 h-2" /> : <Minus className="w-3 h-2" />
 
   return (
@@ -129,13 +129,13 @@ export function MetricCardCompact({
   icon,
   className
 }: MetricCardCompactProps) {
-  const changeColor = change && change > 0 ? 'text-green-600' : change && change < 0 ? 'text-error-600' : 'text-slate-600'
+  const changeColor = change && change > 0 ? 'text-green-600' : change && change < 0 ? 'text-error-600' : 'text-muted-foreground'
 
   return (
     <Card className={cn("rounded-lg p-4", className)}>
       <div className="flex items-center justify-between mb-2">
         <p className="text-xs font-medium text-muted-foreground">{title}</p>
-        {icon && <div className="text-slate-400">{icon}</div>}
+        {icon && <div className="text-muted-foreground">{icon}</div>}
       </div>
       <div className="flex items-baseline gap-2">
         <p className="text-2xl font-bold text-foreground">{value}</p>
@@ -172,14 +172,14 @@ export function StatCard({
   const trendColors = {
     green: 'text-green-600 bg-green-100',
     red: 'text-error-600 bg-error-50',
-    neutral: 'text-slate-600 bg-slate-100'
+    neutral: 'text-muted-foreground bg-muted'
   }
 
   return (
     <Card className={cn("p-5", className)}>
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-muted-foreground">{label}</p>
-        {icon && <div className="text-slate-400">{icon}</div>}
+        {icon && <div className="text-muted-foreground">{icon}</div>}
       </div>
       <div className="flex items-baseline gap-2 mt-1">
         <p className="text-2xl font-bold text-foreground">{value}</p>

@@ -145,15 +145,15 @@ export default function PengaturanPage() {
 
           {/* Header */}
           <div className="flex flex-col gap-2">
-            <h2 className="text-slate-900 text-[30px] font-bold tracking-tight">{t('headmaster.settings.title')}</h2>
-            <p className="text-slate-500 text-base">{t('headmaster.settings.subtitle')}</p>
+            <h2 className="text-foreground text-[30px] font-bold tracking-tight">{t('headmaster.settings.title')}</h2>
+            <p className="text-muted-foreground text-base">{t('headmaster.settings.subtitle')}</p>
           </div>
 
           {/* Section 1: Informasi Pribadi */}
-          <form onSubmit={handleProfileUpdate} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">{t('headmaster.settings.section.personal')}</h3>
-              <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.settings.section.personal.desc')}</p>
+          <form onSubmit={handleProfileUpdate} className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="px-6 py-6 border-b border-border/60">
+              <h3 className="text-lg font-bold text-foreground">{t('headmaster.settings.section.personal')}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">{t('headmaster.settings.section.personal.desc')}</p>
             </div>
             <div className="p-6">
               <div className="flex gap-8">
@@ -169,7 +169,7 @@ export default function PengaturanPage() {
                       <Camera className="w-3.5 h-3.5 text-white" />
                     </button>
                   </div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center leading-4">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider text-center leading-4">
                     {t('headmaster.settings.maxSize')}<br />JPG, PNG, WEBP
                   </p>
                 </div>
@@ -177,7 +177,7 @@ export default function PengaturanPage() {
                 {/* Form Fields */}
                 <div className="flex-1 grid grid-cols-2 gap-x-8 gap-y-6">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="namaLengkap" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.fullName')}</label>
+                    <label htmlFor="namaLengkap" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.fullName')}</label>
                     <input
                       id="namaLengkap"
                       name="fullName"
@@ -185,11 +185,11 @@ export default function PengaturanPage() {
                       placeholder={t('headmaster.settings.fullName.placeholder')}
                       type="text"
                       defaultValue={profile?.full_name || ''}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="nip" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.nip')}</label>
+                    <label htmlFor="nip" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.nip')}</label>
                     <input
                       id="nip"
                       name="nip"
@@ -197,11 +197,11 @@ export default function PengaturanPage() {
                       placeholder={t('headmaster.settings.nip.placeholder')}
                       type="text"
                       defaultValue={profile?.nip || ''}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="emailKedinasan" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.officialEmail')}</label>
+                    <label htmlFor="emailKedinasan" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.officialEmail')}</label>
                     <input
                       id="emailKedinasan"
                       name="email"
@@ -209,12 +209,12 @@ export default function PengaturanPage() {
                       placeholder={t('headmaster.settings.officialEmail.placeholder')}
                       type="email"
                       defaultValue={profile?.email || ''}
-                      className="w-full bg-slate-50 border border-slate-200 text-slate-500 text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
+                      className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg px-4 py-2.5 outline-none cursor-not-allowed"
                       readOnly
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="noWhatsapp" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.whatsapp')}</label>
+                    <label htmlFor="noWhatsapp" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.whatsapp')}</label>
                     <input
                       id="noWhatsapp"
                       name="phone"
@@ -222,7 +222,7 @@ export default function PengaturanPage() {
                       placeholder={t('headmaster.settings.whatsapp.placeholder')}
                       type="tel"
                       defaultValue={profile?.phone || ''}
-                      className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                      className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                     />
                   </div>
                 </div>
@@ -231,19 +231,19 @@ export default function PengaturanPage() {
           </form>
 
           {/* Section 2: Tanda Tangan Digital */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">{t('headmaster.settings.section.signature')}</h3>
-              <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.settings.section.signature.desc')}</p>
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="px-6 py-6 border-b border-border/60">
+              <h3 className="text-lg font-bold text-foreground">{t('headmaster.settings.section.signature')}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">{t('headmaster.settings.section.signature.desc')}</p>
             </div>
             <div className="p-6">
               <div className="flex gap-8 items-center">
                 {/* Signature Preview */}
-                <div className="flex-1 bg-slate-50 border-2 border-dashed border-slate-200 rounded-xl py-16 flex flex-col items-center justify-center">
+                <div className="flex-1 bg-muted/50 border-2 border-dashed border-border rounded-xl py-16 flex flex-col items-center justify-center">
                   <div className="w-12 h-11 bg-slate-200 rounded-lg mb-2 flex items-center justify-center">
-                    <Camera className="w-5 h-5 text-slate-400" />
+                    <Camera className="w-5 h-5 text-muted-foreground" />
                   </div>
-                  <p className="text-xs text-slate-400">{t('headmaster.settings.signature.preview')}</p>
+                  <p className="text-xs text-muted-foreground">{t('headmaster.settings.signature.preview')}</p>
                 </div>
 
                 {/* Info + Actions */}
@@ -251,7 +251,7 @@ export default function PengaturanPage() {
                   <div className="bg-blue-50 border border-blue-100 rounded-lg p-4">
                     <div className="flex gap-3 items-start">
                       <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
-                      <p className="text-xs text-slate-600 leading-5">
+                      <p className="text-xs text-muted-foreground leading-5">
                         {t('headmaster.settings.signature.info')}
                       </p>
                     </div>
@@ -260,7 +260,7 @@ export default function PengaturanPage() {
                     <button type="button" className="flex-1 bg-primary text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors cursor-pointer text-center">
                       {t('headmaster.settings.changeSpecimen')}
                     </button>
-                    <button type="button" className="border border-slate-200 text-slate-600 px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-slate-50 transition-colors cursor-pointer">
+                    <button type="button" className="border border-border text-muted-foreground px-4 py-2.5 rounded-lg text-sm font-semibold hover:bg-accent transition-colors cursor-pointer">
                       {t('headmaster.settings.delete')}
                     </button>
                   </div>
@@ -270,21 +270,21 @@ export default function PengaturanPage() {
           </div>
 
           {/* Section 3: Preferensi Notifikasi */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">{t('headmaster.settings.section.notifications')}</h3>
-              <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.settings.section.notifications.desc')}</p>
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="px-6 py-6 border-b border-border/60">
+              <h3 className="text-lg font-bold text-foreground">{t('headmaster.settings.section.notifications')}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">{t('headmaster.settings.section.notifications.desc')}</p>
             </div>
             <div>
               {/* Toggle 1: Laporan Mingguan */}
               <div className="flex items-center justify-between px-6 py-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                    <Mail className="w-5 h-4 text-slate-500" />
+                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                    <Mail className="w-5 h-4 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{t('headmaster.settings.notif.weeklyReport')}</p>
-                    <p className="text-xs text-slate-500">{t('headmaster.settings.notif.weeklyReport.desc')}</p>
+                    <p className="text-sm font-bold text-foreground">{t('headmaster.settings.notif.weeklyReport')}</p>
+                    <p className="text-xs text-muted-foreground">{t('headmaster.settings.notif.weeklyReport.desc')}</p>
                   </div>
                 </div>
                 <button
@@ -300,7 +300,7 @@ export default function PengaturanPage() {
                   }`}
                 >
                   <div
-                    className={`absolute top-[2px] w-5 h-5 bg-white rounded-full shadow transition-all ${
+                    className={`absolute top-[2px] w-5 h-5 bg-card rounded-full shadow transition-all ${
                       laporanMingguan ? 'left-[22px] border-white' : 'left-[2px] border-slate-300'
                     } border`}
                   />
@@ -308,14 +308,14 @@ export default function PengaturanPage() {
               </div>
 
               {/* Toggle 2: Alert Keuangan */}
-              <div className="flex items-center justify-between px-6 py-6 border-t border-slate-100">
+              <div className="flex items-center justify-between px-6 py-6 border-t border-border/60">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                    <MessageSquare className="w-5 h-5 text-slate-500" />
+                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                    <MessageSquare className="w-5 h-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-sm font-bold text-slate-900">{t('headmaster.settings.notif.financialAlert')}</p>
-                    <p className="text-xs text-slate-500">{t('headmaster.settings.notif.financialAlert.desc')}</p>
+                    <p className="text-sm font-bold text-foreground">{t('headmaster.settings.notif.financialAlert')}</p>
+                    <p className="text-xs text-muted-foreground">{t('headmaster.settings.notif.financialAlert.desc')}</p>
                   </div>
                 </div>
                 <button
@@ -331,7 +331,7 @@ export default function PengaturanPage() {
                   }`}
                 >
                   <div
-                    className={`absolute top-[2px] w-5 h-5 bg-white rounded-full shadow transition-all ${
+                    className={`absolute top-[2px] w-5 h-5 bg-card rounded-full shadow transition-all ${
                       alertKeuangan ? 'left-[22px] border-white' : 'left-[2px] border-slate-300'
                     } border`}
                   />
@@ -341,23 +341,23 @@ export default function PengaturanPage() {
           </div>
 
           {/* Section 4: Keamanan Akun */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="px-6 py-6 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">{t('headmaster.settings.section.security')}</h3>
-              <p className="text-sm text-slate-500 mt-0.5">{t('headmaster.settings.section.security.desc')}</p>
+          <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
+            <div className="px-6 py-6 border-b border-border/60">
+              <h3 className="text-lg font-bold text-foreground">{t('headmaster.settings.section.security')}</h3>
+              <p className="text-sm text-muted-foreground mt-0.5">{t('headmaster.settings.section.security.desc')}</p>
             </div>
             <div className="p-6 flex flex-col gap-4">
               {!showPasswordForm ? (
                 <div className="flex gap-4">
                   <button
                     onClick={() => setShowPasswordForm(true)}
-                    className="flex items-center gap-2 border border-slate-200 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                    className="flex items-center gap-2 border border-border px-6 py-2.5 rounded-lg text-sm font-bold text-foreground hover:bg-accent transition-colors cursor-pointer"
                   >
-                    <Lock className="w-3 h-4 text-slate-500" />
+                    <Lock className="w-3 h-4 text-muted-foreground" />
                     {t('headmaster.settings.changePassword')}
                   </button>
-                  <button className="flex items-center gap-2 border border-slate-200 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer">
-                    <Activity className="w-3.5 h-4 text-slate-500" />
+                  <button className="flex items-center gap-2 border border-border px-6 py-2.5 rounded-lg text-sm font-bold text-foreground hover:bg-accent transition-colors cursor-pointer">
+                    <Activity className="w-3.5 h-4 text-muted-foreground" />
                     {t('headmaster.settings.loginActivity')}
                   </button>
                 </div>
@@ -365,18 +365,18 @@ export default function PengaturanPage() {
                 <form onSubmit={handlePasswordChange} className="flex flex-col gap-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="currentPassword" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.currentPassword')}</label>
+                      <label htmlFor="currentPassword" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.currentPassword')}</label>
                       <input
                         id="currentPassword"
                         name="currentPassword"
                         type="password"
                         placeholder={t('headmaster.settings.currentPassword.placeholder')}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="newPassword" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.newPassword')}</label>
+                      <label htmlFor="newPassword" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.newPassword')}</label>
                       <input
                         id="newPassword"
                         name="newPassword"
@@ -384,11 +384,11 @@ export default function PengaturanPage() {
                         placeholder={t('headmaster.settings.newPassword.placeholder')}
                         required
                         minLength={6}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                       />
                     </div>
                     <div className="flex flex-col gap-2">
-                      <label htmlFor="confirmPassword" className="text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.settings.confirmPassword')}</label>
+                      <label htmlFor="confirmPassword" className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.settings.confirmPassword')}</label>
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
@@ -396,7 +396,7 @@ export default function PengaturanPage() {
                         placeholder={t('headmaster.settings.confirmPassword.placeholder')}
                         required
                         minLength={6}
-                        className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
+                        className="w-full bg-card border border-border rounded-lg px-4 py-2.5 text-sm text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
                       />
                     </div>
                   </div>
@@ -412,15 +412,15 @@ export default function PengaturanPage() {
                     <button
                       type="button"
                       onClick={() => setShowPasswordForm(false)}
-                      className="border border-slate-200 px-6 py-2.5 rounded-lg text-sm font-bold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                      className="border border-border px-6 py-2.5 rounded-lg text-sm font-bold text-foreground hover:bg-accent transition-colors cursor-pointer"
                     >
                       {t('headmaster.settings.cancel')}
                     </button>
                   </div>
                 </form>
               )}
-              <div className="border-t border-slate-100 pt-4">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider leading-5">
+              <div className="border-t border-border/60 pt-4">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider leading-5">
                   {t('headmaster.settings.intelligenceMode')}<br />
                   <span className="text-primary">{t('headmaster.settings.intelligenceMode.desc')}</span>
                 </p>
@@ -430,7 +430,7 @@ export default function PengaturanPage() {
 
           {/* Footer Buttons */}
           <div className="flex items-center justify-end gap-3 pb-12">
-            <button type="button" className="px-6 py-3 text-sm font-bold text-slate-500 hover:text-slate-700 transition-colors cursor-pointer">
+            <button type="button" className="px-6 py-3 text-sm font-bold text-muted-foreground hover:text-slate-700 transition-colors cursor-pointer">
               {t('headmaster.settings.cancelChanges')}
             </button>
             <button

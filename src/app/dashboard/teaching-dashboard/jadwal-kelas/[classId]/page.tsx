@@ -108,7 +108,7 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
     return (
       <div className="flex items-center justify-center h-full">
         <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
-        <span className="ml-3 text-slate-600">Memuat data...</span>
+        <span className="ml-3 text-muted-foreground">Memuat data...</span>
       </div>
     )
   }
@@ -122,7 +122,7 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
         <p className="text-red-600 font-medium mb-4">{error}</p>
         <button
           onClick={() => router.back()}
-          className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+          className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-slate-200 transition-colors"
         >
           Kembali
         </button>
@@ -160,11 +160,11 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA]">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-6 shrink-0">
+      <header className="bg-card border-b border-border px-8 py-6 shrink-0">
         <div className="flex items-center gap-2 mb-4">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 transition-colors"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-slate-700 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Kembali</span>
@@ -173,10 +173,10 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
 
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 mb-1">
+            <h1 className="text-2xl font-bold text-foreground mb-1">
               {class_info.name}
             </h1>
-            <p className="text-slate-500 text-sm">
+            <p className="text-muted-foreground text-sm">
               {class_info.code}
               {class_info.class_level && ` • ${class_info.class_level.name}`}
               {class_info.department && ` • ${class_info.department.name}`}
@@ -190,36 +190,36 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full">
           {/* Left Column - Student List (40%) */}
-          <div className="w-2/5 border-r border-slate-200 bg-white overflow-y-auto">
+          <div className="w-2/5 border-r border-border bg-card overflow-y-auto">
             {/* Class Info */}
-            <div className="p-6 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="p-6 border-b border-border/60">
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Info Kelas
               </h3>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Wali Kelas:</span>
-                  <span className="font-medium text-slate-900">{class_info.wali_kelas?.full_name || '-'}</span>
+                  <span className="text-muted-foreground">Wali Kelas:</span>
+                  <span className="font-medium text-foreground">{class_info.wali_kelas?.full_name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Ruang Base:</span>
-                  <span className="font-medium text-slate-900">{class_info.home_room?.name || '-'}</span>
+                  <span className="text-muted-foreground">Ruang Base:</span>
+                  <span className="font-medium text-foreground">{class_info.home_room?.name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Kapasitas:</span>
-                  <span className="font-medium text-slate-900">{class_info.capacity} siswa</span>
+                  <span className="text-muted-foreground">Kapasitas:</span>
+                  <span className="font-medium text-foreground">{class_info.capacity} siswa</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Terkisi:</span>
-                  <span className="font-medium text-slate-900">{class_info.current_enrollment} siswa</span>
+                  <span className="text-muted-foreground">Terkisi:</span>
+                  <span className="font-medium text-foreground">{class_info.current_enrollment} siswa</span>
                 </div>
               </div>
             </div>
 
             {/* Statistics */}
-            <div className="p-6 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Statistik</h3>
+            <div className="p-6 border-b border-border/60">
+              <h3 className="text-sm font-bold text-foreground mb-4">Statistik</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-blue-50 rounded-lg">
                   <Users className="w-5 h-5 text-blue-600 mx-auto mb-1" />
@@ -241,27 +241,27 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
 
             {/* Student List (Read-Only for teachers) */}
             <div className="p-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Daftar Siswa ({statistics.total_students})
               </h3>
               <div className="space-y-2">
                 {students.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                  <div className="text-center py-8 text-muted-foreground">
                     Belum ada siswa di kelas ini
                   </div>
                 ) : (
                   students.map((student) => (
                     <div
                       key={student.id}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg"
+                      className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg"
                     >
                       <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                         {student.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                       </div>
                       <div>
-                        <p className="text-sm font-medium text-slate-900">{student.full_name}</p>
-                        <p className="text-xs text-slate-500">{student.nisn || '-'}</p>
+                        <p className="text-sm font-medium text-foreground">{student.full_name}</p>
+                        <p className="text-xs text-muted-foreground">{student.nisn || '-'}</p>
                       </div>
                     </div>
                   ))
@@ -271,22 +271,22 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
           </div>
 
           {/* Right Column - Schedule Grid (60%) */}
-          <div className="w-3/5 bg-white overflow-y-auto">
+          <div className="w-3/5 bg-card overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <Calendar className="w-4 h-4" />
                 Jadwal Mingguan
-                <span className="ml-2 text-xs font-normal text-slate-500">(View Only)</span>
+                <span className="ml-2 text-xs font-normal text-muted-foreground">(View Only)</span>
               </h3>
 
               {/* Schedule Grid */}
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <div className="border border-border rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200">
-                      <th className="w-20 px-3 py-3 text-left font-semibold text-slate-600 text-xs">Jam</th>
+                    <tr className="bg-muted/50 border-b border-border">
+                      <th className="w-20 px-3 py-3 text-left font-semibold text-muted-foreground text-xs">Jam</th>
                       {days.map(day => (
-                        <th key={day.value} className="px-3 py-3 text-center font-semibold text-slate-600 text-xs">
+                        <th key={day.value} className="px-3 py-3 text-center font-semibold text-muted-foreground text-xs">
                           {day.label}
                         </th>
                       ))}
@@ -294,8 +294,8 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
                   </thead>
                   <tbody>
                     {timeSlots.map((time) => (
-                      <tr key={time} className="border-b border-slate-100 last:border-b-0">
-                        <td className="px-3 py-2 text-slate-500 text-xs align-top whitespace-nowrap">
+                      <tr key={time} className="border-b border-border/60 last:border-b-0">
+                        <td className="px-3 py-2 text-muted-foreground text-xs align-top whitespace-nowrap">
                           {time}
                         </td>
                         {days.map(day => {
@@ -304,17 +304,17 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
                             <td key={day.value} className="px-2 py-2 align-top">
                               {schedule ? (
                                 <div className="bg-linear-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-2 min-h-[70px]">
-                                  <p className="font-semibold text-slate-900 text-xs mb-1">{schedule.subject?.name}</p>
-                                  <p className="text-xs text-slate-600 mb-2">{schedule.teacher?.full_name}</p>
+                                  <p className="font-semibold text-foreground text-xs mb-1">{schedule.subject?.name}</p>
+                                  <p className="text-xs text-muted-foreground mb-2">{schedule.teacher?.full_name}</p>
                                   <div className="flex items-center gap-2">
-                                    <span className="flex items-center gap-1 text-xs text-slate-500">
+                                    <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                       <MapPin className="w-3 h-3" />
                                       {schedule.room?.code || '-'}
                                     </span>
                                   </div>
                                 </div>
                               ) : (
-                                <div className="min-h-[70px] rounded-lg border border-dashed border-slate-200 bg-slate-50/30" />
+                                <div className="min-h-[70px] rounded-lg border border-dashed border-border bg-slate-50/30" />
                               )}
                             </td>
                           )
@@ -327,18 +327,18 @@ export default function TeacherClassDetailPage({ params }: { params: Promise<{ c
             </div>
 
             {/* Teachers List */}
-            <div className="mt-6 p-6 border-t border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Guru Pengajar ({statistics.total_teachers})</h3>
+            <div className="mt-6 p-6 border-t border-border/60">
+              <h3 className="text-sm font-bold text-foreground mb-4">Guru Pengajar ({statistics.total_teachers})</h3>
               <div className="flex flex-wrap gap-2">
                 {teachers.map((teacher) => (
                   <div
                     key={teacher.id}
-                    className="flex items-center gap-2 px-3 py-2 bg-slate-50 rounded-lg border border-slate-200"
+                    className="flex items-center gap-2 px-3 py-2 bg-muted/50 rounded-lg border border-border"
                   >
                     <div className="w-6 h-6 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white text-xs font-bold">
                       {teacher.full_name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <span className="text-xs font-medium text-slate-900">{teacher.full_name}</span>
+                    <span className="text-xs font-medium text-foreground">{teacher.full_name}</span>
                   </div>
                 ))}
               </div>

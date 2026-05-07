@@ -43,14 +43,14 @@ export default function GradesPage() {
             </div>
 
             {/* Filter Tabs */}
-            <div className="bg-white border border-slate-200 rounded-xl shadow-sm p-2.5 flex items-center gap-3">
+            <div className="bg-card border border-border rounded-xl shadow-sm p-2.5 flex items-center gap-3">
               <div className="px-3 flex flex-col">
-                <span className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">{t('student.grades.period.year')}</span>
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{t('student.grades.period.year')}</span>
                 <span className="text-sm font-medium text-foreground">2023/2024</span>
               </div>
               <div className="w-px h-8 bg-slate-200" />
               <div className="px-3 flex flex-col">
-                <span className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold">{t('student.grades.period.semester')}</span>
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground font-semibold">{t('student.grades.period.semester')}</span>
                 <span className="text-sm font-medium text-foreground">{t('student.grades.period.even')}</span>
               </div>
               <button title="Download" className="bg-primary text-white p-2.5 rounded-xl hover:bg-primary/90 transition-colors cursor-pointer ml-2">
@@ -60,7 +60,7 @@ export default function GradesPage() {
           </div>
 
           {/* Performance Overview */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <div className="bg-card rounded-xl border border-border shadow-sm p-6">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <h3 className="text-lg font-semibold text-foreground">{t('student.grades.overview.title')}</h3>
@@ -89,30 +89,30 @@ export default function GradesPage() {
                       style={{ height: `${(d.score / 100) * 200}px` } as React.CSSProperties}
                     />
                   </div>
-                  <span className="text-[10px] font-medium text-slate-400">{d.label}</span>
+                  <span className="text-[10px] font-medium text-muted-foreground">{d.label}</span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Subject Breakdown Table */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-6 border-b border-slate-200">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-6 border-b border-border">
               <h3 className="text-lg font-semibold text-foreground">{t('student.grades.table.title')}</h3>
-              <button className="bg-white border border-slate-200 rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors cursor-pointer">
+              <button className="bg-card border border-border rounded-lg px-4 py-2 flex items-center gap-2 text-sm font-medium text-muted-foreground hover:bg-accent transition-colors cursor-pointer">
                 <Download className="w-3.5 h-3.5" />
                 {t('student.grades.table.export')}
               </button>
             </div>
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-50">
-                  <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.subject')}</th>
-                  <th className="text-center px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.credits')}</th>
-                  <th className="text-center px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.midterm')}</th>
-                  <th className="text-center px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.final')}</th>
-                  <th className="text-center px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.grade')}</th>
-                  <th className="text-right pr-6 pl-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.table.point')}</th>
+                <tr className="bg-muted/50">
+                  <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.subject')}</th>
+                  <th className="text-center px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.credits')}</th>
+                  <th className="text-center px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.midterm')}</th>
+                  <th className="text-center px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.final')}</th>
+                  <th className="text-center px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.grade')}</th>
+                  <th className="text-right pr-6 pl-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.table.point')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -141,7 +141,7 @@ export default function GradesPage() {
                   <td colSpan={3}></td>
                   <td className="text-right pr-6 pl-4 py-4">
                     <p className="text-2xl font-bold text-primary">3.58</p>
-                    <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">{t('student.grades.summary.gpa')}</p>
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wide">{t('student.grades.summary.gpa')}</p>
                   </td>
                 </tr>
               </tfoot>
@@ -151,7 +151,7 @@ export default function GradesPage() {
           {/* Summary Cards */}
           <div className="grid grid-cols-3 gap-6">
             {/* Cumulative GPA */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-card rounded-xl border border-border shadow-sm p-6">
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.cumulative')}</p>
               <div className="flex items-center gap-3">
                 <span className="text-2xl font-bold text-foreground">3.85</span>
@@ -162,29 +162,29 @@ export default function GradesPage() {
             </div>
 
             {/* Total Credits */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-card rounded-xl border border-border shadow-sm p-6">
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.credits')}</p>
               <div className="flex items-center gap-3">
                 <span className="text-2xl font-bold text-foreground">84 / 144</span>
-                <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                   <div className="h-full bg-primary rounded-full w-[58%]" />
                 </div>
               </div>
             </div>
 
             {/* Rank */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+            <div className="bg-card rounded-xl border border-border shadow-sm p-6">
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.grades.summary.rank')}</p>
               <div className="flex items-center gap-1">
                 <span className="text-2xl font-bold text-foreground">#12 </span>
-                <span className="text-lg text-slate-400">{t('student.grades.summary.rankOf').replace('{total}', '120')}</span>
+                <span className="text-lg text-muted-foreground">{t('student.grades.summary.rankOf').replace('{total}', '120')}</span>
                 <TrendingUp className="w-2.5 h-5 text-green-500 ml-3" />
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-200">
+          <div className="flex items-center justify-between pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>

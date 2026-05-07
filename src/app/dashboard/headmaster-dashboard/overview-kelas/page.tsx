@@ -166,14 +166,14 @@ export default function HeadmasterClassOverviewPage() {
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA]">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-8 py-6 shrink-0">
+      <header className="bg-card border-b border-border px-8 py-6 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center">
             <GraduationCap className="w-5 h-5 text-emerald-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Overview Kelas Sekolah</h1>
-            <p className="text-slate-500 text-sm">
+            <h1 className="text-2xl font-bold text-foreground">Overview Kelas Sekolah</h1>
+            <p className="text-muted-foreground text-sm">
               Monitoring seluruh kelas, siswa, dan jadwal pelajaran
             </p>
           </div>
@@ -181,7 +181,7 @@ export default function HeadmasterClassOverviewPage() {
       </header>
 
       {/* Stats Cards */}
-      <div className="bg-white border-b border-slate-200 px-8 py-6 shrink-0">
+      <div className="bg-card border-b border-border px-8 py-6 shrink-0">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Total Kelas */}
           <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-6 border border-blue-200">
@@ -226,7 +226,7 @@ export default function HeadmasterClassOverviewPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white border-b border-slate-200 px-8 py-4 shrink-0">
+      <div className="bg-card border-b border-border px-8 py-4 shrink-0">
         <div className="flex flex-wrap items-center gap-3">
           {/* Search */}
           <div className="flex-1 min-w-[200px] relative">
@@ -235,18 +235,18 @@ export default function HeadmasterClassOverviewPage() {
               placeholder="Cari kelas berdasarkan nama atau kode..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-4 pr-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm hover:border-slate-300 transition-colors"
+              className="w-full pl-4 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm hover:border-slate-300 transition-colors"
             />
           </div>
 
           {/* Level Filter */}
           <div className="relative min-w-[160px]">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
               title="Filter berdasarkan tingkat kelas"
-              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
+              className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Tingkat</option>
               {classLevels.map(level => (
@@ -255,17 +255,17 @@ export default function HeadmasterClassOverviewPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           </div>
 
           {/* Department Filter */}
           <div className="relative min-w-[160px]">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
               title="Filter berdasarkan jurusan"
-              className="pl-9 pr-10 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-white appearance-none cursor-pointer hover:border-slate-300 transition-colors"
+              className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
               <option value="">Semua Jurusan</option>
               {departments.map(dept => (
@@ -274,7 +274,7 @@ export default function HeadmasterClassOverviewPage() {
                 </option>
               ))}
             </select>
-            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
           </div>
 
           {/* Clear Filters */}
@@ -285,7 +285,7 @@ export default function HeadmasterClassOverviewPage() {
                 setLevelFilter('')
                 setDepartmentFilter('')
               }}
-              className="px-4 py-2.5 text-slate-600 hover:text-slate-900 text-sm font-medium hover:bg-slate-100 rounded-lg transition-colors shrink-0"
+              className="px-4 py-2.5 text-muted-foreground hover:text-slate-900 text-sm font-medium hover:bg-accent rounded-lg transition-colors shrink-0"
             >
               Reset Filter
             </button>
@@ -293,7 +293,7 @@ export default function HeadmasterClassOverviewPage() {
         </div>
 
         {/* Result count */}
-        <div className="mt-3 text-sm text-slate-500">
+        <div className="mt-3 text-sm text-muted-foreground">
           {classes.length} kelas ditemukan
         </div>
       </div>
@@ -306,7 +306,7 @@ export default function HeadmasterClassOverviewPage() {
               <Loader2 className="w-12 h-12 animate-spin text-emerald-600" />
               <div className="absolute inset-0 w-12 h-12 rounded-full border-4 border-emerald-200" />
             </div>
-            <span className="mt-4 text-slate-600 font-medium">Memuat data...</span>
+            <span className="mt-4 text-muted-foreground font-medium">Memuat data...</span>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center h-full">
@@ -314,7 +314,7 @@ export default function HeadmasterClassOverviewPage() {
               <AlertCircle className="w-8 h-8 text-red-600" />
             </div>
             <p className="text-red-600 font-semibold mb-2 text-lg">Gagal Memuat Data</p>
-            <p className="text-slate-600 mb-4 text-center max-w-md">{error}</p>
+            <p className="text-muted-foreground mb-4 text-center max-w-md">{error}</p>
             <button
               onClick={fetchClassesData}
               className="px-6 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium shadow-sm hover:shadow"
@@ -324,13 +324,13 @@ export default function HeadmasterClassOverviewPage() {
           </div>
         ) : classes.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full">
-            <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center mb-6">
-              <Calendar className="w-10 h-10 text-slate-400" />
+            <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center mb-6">
+              <Calendar className="w-10 h-10 text-muted-foreground" />
             </div>
-            <h3 className="text-xl font-semibold text-slate-900 mb-2">
+            <h3 className="text-xl font-semibold text-foreground mb-2">
               Tidak ada kelas ditemukan
             </h3>
-            <p className="text-slate-500 text-sm mb-6">
+            <p className="text-muted-foreground text-sm mb-6">
               Coba ubah filter atau kata kunci pencarian
             </p>
             {(search || levelFilter || departmentFilter) && (
@@ -340,7 +340,7 @@ export default function HeadmasterClassOverviewPage() {
                   setLevelFilter('')
                   setDepartmentFilter('')
                 }}
-                className="px-6 py-2.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium"
+                className="px-6 py-2.5 bg-muted text-foreground rounded-lg hover:bg-slate-200 transition-colors font-medium"
               >
                 Reset Filter
               </button>
@@ -356,23 +356,23 @@ export default function HeadmasterClassOverviewPage() {
                 <div
                   key={cls.id}
                   onClick={() => handleClassClick(cls.id)}
-                  className="bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-lg hover:border-emerald-300 hover:scale-[1.02] transition-all duration-200 cursor-pointer group"
+                  className="bg-card rounded-xl border border-border shadow-sm hover:shadow-lg hover:border-emerald-300 hover:scale-[1.02] transition-all duration-200 cursor-pointer group"
                 >
                   {/* Header */}
-                  <div className="p-5 border-b border-slate-100">
+                  <div className="p-5 border-b border-border/60">
                     <div className="flex items-start justify-between mb-2">
                       <div className="flex-1 min-w-0">
-                        <h3 className="text-base font-bold text-slate-900 group-hover:text-emerald-600 transition-colors truncate">
+                        <h3 className="text-base font-bold text-foreground group-hover:text-emerald-600 transition-colors truncate">
                           {cls.name}
                         </h3>
-                        <p className="text-xs text-slate-500 truncate">{cls.code}</p>
+                        <p className="text-xs text-muted-foreground truncate">{cls.code}</p>
                       </div>
                       <div className={`px-2 py-1 rounded-full text-xs font-bold shrink-0 ml-2 ${getOccupancyBg(occupancyRate)} ${getOccupancyColor(occupancyRate)}`}>
                         {occupancyRate}%
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 text-xs text-slate-600">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       {cls.class_level && (
                         <>
                           <span className="truncate">{cls.class_level.name}</span>
@@ -391,8 +391,8 @@ export default function HeadmasterClassOverviewPage() {
                           <Users className="w-3.5 h-3.5 text-blue-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Siswa</p>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-xs text-muted-foreground">Siswa</p>
+                          <p className="text-sm font-semibold text-foreground">
                             {cls.current_enrollment}/{cls.capacity}
                           </p>
                         </div>
@@ -403,8 +403,8 @@ export default function HeadmasterClassOverviewPage() {
                           <Calendar className="w-3.5 h-3.5 text-purple-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-slate-500">Jam/Minggu</p>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-xs text-muted-foreground">Jam/Minggu</p>
+                          <p className="text-sm font-semibold text-foreground">
                             {cls.total_hours_per_week || 0}
                           </p>
                         </div>
@@ -413,9 +413,9 @@ export default function HeadmasterClassOverviewPage() {
 
                     {/* Wali Kelas */}
                     {cls.wali_kelas && (
-                      <div className="mt-4 pt-3 border-t border-slate-100">
-                        <p className="text-xs text-slate-500">Wali Kelas</p>
-                        <p className="text-xs font-medium text-slate-900 truncate">
+                      <div className="mt-4 pt-3 border-t border-border/60">
+                        <p className="text-xs text-muted-foreground">Wali Kelas</p>
+                        <p className="text-xs font-medium text-foreground truncate">
                           {cls.wali_kelas.full_name}
                         </p>
                       </div>
@@ -423,7 +423,7 @@ export default function HeadmasterClassOverviewPage() {
                   </div>
 
                   {/* Footer */}
-                  <div className="px-5 py-3 bg-slate-50 rounded-b-xl flex items-center justify-center">
+                  <div className="px-5 py-3 bg-muted/50 rounded-b-xl flex items-center justify-center">
                     <span className="text-xs text-emerald-600 font-medium group-hover:underline">
                       Lihat Detail →
                     </span>

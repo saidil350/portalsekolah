@@ -1,6 +1,7 @@
 import StudentSidebar from "./components/StudentSidebar";
 import { authorizeDashboard } from '@/lib/auth/authorization';
 import { redirect } from 'next/navigation';
+import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 
 export default async function StudentDashboardLayout({
   children,
@@ -18,7 +19,7 @@ export default async function StudentDashboardLayout({
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-display antialiased">
       <StudentSidebar />
-      {children}
+      <DashboardShell>{children}</DashboardShell>
     </div>
   );
 }

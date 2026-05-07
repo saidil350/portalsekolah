@@ -129,7 +129,7 @@ export function EmptyTableState({
       )}
     >
       <div className="relative mb-8">
-        <div className="w-24 h-24 rounded-3xl bg-white shadow-xl shadow-slate-200/50 border border-slate-100 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300">
+        <div className="w-24 h-24 rounded-3xl bg-card shadow-xl shadow-slate-200/50 border border-border/60 flex items-center justify-center text-primary/60 rotate-6 transition-all hover:rotate-0 hover:scale-110 duration-300">
           {isFiltering ? <FileSearch className="w-12 h-12" /> : config.icon}
         </div>
         <div className="absolute -bottom-3 -right-3 w-10 h-10 rounded-2xl bg-primary shadow-lg shadow-primary/20 flex items-center justify-center text-white border-4 border-white">
@@ -137,11 +137,11 @@ export function EmptyTableState({
         </div>
       </div>
 
-      <h3 className="text-2xl font-black text-slate-800 mb-3 text-center tracking-tight">
+      <h3 className="text-2xl font-black text-foreground mb-3 text-center tracking-tight">
         {displayTitle}
       </h3>
 
-      <p className="text-base text-slate-500 text-center max-w-sm mb-10 leading-relaxed font-medium">
+      <p className="text-base text-muted-foreground text-center max-w-sm mb-10 leading-relaxed font-medium">
         {displayDescription}
       </p>
 
@@ -151,7 +151,7 @@ export function EmptyTableState({
             variant="secondary"
             size="lg"
             onClick={onClearFilters}
-            className="bg-white hover:bg-slate-50 border-slate-200 text-slate-700 font-bold px-8 rounded-xl"
+            className="bg-card hover:bg-accent border-border text-foreground font-bold px-8 rounded-xl"
             leftIcon={<X className="w-5 h-5" />}
           >
             Hapus Filter

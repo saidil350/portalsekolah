@@ -62,7 +62,7 @@ export default function StudentDashboardPage() {
               <p className="text-muted-foreground mt-1">{t('student.db.subtitle')}</p>
             </div>
             <div className="flex items-center gap-3">
-              <div className="bg-white border border-slate-200 rounded-full shadow-sm px-3 py-1.5 flex items-center gap-2">
+              <div className="bg-card border border-border rounded-full shadow-sm px-3 py-1.5 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-green-500" />
                 <span className="text-sm font-medium text-muted-foreground">{t('student.db.activeStatus')}</span>
               </div>
@@ -77,7 +77,7 @@ export default function StudentDashboardPage() {
           {/* 3 KPI Cards */}
           <div className="grid grid-cols-3 gap-6 mb-6">
             {/* GPA Card */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+            <div className="bg-card rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start justify-between mb-10">
                 <div className="w-[46px] h-[42px] bg-blue-50 rounded-xl flex items-center justify-center">
                   <span className="text-xl">📊</span>
@@ -89,17 +89,17 @@ export default function StudentDashboardPage() {
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.gpa')}</p>
               <p className="text-[30px] font-bold text-foreground leading-9">3.85</p>
-              <p className="text-xs text-slate-400 mt-2">{t('student.db.scale')}</p>
+              <p className="text-xs text-muted-foreground mt-2">{t('student.db.scale')}</p>
             </div>
 
             {/* Attendance Card */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+            <div className="bg-card rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start justify-between mb-10">
                 <div className="w-[44px] h-[44px] bg-purple-50 rounded-xl flex items-center justify-center">
                   <span className="text-xl">📅</span>
                 </div>
-                <div className="bg-slate-100 rounded-full px-2 py-1">
-                  <span className="text-xs font-medium text-slate-600">{t('student.db.overall')}</span>
+                <div className="bg-muted rounded-full px-2 py-1">
+                  <span className="text-xs font-medium text-muted-foreground">{t('student.db.overall')}</span>
                 </div>
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.attendanceRate')}</p>
@@ -107,13 +107,13 @@ export default function StudentDashboardPage() {
                 <p className="text-[30px] font-bold text-foreground leading-9">92%</p>
                 <p className="text-sm font-medium text-green-600 pb-1">{t('student.db.good')}</p>
               </div>
-              <div className="mt-3 w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div className="mt-3 w-full h-2 bg-muted rounded-full overflow-hidden">
                 <div className="h-full bg-purple-600 rounded-full w-[92%]" />
               </div>
             </div>
 
             {/* Credits Card */}
-            <div className="bg-white rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
+            <div className="bg-card rounded-xl p-5 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start mb-10">
                 <div className="w-10 h-[45px] bg-amber-50 rounded-xl flex items-center justify-center">
                   <span className="text-xl">📚</span>
@@ -121,7 +121,7 @@ export default function StudentDashboardPage() {
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.creditsLabel')}</p>
               <p className="text-[30px] font-bold text-foreground leading-9">84</p>
-              <p className="text-xs text-slate-400 mt-2">{t('student.db.creditsThisSem')}</p>
+              <p className="text-xs text-muted-foreground mt-2">{t('student.db.creditsThisSem')}</p>
             </div>
           </div>
 
@@ -171,7 +171,7 @@ export default function StudentDashboardPage() {
               </div>
 
               {/* Today's Schedule */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="bg-card rounded-xl border border-border shadow-sm p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-foreground">{t('student.db.todaySchedule')}</h3>
                   <Link href="/dashboard/student-dashboard/schedule" className="text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer">
@@ -180,26 +180,26 @@ export default function StudentDashboardPage() {
                 </div>
 
                 {/* Timeline */}
-                <div className="relative pl-5 border-l-2 border-slate-100">
+                <div className="relative pl-5 border-l-2 border-border/60">
                   <div className="flex flex-col gap-8">
                     {scheduleData.map((item, i) => {
                       let badge = { label: '', className: '' };
                       if (item.status === 'completed') badge = { label: t('student.db.status.completed'), className: 'bg-green-100 text-green-700' };
                       else if (item.status === 'upnext') badge = { label: t('student.db.status.upnext'), className: 'bg-blue-100 text-blue-700' };
-                      else badge = { label: t('student.db.status.upcoming'), className: 'bg-slate-100 text-slate-500' };
+                      else badge = { label: t('student.db.status.upcoming'), className: 'bg-muted text-muted-foreground' };
                       
                       const isUpNext = item.status === 'upnext';
                       return (
                         <div key={i} className="relative">
                           {/* Timeline dot */}
                           {isUpNext ? (
-                            <div className="absolute -left-[27px] top-1 w-3.5 h-3.5 bg-white border-4 border-primary rounded-full shadow-[0px_0px_0px_4px_rgba(59,130,246,0.1)]" />
+                            <div className="absolute -left-[27px] top-1 w-3.5 h-3.5 bg-card border-4 border-primary rounded-full shadow-[0px_0px_0px_4px_rgba(59,130,246,0.1)]" />
                           ) : (
-                            <div className="absolute -left-[25px] top-1 w-3 h-3 bg-white border-2 border-slate-300 rounded-full" />
+                            <div className="absolute -left-[25px] top-1 w-3 h-3 bg-card border-2 border-slate-300 rounded-full" />
                           )}
 
                           <div className={`flex items-center justify-between p-4 rounded-xl ${
-                            isUpNext ? 'bg-blue-50/50 border border-blue-100' : 'bg-slate-50'
+                            isUpNext ? 'bg-blue-50/50 border border-blue-100' : 'bg-muted/50'
                           }`}>
                             <div className="flex items-start gap-4">
                               <div className={`w-12 h-12 rounded-xl ${item.bgColor} flex items-center justify-center shrink-0`}>
@@ -225,11 +225,11 @@ export default function StudentDashboardPage() {
             {/* Right Column */}
             <div className="flex flex-col gap-6 w-[300px] shrink-0">
               {/* Recent Grades */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 flex-1">
+              <div className="bg-card rounded-xl border border-border shadow-sm p-6 flex-1">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-lg font-semibold text-foreground">{t('student.db.recentGrades')}</h3>
-                  <button title="More Options" className="p-1 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer">
-                    <MoreHorizontal className="w-4 h-1 text-slate-400" />
+                  <button title="More Options" className="p-1 rounded-lg hover:bg-accent transition-colors cursor-pointer">
+                    <MoreHorizontal className="w-4 h-1 text-muted-foreground" />
                   </button>
                 </div>
 
@@ -250,7 +250,7 @@ export default function StudentDashboardPage() {
                   ))}
                 </div>
 
-                <div className="border-t border-slate-100 mt-4 pt-4">
+                <div className="border-t border-border/60 mt-4 pt-4">
                   <Link href="/dashboard/student-dashboard/grades" className="block text-sm font-medium text-muted-foreground text-center hover:text-primary cursor-pointer">
                     {t('student.db.viewAllGrades')}
                   </Link>
@@ -258,7 +258,7 @@ export default function StudentDashboardPage() {
               </div>
 
               {/* Tuition Status */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="bg-card rounded-xl border border-border shadow-sm p-6">
                 <h3 className="text-lg font-semibold text-foreground mb-4">{t('student.db.tuitionStatus')}</h3>
                 <div className="bg-green-50 border border-green-100 rounded-xl p-4 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
@@ -274,7 +274,7 @@ export default function StudentDashboardPage() {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between mt-8 pt-6 border-t border-slate-200">
+          <div className="flex items-center justify-between mt-8 pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>

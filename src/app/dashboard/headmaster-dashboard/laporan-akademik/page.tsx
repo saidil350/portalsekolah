@@ -91,8 +91,8 @@ export default function LaporanAkademikPage() {
           {/* Header Section */}
           <div className="flex items-center justify-between pb-2">
             <div className="flex flex-col gap-1">
-              <h2 className="text-slate-900 text-3xl font-bold tracking-tight">{t('headmaster.academicReport.title')}</h2>
-              <p className="text-slate-500 text-base leading-6">
+              <h2 className="text-foreground text-3xl font-bold tracking-tight">{t('headmaster.academicReport.title')}</h2>
+              <p className="text-muted-foreground text-base leading-6">
                 {t('headmaster.academicReport.subtitle')}
               </p>
             </div>
@@ -100,23 +100,23 @@ export default function LaporanAkademikPage() {
               <div className="flex items-center gap-2">
                 {/* Dropdown Tahun Ajaran */}
                 <div className="relative">
-                  <select title={t('headmaster.academicReport.selectYear')} className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-9 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+                  <select title={t('headmaster.academicReport.selectYear')} className="appearance-none bg-card border border-border rounded-lg px-3 py-2 pr-9 text-sm font-medium text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
                     <option>{t('headmaster.academicReport.year').replace('{value}', '2023/2024')}</option>
                     <option>{t('headmaster.academicReport.year').replace('{value}', '2022/2023')}</option>
                   </select>
-                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>
                 {/* Dropdown Semester */}
                 <div className="relative">
-                  <select title={t('headmaster.academicReport.selectSemester')} className="appearance-none bg-white border border-slate-200 rounded-lg px-3 py-2 pr-9 text-sm font-medium text-slate-700 focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
+                  <select title={t('headmaster.academicReport.selectSemester')} className="appearance-none bg-card border border-border rounded-lg px-3 py-2 pr-9 text-sm font-medium text-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none cursor-pointer">
                     <option>{t('headmaster.academicReport.semester.even')}</option>
                     <option>{t('headmaster.academicReport.semester.odd')}</option>
                   </select>
-                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+                  <ChevronDown className="absolute right-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
                 </div>
               </div>
               {/* Export Button */}
-              <div className="flex items-center border-l border-slate-200 pl-3">
+              <div className="flex items-center border-l border-border pl-3">
                 <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primary/90 shadow-sm transition-all cursor-pointer">
                   <Download className="w-3 h-3" />
                   {t('headmaster.academicReport.export')}
@@ -128,10 +128,10 @@ export default function LaporanAkademikPage() {
           {/* 3 KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Rata-rata Sekolah */}
-            <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.kpi.avg')}</p>
+            <div className="bg-card rounded-xl p-5 border border-border shadow-sm">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.kpi.avg')}</p>
               <div className="flex items-center gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-slate-900">82.4</h3>
+                <h3 className="text-2xl font-bold text-foreground">82.4</h3>
                 <div className="flex items-center gap-0.5">
                   <TrendingUp className="w-2.5 h-2.5 text-green-600" />
                   <span className="text-xs font-medium text-green-600">1.2</span>
@@ -140,29 +140,29 @@ export default function LaporanAkademikPage() {
             </div>
 
             {/* Tingkat Kelulusan */}
-            <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.kpi.graduation')}</p>
+            <div className="bg-card rounded-xl p-5 border border-border shadow-sm">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.kpi.graduation')}</p>
               <div className="flex items-baseline gap-2 mt-1">
-                <h3 className="text-2xl font-bold text-slate-900">96.8%</h3>
-                <span className="text-xs font-medium text-slate-500">{t('headmaster.academicReport.kpi.target').replace('{value}', '95%')}</span>
+                <h3 className="text-2xl font-bold text-foreground">96.8%</h3>
+                <span className="text-xs font-medium text-muted-foreground">{t('headmaster.academicReport.kpi.target').replace('{value}', '95%')}</span>
               </div>
             </div>
 
             {/* Peringkat Tertinggi */}
-            <div className="bg-white rounded-xl p-5 border border-slate-200 shadow-sm">
-              <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.kpi.topStudent')}</p>
+            <div className="bg-card rounded-xl p-5 border border-border shadow-sm">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.kpi.topStudent')}</p>
               <div className="flex items-center gap-2 mt-1">
-                <h3 className="text-xl font-bold text-slate-900">Aditya Pratama</h3>
+                <h3 className="text-xl font-bold text-foreground">Aditya Pratama</h3>
                 <span className="bg-blue-50 text-blue-600 text-[10px] font-bold uppercase px-2 py-0.5 rounded">XII-IPA-1</span>
               </div>
             </div>
           </div>
 
           {/* Tabel Performa Agregat per Kelas */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
             {/* Table Header */}
-            <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-              <h3 className="text-lg font-bold text-slate-900">{t('headmaster.academicReport.table.title')}</h3>
+            <div className="flex items-center justify-between px-6 py-5 border-b border-border/60">
+              <h3 className="text-lg font-bold text-foreground">{t('headmaster.academicReport.table.title')}</h3>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                 <input
@@ -170,7 +170,7 @@ export default function LaporanAkademikPage() {
                   placeholder={t('headmaster.academicReport.table.search')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10 pr-4 py-1.5 bg-slate-50 border-0 rounded-lg text-sm text-slate-700 placeholder:text-gray-400 focus:ring-1 focus:ring-primary outline-none w-64"
+                  className="pl-10 pr-4 py-1.5 bg-muted/50 border-0 rounded-lg text-sm text-foreground placeholder:text-gray-400 focus:ring-1 focus:ring-primary outline-none w-64"
                 />
               </div>
             </div>
@@ -179,13 +179,13 @@ export default function LaporanAkademikPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="bg-slate-50/50 border-b border-slate-200">
-                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.class')}</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.level')}</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.avg')}</th>
-                    <th className="text-left px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.topStudent')}</th>
-                    <th className="text-center px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.graduation')}</th>
-                    <th className="text-right px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{t('headmaster.academicReport.table.action')}</th>
+                  <tr className="bg-slate-50/50 border-b border-border">
+                    <th className="text-left px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.class')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.level')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.avg')}</th>
+                    <th className="text-left px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.topStudent')}</th>
+                    <th className="text-center px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.graduation')}</th>
+                    <th className="text-right px-6 py-4 text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('headmaster.academicReport.table.action')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -197,17 +197,17 @@ export default function LaporanAkademikPage() {
                     .map((cls, i) => {
                       const style = getKelulusanStyle(cls.kelulusanColor, cls.tingkatKelulusan);
                       return (
-                        <tr key={i} className="border-t border-slate-100 hover:bg-slate-50/50 transition-colors">
+                        <tr key={i} className="border-t border-border/60 hover:bg-slate-50/50 transition-colors">
                           <td className="px-6 py-5">
-                            <span className="text-base font-bold text-slate-900">{cls.kelas}</span>
+                            <span className="text-base font-bold text-foreground">{cls.kelas}</span>
                           </td>
                           <td className="px-6 py-5">
-                            <span className="text-sm text-slate-600">
+                            <span className="text-sm text-muted-foreground">
                               {t('headmaster.academicReport.level').replace('{value}', cls.tingkat)}
                             </span>
                           </td>
                           <td className="px-6 py-5">
-                            <span className="text-base font-semibold text-slate-900">{cls.rataRata}</span>
+                            <span className="text-base font-semibold text-foreground">{cls.rataRata}</span>
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex items-center gap-2">
@@ -216,13 +216,13 @@ export default function LaporanAkademikPage() {
                                 alt={cls.siswaBerprestasi}
                                 className="w-6 h-6 rounded-full bg-slate-200 shrink-0 object-cover"
                               />
-                              <span className="text-sm font-medium text-slate-700">{cls.siswaBerprestasi}</span>
+                              <span className="text-sm font-medium text-foreground">{cls.siswaBerprestasi}</span>
                             </div>
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex flex-col items-center gap-1">
                               <span className={`text-xs font-bold ${style.textColor}`}>{cls.tingkatKelulusan}%</span>
-                              <div className="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="w-24 h-1.5 bg-muted rounded-full overflow-hidden">
                                 <div
                                   className={`h-full ${style.barColor} rounded-full transition-all duration-500`}
                                   style={{ width: style.width } as React.CSSProperties}
@@ -231,7 +231,7 @@ export default function LaporanAkademikPage() {
                             </div>
                           </td>
                           <td className="px-6 py-5 text-right">
-                            <button className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer" title={t('headmaster.academicReport.table.details')}>
+                            <button className="text-muted-foreground hover:text-slate-600 transition-colors cursor-pointer" title={t('headmaster.academicReport.table.details')}>
                               <MoreHorizontal className="w-5 h-5" />
                             </button>
                           </td>
@@ -243,8 +243,8 @@ export default function LaporanAkademikPage() {
             </div>
 
             {/* Pagination */}
-            <div className="flex items-center justify-between px-4 py-4 border-t border-slate-100">
-              <span className="text-xs text-slate-500">
+            <div className="flex items-center justify-between px-4 py-4 border-t border-border/60">
+              <span className="text-xs text-muted-foreground">
                 {t('headmaster.academicReport.pagination.info')
                   .replace('{start}', '5')
                   .replace('{total}', '32')}
@@ -255,7 +255,7 @@ export default function LaporanAkademikPage() {
                   disabled
                   title={t('headmaster.academicReport.pagination.prev')}
                 >
-                  <ChevronLeft className="w-3.5 h-3.5 text-slate-500" />
+                  <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
                 {[1, 2, 3].map((page) => (
                   <button
@@ -264,17 +264,17 @@ export default function LaporanAkademikPage() {
                     className={`w-8 h-8 rounded text-xs font-bold transition-all cursor-pointer ${
                       currentPage === page
                         ? 'bg-primary text-white'
-                        : 'text-slate-600 hover:bg-slate-100'
+                        : 'text-muted-foreground hover:bg-accent'
                     }`}
                   >
                     {page}
                   </button>
                 ))}
                 <button
-                  className="p-2 rounded hover:bg-slate-100 cursor-pointer"
+                  className="p-2 rounded hover:bg-accent cursor-pointer"
                   title={t('headmaster.academicReport.pagination.next')}
                 >
-                  <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
                 </button>
               </div>
             </div>
@@ -283,8 +283,8 @@ export default function LaporanAkademikPage() {
           {/* Bottom Section: Chart + Validasi */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-4 pb-8">
             {/* Sebaran Nilai Siswa */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6">
-              <h4 className="text-base font-bold text-slate-900 mb-4">{t('headmaster.academicReport.chart.title')}</h4>
+            <div className="bg-card rounded-xl border border-border p-6">
+              <h4 className="text-base font-bold text-foreground mb-4">{t('headmaster.academicReport.chart.title')}</h4>
               <div className="flex items-end justify-center gap-2 px-2 h-[120px]">
                 {sebaranNilai.map((item) => (
                   <div
@@ -292,7 +292,7 @@ export default function LaporanAkademikPage() {
                     className="flex-1 flex flex-col items-center group cursor-pointer"
                   >
                     {/* Tooltip on hover */}
-                    <span className="text-[10px] font-bold text-slate-900 opacity-0 group-hover:opacity-100 transition-opacity mb-1">
+                    <span className="text-[10px] font-bold text-foreground opacity-0 group-hover:opacity-100 transition-opacity mb-1">
                       {item.count}
                     </span>
                     <div className={`w-full ${item.height} ${item.color} rounded-t transition-all group-hover:opacity-80`} />
@@ -302,7 +302,7 @@ export default function LaporanAkademikPage() {
               {/* X-axis labels */}
               <div className="flex items-start justify-between px-2 mt-1">
                 {sebaranNilai.map((item) => (
-                  <span key={item.range} className="text-[10px] font-bold text-slate-400 flex-1 text-center">
+                  <span key={item.range} className="text-[10px] font-bold text-muted-foreground flex-1 text-center">
                     {item.range}
                   </span>
                 ))}
@@ -310,14 +310,14 @@ export default function LaporanAkademikPage() {
             </div>
 
             {/* Validasi Kurikulum */}
-            <div className="bg-white rounded-xl border border-slate-200 p-6 flex items-center">
+            <div className="bg-card rounded-xl border border-border p-6 flex items-center">
               <div className="flex items-center gap-4">
                 <div className="w-[53px] h-[52px] shrink-0 bg-green-50 rounded-xl flex items-center justify-center">
                   <ShieldCheck className="w-6 h-6 text-green-600" />
                 </div>
                 <div className="flex flex-col">
-                  <h4 className="text-base font-bold text-slate-900">{t('headmaster.academicReport.validation.title')}</h4>
-                  <p className="text-sm text-slate-500 leading-5 mt-0.5">
+                  <h4 className="text-base font-bold text-foreground">{t('headmaster.academicReport.validation.title')}</h4>
+                  <p className="text-sm text-muted-foreground leading-5 mt-0.5">
                     {t('headmaster.academicReport.validation.desc')}
                   </p>
                   <div className="flex items-center gap-2 mt-3">

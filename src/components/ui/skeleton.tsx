@@ -3,13 +3,13 @@ import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
 const skeletonVariants = cva(
-  "animate-pulse rounded-md bg-slate-100",
+  "animate-pulse rounded-md bg-muted",
   {
     variants: {
       variant: {
         text: "h-4 w-full",
         title: "h-6 w-3/4",
-        avatar: "h-10 w-10 rounded-full",
+        avatar: "size-10 rounded-full",
         card: "h-24 w-full",
         button: "h-10 w-24",
         thumbnail: "h-16 w-16",
@@ -61,22 +61,22 @@ export function TableSkeleton({ rows = 5, columns = 4, hasHeader = true }: Table
     <div className="w-full">
       <table className="w-full text-sm">
         {hasHeader && (
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="border-b bg-muted/50">
             <tr>
               {Array.from({ length: columns }).map((_, i) => (
                 <th key={i} className="px-4 py-3 text-left">
-                  <div className="h-4 bg-slate-200 rounded animate-shimmer w-24" />
+                  <div className="h-4 w-24 animate-shimmer rounded bg-muted" />
                 </th>
               ))}
             </tr>
           </thead>
         )}
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-border">
           {Array.from({ length: rows }).map((_, rowIndex) => (
             <tr key={rowIndex}>
               {Array.from({ length: columns }).map((_, colIndex) => (
                 <td key={colIndex} className="px-4 py-3">
-                  <div className="h-4 bg-slate-100 rounded animate-shimmer" />
+                  <div className="h-4 animate-shimmer rounded bg-muted" />
                 </td>
               ))}
             </tr>
@@ -102,10 +102,10 @@ export function CardSkeleton({
   hasButton = false,
 }: CardSkeletonProps) {
   return (
-    <div className="p-6 space-y-4">
+    <div className="flex flex-col gap-4 p-6">
       <div className="flex items-start gap-4">
         {hasAvatar && <Skeleton variant="avatar" />}
-        <div className="flex-1 space-y-2">
+        <div className="flex flex-1 flex-col gap-2">
           {hasTitle && <Skeleton variant="title" />}
           <Skeleton count={linesOfText} gap={2} />
         </div>
@@ -123,16 +123,16 @@ export function CardSkeleton({
 // Metric card skeleton
 export function MetricSkeleton({ hasIcon = true, hasTrend = true }: { hasIcon?: boolean; hasTrend?: boolean }) {
   return (
-    <div className="p-5 space-y-4">
+    <div className="flex flex-col gap-4 p-5">
       <div className="flex items-start justify-between">
         {hasIcon && (
-          <div className="w-[46px] h-[42px] rounded-xl">
-            <Skeleton className="w-full h-full" />
+          <div className="h-[42px] w-[46px] rounded-xl">
+            <Skeleton className="h-full w-full" />
           </div>
         )}
         {hasTrend && <Skeleton variant="button" />}
       </div>
-      <div className="space-y-2">
+      <div className="flex flex-col gap-2">
         <Skeleton variant="text" className="w-1/3" />
         <Skeleton variant="title" />
       </div>

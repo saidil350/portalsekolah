@@ -135,28 +135,28 @@ export default function AcademicYearModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md animate-in fade-in zoom-in duration-200">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-md animate-in fade-in zoom-in duration-200">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
               <Calendar className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900">
+              <h3 className="text-lg font-bold text-foreground">
                 {mode === 'create' ? 'Tambah Tahun Ajaran' : 'Edit Tahun Ajaran'}
               </h3>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-muted-foreground">
                 {mode === 'create' ? 'Buat tahun ajaran baru' : 'Update tahun ajaran'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={submitting}
           >
-            <X className="w-5 h-5 text-slate-400" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -164,7 +164,7 @@ export default function AcademicYearModal({
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Nama Tahun Ajaran */}
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Nama Tahun Ajaran <span className="text-red-500">*</span>
             </label>
             <input
@@ -173,19 +173,19 @@ export default function AcademicYearModal({
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="Contoh: 2024/2025"
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                errors.name ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                errors.name ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
               disabled={submitting}
             />
             {errors.name && (
               <p className="mt-1 text-xs text-red-600">{errors.name}</p>
             )}
-            <p className="mt-1 text-xs text-slate-500">Format: YYYY/YYYY (contoh: 2024/2025)</p>
+            <p className="mt-1 text-xs text-muted-foreground">Format: YYYY/YYYY (contoh: 2024/2025)</p>
           </div>
 
           {/* Tanggal Mulai */}
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Tanggal Mulai <span className="text-red-500">*</span>
             </label>
             <input
@@ -198,7 +198,7 @@ export default function AcademicYearModal({
                 }
               }}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                errors.start_date ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                errors.start_date ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
               disabled={submitting}
             />
@@ -209,7 +209,7 @@ export default function AcademicYearModal({
 
           {/* Tanggal Selesai */}
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Tanggal Selesai <span className="text-red-500">*</span>
             </label>
             <input
@@ -217,7 +217,7 @@ export default function AcademicYearModal({
               value={formData.end_date}
               onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
-                errors.end_date ? 'border-red-300 bg-red-50' : 'border-slate-200'
+                errors.end_date ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
               disabled={submitting}
             />
@@ -228,7 +228,7 @@ export default function AcademicYearModal({
 
           {/* Deskripsi */}
           <div>
-            <label className="block text-sm font-semibold text-slate-900 mb-2">
+            <label className="block text-sm font-semibold text-foreground mb-2">
               Deskripsi
             </label>
             <textarea
@@ -236,7 +236,7 @@ export default function AcademicYearModal({
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder="Deskripsi tambahan tentang tahun ajaran..."
               rows={3}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
+              className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
               disabled={submitting}
             />
           </div>
@@ -251,17 +251,17 @@ export default function AcademicYearModal({
               className="w-5 h-5 text-blue-600 border-slate-300 rounded focus:ring-blue-500"
               disabled={submitting}
             />
-            <label htmlFor="is_active" className="text-sm font-medium text-slate-900">
+            <label htmlFor="is_active" className="text-sm font-medium text-foreground">
               Tahun Ajaran Aktif
             </label>
           </div>
 
           {/* Actions */}
-          <div className="flex gap-3 pt-4 border-t border-slate-100 mt-6">
+          <div className="flex gap-3 pt-4 border-t border-border/60 mt-6">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg font-medium hover:bg-slate-50 transition-colors"
+              className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
               disabled={submitting}
             >
               Batal

@@ -38,12 +38,12 @@ import FloatingElements from "@/components/animations/FloatingElements";
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-white font-sans text-slate-900">
+    <div className="min-h-screen bg-card font-sans text-foreground">
       {/* Floating Background Elements */}
       <FloatingElements />
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 w-full border-b border-border bg-white/95 backdrop-blur-md">
         <motion.div
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -59,7 +59,7 @@ export default function AboutPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
               <BookOpen className="h-5 w-5" />
             </div>
-            <Link href="/" className="text-xl font-bold tracking-tight text-slate-900">
+            <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
               SIAKAD <span className="text-blue-600">Plus</span>
             </Link>
           </motion.div>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               >
                 <Link
                   href={item === "Beranda" ? "/" : `/#${item.toLowerCase().replace(" ", "-")}`}
-                  className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+                  className="text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors"
                 >
                   {item}
                 </Link>
@@ -99,7 +99,7 @@ export default function AboutPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="hidden sm:inline-block text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+              className="hidden sm:inline-block text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors"
             >
               Login
             </Link>
@@ -162,7 +162,7 @@ export default function AboutPage() {
                     <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                       <Link
                         href="/contact"
-                        className="inline-flex items-center gap-2 rounded-xl bg-white px-6 py-3 text-base font-semibold text-blue-600 shadow-lg hover:bg-blue-50 transition-colors"
+                        className="inline-flex items-center gap-2 rounded-xl bg-card px-6 py-3 text-base font-semibold text-blue-600 shadow-lg hover:bg-blue-50 transition-colors"
                       >
                         Hubungi Kami
                         <ArrowRight className="h-5 w-5" />
@@ -199,7 +199,7 @@ export default function AboutPage() {
 
                   {/* Floating Stats Cards */}
                   <motion.div
-                    className="absolute -bottom-6 -left-6 bg-white rounded-2xl p-4 shadow-xl"
+                    className="absolute -bottom-6 -left-6 bg-card rounded-2xl p-4 shadow-xl"
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 3, repeat: Infinity }}
                   >
@@ -208,14 +208,14 @@ export default function AboutPage() {
                         <Check className="h-6 w-6 text-green-600" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">500+</p>
-                        <p className="text-sm text-slate-600">Sekolah Mitra</p>
+                        <p className="text-2xl font-bold text-foreground">500+</p>
+                        <p className="text-sm text-muted-foreground">Sekolah Mitra</p>
                       </div>
                     </div>
                   </motion.div>
 
                   <motion.div
-                    className="absolute -top-6 -right-6 bg-white rounded-2xl p-4 shadow-xl"
+                    className="absolute -top-6 -right-6 bg-card rounded-2xl p-4 shadow-xl"
                     animate={{ y: [0, -10, 0] }}
                     transition={{ duration: 3, repeat: Infinity, delay: 1.5 }}
                   >
@@ -224,8 +224,8 @@ export default function AboutPage() {
                         <Users className="h-6 w-6 text-blue-600" />
                       </div>
                       <div>
-                        <p className="text-2xl font-bold text-slate-900">50K+</p>
-                        <p className="text-sm text-slate-600">Siswa Aktif</p>
+                        <p className="text-2xl font-bold text-foreground">50K+</p>
+                        <p className="text-sm text-muted-foreground">Siswa Aktif</p>
                       </div>
                     </div>
                   </motion.div>
@@ -236,13 +236,13 @@ export default function AboutPage() {
         </section>
 
         {/* Our Story Section */}
-        <section className="py-20 bg-slate-50">
+        <section className="py-20 bg-muted/50">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 Cerita Kami
               </h2>
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-muted-foreground">
                 Dari ide sederhana hingga menjadi platform manajemen sekolah terpercaya di Indonesia
               </p>
             </AnimatedSection>
@@ -256,8 +256,8 @@ export default function AboutPage() {
                       <Lightbulb className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2">Awal Mula (2021)</h3>
-                      <p className="text-slate-600">
+                      <h3 className="text-xl font-bold text-foreground mb-2">Awal Mula (2021)</h3>
+                      <p className="text-muted-foreground">
                         Didirikan oleh Andi Susanto dan Maya Wijaya dengan visi untuk mendigitalkan
                         sistem manajemen sekolah di Indonesia. Bermula dari pengalaman pribadi
                         melihat banyak sekolah yang masih menggunakan manual processes.
@@ -270,8 +270,8 @@ export default function AboutPage() {
                       <Rocket className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2">Pertumbuhan Cepat (2022-2023)</h3>
-                      <p className="text-slate-600">
+                      <h3 className="text-xl font-bold text-foreground mb-2">Pertumbuhan Cepat (2022-2023)</h3>
+                      <p className="text-muted-foreground">
                         Dalam 2 tahun pertama, kami berhasil mengembangkan platform komprehensif
                         dan mendapatkan kepercayaan dari 100+ sekolah. Tim kami berkembang dari
                         5 orang menjadi 30 profesional berbakat.
@@ -284,8 +284,8 @@ export default function AboutPage() {
                       <TrendingUp className="h-5 w-5" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-slate-900 mb-2">Ekspansi Nasional (2024-Sekarang)</h3>
-                      <p className="text-slate-600">
+                      <h3 className="text-xl font-bold text-foreground mb-2">Ekspansi Nasional (2024-Sekarang)</h3>
+                      <p className="text-muted-foreground">
                         Kini hadir di 34 provinsi dengan 500+ sekolah mitra. Terpilih sebagai
                         "Best EdTech Startup 2024" dan terus berinovasi untuk memberikan solusi
                         terbaik bagi pendidikan Indonesia.
@@ -301,9 +301,9 @@ export default function AboutPage() {
                     {/* Placeholder for team photo */}
                     <div className="h-full flex items-center justify-center">
                       <div className="text-center p-8">
-                        <Users className="h-32 w-32 mx-auto mb-4 text-slate-400" />
-                        <p className="text-xl font-semibold text-slate-600">Tim SIAKAD Plus</p>
-                        <p className="text-slate-500">Together We Grow</p>
+                        <Users className="h-32 w-32 mx-auto mb-4 text-muted-foreground" />
+                        <p className="text-xl font-semibold text-muted-foreground">Tim SIAKAD Plus</p>
+                        <p className="text-muted-foreground">Together We Grow</p>
                       </div>
                     </div>
                   </div>
@@ -313,11 +313,11 @@ export default function AboutPage() {
                     className="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur-sm rounded-2xl p-6 shadow-xl"
                     whileHover={{ scale: 1.02 }}
                   >
-                    <p className="text-lg font-medium text-slate-900 italic mb-2">
+                    <p className="text-lg font-medium text-foreground italic mb-2">
                       "Kami percaya bahwa teknologi dapat membuat pendidikan lebih baik dan
                       dapat diakses oleh semua anak Indonesia."
                     </p>
-                    <p className="text-sm text-slate-600">— Andi Susanto, CEO & Founder</p>
+                    <p className="text-sm text-muted-foreground">— Andi Susanto, CEO & Founder</p>
                   </motion.div>
                 </div>
               </AnimatedSection>
@@ -325,8 +325,8 @@ export default function AboutPage() {
 
             {/* Timeline */}
             <AnimatedSection delay={0.4}>
-              <div className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl">
-                <h3 className="text-2xl font-bold text-slate-900 text-center mb-12">
+              <div className="bg-card rounded-3xl p-8 sm:p-12 shadow-xl">
+                <h3 className="text-2xl font-bold text-foreground text-center mb-12">
                   Perjalanan Kami
                 </h3>
 
@@ -387,10 +387,10 @@ export default function AboutPage() {
                             <span className="text-sm font-semibold text-blue-600 mb-1 block">
                               {milestone.year}
                             </span>
-                            <h4 className="text-lg font-bold text-slate-900 mb-1">
+                            <h4 className="text-lg font-bold text-foreground mb-1">
                               {milestone.title}
                             </h4>
-                            <p className="text-sm text-slate-600">{milestone.desc}</p>
+                            <p className="text-sm text-muted-foreground">{milestone.desc}</p>
                           </div>
                         </div>
 
@@ -409,13 +409,13 @@ export default function AboutPage() {
         </section>
 
         {/* Vision & Mission */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-card">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 Visi & Misi
               </h2>
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-muted-foreground">
                 Arah dan tujuan kami untuk masa depan pendidikan Indonesia
               </p>
             </AnimatedSection>
@@ -433,11 +433,11 @@ export default function AboutPage() {
                       <Target className="h-8 w-8 text-white" />
                     </motion.div>
 
-                    <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                    <h3 className="text-2xl font-bold text-foreground mb-4">
                       Visi Kami
                     </h3>
 
-                    <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                    <p className="text-lg text-foreground leading-relaxed mb-6">
                       Menjadi platform manajemen sekolah terdepan yang
                       <span className="font-semibold text-blue-600"> mendemokratisasi akses teknologi pendidikan</span> di
                       Indonesia dan memberdayakan 10.000 sekolah untuk transformasi digital.
@@ -452,7 +452,7 @@ export default function AboutPage() {
                       ].map((item, index) => (
                         <div key={index} className="flex items-center gap-3">
                           <CheckCircle2 className="h-5 w-5 text-blue-600 shrink-0" />
-                          <span className="text-slate-700">{item}</span>
+                          <span className="text-foreground">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -472,11 +472,11 @@ export default function AboutPage() {
                       <Rocket className="h-8 w-8 text-white" />
                     </motion.div>
 
-                    <h3 className="text-2xl font-bold text-slate-900 mb-4">
+                    <h3 className="text-2xl font-bold text-foreground mb-4">
                       Misi Kami
                     </h3>
 
-                    <p className="text-lg text-slate-700 leading-relaxed mb-6">
+                    <p className="text-lg text-foreground leading-relaxed mb-6">
                       Memberdayakan sekolah dengan teknologi modern yang
                       <span className="font-semibold text-green-600"> terjangkau, mudah digunakan, dan komprehensif</span>.
                     </p>
@@ -491,7 +491,7 @@ export default function AboutPage() {
                       ].map((item, index) => (
                         <div key={index} className="flex items-center gap-3">
                           <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0" />
-                          <span className="text-slate-700">{item}</span>
+                          <span className="text-foreground">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -575,13 +575,13 @@ export default function AboutPage() {
         </section>
 
         {/* Leadership Team */}
-        <section className="py-20 bg-slate-50">
+        <section className="py-20 bg-muted/50">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 Tim Pemimpin
               </h2>
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-muted-foreground">
                 Profesional berpengalaman yang mengarahkan misi kami
               </p>
             </AnimatedSection>
@@ -631,7 +631,7 @@ export default function AboutPage() {
               ].map((member, index) => (
                 <AnimatedSection key={member.name} delay={index * 0.1}>
                   <motion.div
-                    className="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
+                    className="bg-card rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
                     whileHover={{ y: -10 }}
                   >
                     {/* Photo Placeholder */}
@@ -656,7 +656,7 @@ export default function AboutPage() {
                     </div>
 
                     <div className="p-6 text-center">
-                      <h3 className="text-lg font-bold text-slate-900 mb-1">
+                      <h3 className="text-lg font-bold text-foreground mb-1">
                         {member.name}
                       </h3>
                       <p
@@ -676,7 +676,7 @@ export default function AboutPage() {
                       >
                         {member.role}
                       </p>
-                      <p className="text-sm text-slate-600 mb-4">
+                      <p className="text-sm text-muted-foreground mb-4">
                         {member.bio}
                       </p>
                       <motion.a
@@ -697,13 +697,13 @@ export default function AboutPage() {
         </section>
 
         {/* Company Culture */}
-        <section className="py-20 bg-white">
+        <section className="py-20 bg-card">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection className="text-center max-w-3xl mx-auto mb-16">
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-foreground mb-4">
                 Budaya Perusahaan
               </h2>
-              <p className="text-lg text-slate-600">
+              <p className="text-lg text-muted-foreground">
                 Lingkungan kerja yang mendorong inovasi dan pertumbuhan
               </p>
             </AnimatedSection>
@@ -731,22 +731,22 @@ export default function AboutPage() {
               ].map((culture, index) => (
                 <AnimatedSection key={culture.title} delay={index * 0.1}>
                   <CardHover>
-                    <div className="bg-slate-50 rounded-2xl p-8 h-full">
+                    <div className="bg-muted/50 rounded-2xl p-8 h-full">
                       <div className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-blue-600 mb-6">
                         <culture.icon className="h-7 w-7 text-white" />
                       </div>
 
-                      <h3 className="text-xl font-bold text-slate-900 mb-3">
+                      <h3 className="text-xl font-bold text-foreground mb-3">
                         {culture.title}
                       </h3>
 
-                      <p className="text-slate-600 mb-6">
+                      <p className="text-muted-foreground mb-6">
                         {culture.desc}
                       </p>
 
                       <ul className="space-y-3">
                         {culture.items.map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-sm text-slate-700">
+                          <li key={i} className="flex items-center gap-3 text-sm text-foreground">
                             <Check className="h-4 w-4 text-green-600 shrink-0" />
                             {item}
                           </li>
@@ -768,7 +768,7 @@ export default function AboutPage() {
                     whileHover={{ scale: 1.05 }}
                     transition={{ type: "spring", stiffness: 300 }}
                   >
-                    <div className="text-center text-slate-400">
+                    <div className="text-center text-muted-foreground">
                       <Users className="h-12 w-12 mx-auto mb-2" />
                       <p className="text-sm font-medium">Team Activity {item}</p>
                     </div>
@@ -841,7 +841,7 @@ export default function AboutPage() {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   href="/careers"
-                  className="inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 text-base font-semibold text-blue-600 shadow-lg hover:bg-blue-50 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-xl bg-card px-8 py-4 text-base font-semibold text-blue-600 shadow-lg hover:bg-blue-50 transition-colors"
                 >
                   Lihat Posisi Terbuka
                   <ArrowRight className="h-5 w-5" />
@@ -852,19 +852,19 @@ export default function AboutPage() {
         </section>
 
         {/* Contact CTA */}
-        <section className="py-20 bg-slate-50">
+        <section className="py-20 bg-muted/50">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection>
               <motion.div
-                className="bg-white rounded-3xl p-8 sm:p-12 shadow-xl"
+                className="bg-card rounded-3xl p-8 sm:p-12 shadow-xl"
                 whileHover={{ scale: 1.01 }}
               >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                   <div>
-                    <h2 className="text-3xl font-bold text-slate-900 mb-4">
+                    <h2 className="text-3xl font-bold text-foreground mb-4">
                       Ingin Berkolaborasi?
                     </h2>
-                    <p className="text-lg text-slate-600 mb-8">
+                    <p className="text-lg text-muted-foreground mb-8">
                       Kami selalu terbuka untuk diskusi mengenai potensi kerjasama,
                       investasi, atau media partnership.
                     </p>
@@ -875,8 +875,8 @@ export default function AboutPage() {
                           <MapPin className="h-6 w-6 text-blue-600" />
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-900">Alamat</p>
-                          <p className="text-slate-600">Jl. Sudirman No. 123, Jakarta Selatan 12190</p>
+                          <p className="font-semibold text-foreground">Alamat</p>
+                          <p className="text-muted-foreground">Jl. Sudirman No. 123, Jakarta Selatan 12190</p>
                         </div>
                       </div>
 
@@ -885,8 +885,8 @@ export default function AboutPage() {
                           <Mail className="h-6 w-6 text-green-600" />
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-900">Email</p>
-                          <p className="text-slate-600">hello@siakadplus.id</p>
+                          <p className="font-semibold text-foreground">Email</p>
+                          <p className="text-muted-foreground">hello@siakadplus.id</p>
                         </div>
                       </div>
 
@@ -895,8 +895,8 @@ export default function AboutPage() {
                           <Phone className="h-6 w-6 text-purple-600" />
                         </div>
                         <div>
-                          <p className="font-semibold text-slate-900">Telepon</p>
-                          <p className="text-slate-600">+62 21 1234 5678</p>
+                          <p className="font-semibold text-foreground">Telepon</p>
+                          <p className="text-muted-foreground">+62 21 1234 5678</p>
                         </div>
                       </div>
                     </div>
@@ -969,7 +969,7 @@ export default function AboutPage() {
                   SIAKAD <span className="text-blue-400">Plus</span>
                 </span>
               </motion.div>
-              <p className="text-sm text-slate-400 mb-6">
+              <p className="text-sm text-muted-foreground mb-6">
                 Solusi manajemen sekolah #1 di Indonesia yang terpercaya, aman,
                 dan mudah digunakan.
               </p>
@@ -982,7 +982,7 @@ export default function AboutPage() {
                   <motion.a
                     key={social.label}
                     href="#"
-                    className="text-slate-400 hover:text-blue-400 transition-colors"
+                    className="text-muted-foreground hover:text-blue-400 transition-colors"
                     aria-label={social.label}
                     whileHover={{ scale: 1.2, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
@@ -1006,7 +1006,7 @@ export default function AboutPage() {
                     >
                       <Link
                         href={link === "Fitur Utama" ? "/#fitur" : "#"}
-                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                        className="text-sm text-muted-foreground hover:text-white transition-colors"
                       >
                         {link}
                       </Link>
@@ -1027,7 +1027,7 @@ export default function AboutPage() {
                   >
                     <Link
                       href={link === "Tentang Kami" ? "/about" : "#"}
-                      className="text-sm text-slate-400 hover:text-white transition-colors"
+                      className="text-sm text-muted-foreground hover:text-white transition-colors"
                     >
                       {link}
                     </Link>
@@ -1048,7 +1048,7 @@ export default function AboutPage() {
                     >
                       <Link
                         href="#"
-                        className="text-sm text-slate-400 hover:text-white transition-colors"
+                        className="text-sm text-muted-foreground hover:text-white transition-colors"
                       >
                         {link}
                       </Link>
@@ -1059,10 +1059,10 @@ export default function AboutPage() {
             </div>
           </div>
           <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-muted-foreground">
               © 2026 SIAKAD Plus. All rights reserved.
             </p>
-            <p className="text-sm text-slate-400">Jakarta, Indonesia</p>
+            <p className="text-sm text-muted-foreground">Jakarta, Indonesia</p>
           </div>
         </div>
       </footer>

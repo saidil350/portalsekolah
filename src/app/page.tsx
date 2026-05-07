@@ -40,12 +40,12 @@ import FloatingElements from "@/components/animations/FloatingElements";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
+    <div className="min-h-screen bg-muted/50 font-sans text-foreground">
       {/* Floating Background Elements */}
       <FloatingElements />
 
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 w-full border-b border-slate-200 bg-white/80 backdrop-blur-md">
+      <nav className="sticky top-0 z-50 w-full border-b border-border bg-white/80 backdrop-blur-md">
         <motion.div
           initial={{ y: -100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -61,7 +61,7 @@ export default function LandingPage() {
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
               <BookOpen className="h-5 w-5" />
             </div>
-            <span className="text-xl font-bold tracking-tight text-slate-900">
+            <span className="text-xl font-bold tracking-tight text-foreground">
               SIAKAD <span className="text-blue-600">Plus</span>
             </span>
           </motion.div>
@@ -77,7 +77,7 @@ export default function LandingPage() {
               >
                 <Link
                   href={item === "Tentang Kami" ? "/about" : `#${item.toLowerCase().replace(" ", "-")}`}
-                  className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+                  className="text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors"
                 >
                   {item}
                 </Link>
@@ -89,7 +89,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="hidden sm:inline-block text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
+              className="hidden sm:inline-block text-sm font-medium text-muted-foreground hover:text-blue-600 transition-colors"
             >
               Login
             </Link>
@@ -160,14 +160,14 @@ export default function LandingPage() {
             </AnimatedSection>
 
             <TextReveal
-              className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
+              className="mx-auto max-w-4xl text-5xl font-extrabold tracking-tight text-foreground sm:text-6xl lg:text-7xl"
               delay={0.2}
             >
               Digitalkan Ekosistem Sekolah Anda
             </TextReveal>
 
             <AnimatedSection delay={0.4} className="mx-auto mt-6 max-w-2xl">
-              <p className="text-lg leading-8 text-slate-600">
+              <p className="text-lg leading-8 text-muted-foreground">
                 Platform manajemen sekolah terpadu dengan akses berbasis peran
                 untuk administrator, guru, siswa, dan orang tua. Tingkatkan
                 efisiensi dan transparansi pendidikan sekarang.
@@ -190,9 +190,9 @@ export default function LandingPage() {
                 >
                   <Link
                     href="/demo"
-                    className="inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-8 py-3 text-base font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    className="inline-flex h-12 w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-slate-300 bg-card px-8 py-3 text-base font-semibold text-foreground hover:bg-accent transition-colors"
                   >
-                    <PlayCircle className="h-5 w-5 text-slate-500" />
+                    <PlayCircle className="h-5 w-5 text-muted-foreground" />
                     Demo Sistem
                   </Link>
                 </motion.div>
@@ -201,7 +201,7 @@ export default function LandingPage() {
 
             {/* Social Proof */}
             <AnimatedSection delay={0.8} className="mt-12">
-              <div className="flex flex-col items-center justify-center gap-4 border-t border-slate-200 pt-8 sm:flex-row">
+              <div className="flex flex-col items-center justify-center gap-4 border-t border-border pt-8 sm:flex-row">
                 <motion.div
                   className="flex -space-x-3"
                   whileHover={{ x: -4 }}
@@ -224,9 +224,9 @@ export default function LandingPage() {
                     />
                   ))}
                 </motion.div>
-                <p className="text-sm font-medium text-slate-600 text-left">
+                <p className="text-sm font-medium text-muted-foreground text-left">
                   Dipercaya oleh{" "}
-                  <span className="font-bold text-slate-900">500+ Sekolah</span>
+                  <span className="font-bold text-foreground">500+ Sekolah</span>
                   <br />
                   di seluruh Indonesia
                 </p>
@@ -236,16 +236,16 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section id="fitur" className="bg-white py-16 sm:py-20">
+        <section id="fitur" className="bg-card py-16 sm:py-20">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection className="mx-auto max-w-2xl text-center">
               <h2 className="text-sm font-semibold leading-7 text-blue-600 uppercase tracking-wider">
                 Fitur Unggulan
               </h2>
-              <p className="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              <p className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 Modul Lengkap untuk Sekolah Modern
               </p>
-              <p className="mt-6 text-lg leading-8 text-slate-600">
+              <p className="mt-6 text-lg leading-8 text-muted-foreground">
                 Satu sistem terintegrasi untuk menangani seluruh aspek operasional
                 sekolah Anda, dari akademik hingga keuangan dengan keamanan
                 tingkat tinggi.
@@ -297,7 +297,7 @@ export default function LandingPage() {
                           : "249, 115, 22"
                       }, 0.3)`}
                     >
-                      <div className="relative flex flex-col rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-200">
+                      <div className="relative flex flex-col rounded-2xl bg-card p-8 shadow-sm ring-1 ring-slate-200">
                         <motion.div
                           className="mb-6 flex h-12 w-12 items-center justify-center rounded-lg"
                           style={{
@@ -328,10 +328,10 @@ export default function LandingPage() {
                           />
                         </motion.div>
                         <dl>
-                          <dt className="text-xl font-semibold leading-7 text-slate-900">
+                          <dt className="text-xl font-semibold leading-7 text-foreground">
                             {feature.title}
                           </dt>
-                          <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-slate-600">
+                          <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-muted-foreground">
                             <p className="flex-auto">{feature.desc}</p>
                           </dd>
                         </dl>
@@ -363,7 +363,7 @@ export default function LandingPage() {
                       className="text-4xl font-extrabold text-blue-600"
                       duration={2}
                     />
-                    <span className="mt-2 text-sm font-medium text-slate-600">
+                    <span className="mt-2 text-sm font-medium text-muted-foreground">
                       {stat.label}
                     </span>
                   </div>
@@ -374,7 +374,7 @@ export default function LandingPage() {
         </section>
 
         {/* Pricing Section */}
-        <section id="harga" className="bg-slate-50 py-16 sm:py-20">
+        <section id="harga" className="bg-muted/50 py-16 sm:py-20">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Header */}
             <AnimatedSection className="mx-auto max-w-2xl text-center">
@@ -382,10 +382,10 @@ export default function LandingPage() {
                 <span className="flex h-2 w-2 rounded-full bg-green-600"></span>
                 Transparan & Terjangkau
               </div>
-              <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              <h2 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 Pilih Paket yang Sesuai Kebutuhan Sekolah Anda
               </h2>
-              <p className="mt-6 text-lg leading-8 text-slate-600">
+              <p className="mt-6 text-lg leading-8 text-muted-foreground">
                 Investasi cerdas untuk transformasi digital pendidikan. Tanpa
                 biaya tersembunyi, fleksibel, dan dapat disesuaikan.
               </p>
@@ -396,19 +396,19 @@ export default function LandingPage() {
               {/* Basic Plan */}
               <AnimatedSection delay={0.1} direction="up">
                 <CardHover>
-                  <div className="flex flex-col rounded-3xl bg-white p-8 shadow-sm ring-1 ring-slate-200 hover:shadow-xl transition-shadow duration-300">
+                  <div className="flex flex-col rounded-3xl bg-card p-8 shadow-sm ring-1 ring-slate-200 hover:shadow-xl transition-shadow duration-300">
                     <div className="mb-6">
-                      <h3 className="text-xl font-semibold leading-7 text-slate-900">
+                      <h3 className="text-xl font-semibold leading-7 text-foreground">
                         Basic
                       </h3>
-                      <p className="mt-4 text-sm text-slate-600">
+                      <p className="mt-4 text-sm text-muted-foreground">
                         Cocok untuk sekolah kecil yang baru memulai digitalisasi
                       </p>
                       <p className="mt-6 flex items-baseline gap-x-1">
-                        <span className="text-4xl font-bold tracking-tight text-slate-900">
+                        <span className="text-4xl font-bold tracking-tight text-foreground">
                           Rp 499rb
                         </span>
-                        <span className="text-sm font-semibold leading-6 text-slate-600">
+                        <span className="text-sm font-semibold leading-6 text-muted-foreground">
                           /bulan
                         </span>
                       </p>
@@ -426,7 +426,7 @@ export default function LandingPage() {
                       ].map((item) => (
                         <li
                           key={item.text}
-                          className="flex gap-x-3 text-sm leading-6 text-slate-600"
+                          className="flex gap-x-3 text-sm leading-6 text-muted-foreground"
                         >
                           {item.included ? (
                             <Check
@@ -435,7 +435,7 @@ export default function LandingPage() {
                             />
                           ) : (
                             <X
-                              className="h-6 w-5 flex-none text-slate-400"
+                              className="h-6 w-5 flex-none text-muted-foreground"
                               aria-hidden="true"
                             />
                           )}
@@ -445,11 +445,11 @@ export default function LandingPage() {
                     </ul>
                     <Link
                       href="/register"
-                      className="mt-8 block rounded-xl bg-slate-100 px-3.5 py-2.5 text-center text-sm font-semibold leading-6 text-slate-900 hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
+                      className="mt-8 block rounded-xl bg-muted px-3.5 py-2.5 text-center text-sm font-semibold leading-6 text-foreground hover:bg-slate-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-600 transition-colors"
                     >
                       Mulai Sekarang
                     </Link>
-                    <p className="mt-4 text-xs text-center text-slate-500">
+                    <p className="mt-4 text-xs text-center text-muted-foreground">
                       Ideal untuk SD/SMP kecil
                     </p>
                   </div>
@@ -463,7 +463,7 @@ export default function LandingPage() {
                   glowColor="rgba(37, 99, 235, 0.4)"
                   glowOpacity={0.4}
                 >
-                  <div className="flex flex-col rounded-3xl bg-white p-8 shadow-xl ring-2 ring-blue-600 hover:shadow-2xl transition-shadow duration-300 relative">
+                  <div className="flex flex-col rounded-3xl bg-card p-8 shadow-xl ring-2 ring-blue-600 hover:shadow-2xl transition-shadow duration-300 relative">
                     {/* Popular Badge */}
                     <motion.div
                       className="absolute -top-4 left-1/2 -translate-x-1/2"
@@ -483,17 +483,17 @@ export default function LandingPage() {
                     </motion.div>
 
                     <div className="mb-6 pt-2">
-                      <h3 className="text-xl font-semibold leading-7 text-slate-900">
+                      <h3 className="text-xl font-semibold leading-7 text-foreground">
                         Professional
                       </h3>
-                      <p className="mt-4 text-sm text-slate-600">
+                      <p className="mt-4 text-sm text-muted-foreground">
                         Untuk sekolah menengah yang membutuhkan fitur lengkap
                       </p>
                       <p className="mt-6 flex items-baseline gap-x-1">
                         <span className="text-4xl font-bold tracking-tight text-blue-600">
                           Rp 1.499rb
                         </span>
-                        <span className="text-sm font-semibold leading-6 text-slate-600">
+                        <span className="text-sm font-semibold leading-6 text-muted-foreground">
                           /bulan
                         </span>
                       </p>
@@ -512,7 +512,7 @@ export default function LandingPage() {
                       ].map((item) => (
                         <li
                           key={item.text}
-                          className="flex gap-x-3 text-sm leading-6 text-slate-600"
+                          className="flex gap-x-3 text-sm leading-6 text-muted-foreground"
                         >
                           <Check
                             className="h-6 w-5 flex-none text-green-600"
@@ -591,7 +591,7 @@ export default function LandingPage() {
                     >
                       Hubungi Sales
                     </Link>
-                    <p className="mt-4 text-xs text-center text-slate-400">
+                    <p className="mt-4 text-xs text-center text-muted-foreground">
                       Solusi enterprise untuk sekolah top
                     </p>
                   </div>
@@ -602,7 +602,7 @@ export default function LandingPage() {
             {/* Trust Elements */}
             <AnimatedSection delay={0.4} className="mt-12">
               <div className="flex flex-col items-center justify-center gap-6 text-center">
-                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-600">
+                <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                   {[
                     "14 hari free trial",
                     "Tanpa kartu kredit",
@@ -627,7 +627,7 @@ export default function LandingPage() {
 
             {/* FAQ Section */}
             <AnimatedSection delay={0.5} className="mx-auto mt-12 max-w-3xl">
-              <h3 className="text-2xl font-bold text-slate-900 text-center mb-8">
+              <h3 className="text-2xl font-bold text-foreground text-center mb-8">
                 Pertanyaan Umum
               </h3>
               <div className="space-y-4">
@@ -651,17 +651,17 @@ export default function LandingPage() {
                 ].map((faq, index) => (
                   <AnimatedSection key={faq.q} delay={0.6 + index * 0.1}>
                     <motion.div
-                      className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-slate-200"
+                      className="rounded-xl bg-card p-6 shadow-sm ring-1 ring-slate-200"
                       whileHover={{ scale: 1.02, y: -5 }}
                       transition={{ type: "spring", stiffness: 300 }}
                     >
                       <div className="flex items-start gap-4">
                         <HelpCircle className="h-6 w-6 text-blue-600 shrink-0 mt-1" />
                         <div>
-                          <h4 className="font-semibold text-slate-900 mb-2">
+                          <h4 className="font-semibold text-foreground mb-2">
                             {faq.q}
                           </h4>
-                          <p className="text-sm text-slate-600">{faq.a}</p>
+                          <p className="text-sm text-muted-foreground">{faq.a}</p>
                         </div>
                       </div>
                     </motion.div>
@@ -676,10 +676,10 @@ export default function LandingPage() {
                 className="rounded-3xl bg-blue-50 p-8 text-center"
                 whileHover={{ scale: 1.02 }}
               >
-                <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                <h3 className="text-2xl font-bold text-foreground mb-2">
                   Bingung Pilih Paket?
                 </h3>
-                <p className="text-slate-600 mb-6">
+                <p className="text-muted-foreground mb-6">
                   Konsultasikan kebutuhan sekolah Anda dengan tim kami. Kami
                   siap membantu menemukan solusi terbaik.
                 </p>
@@ -711,7 +711,7 @@ export default function LandingPage() {
 
 
         {/* CTA Section */}
-        <section className="bg-white py-16 border-b border-slate-200">
+        <section className="bg-card py-16 border-b border-border">
           <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <AnimatedSection>
               <motion.div
@@ -782,7 +782,7 @@ export default function LandingPage() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-slate-50 border-t border-slate-200">
+      <footer className="bg-muted/50 border-t border-border">
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Brand */}
@@ -794,11 +794,11 @@ export default function LandingPage() {
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
                   <BookOpen className="h-5 w-5" />
                 </div>
-                <span className="text-xl font-bold tracking-tight text-slate-900">
+                <span className="text-xl font-bold tracking-tight text-foreground">
                   SIAKAD <span className="text-blue-600">Plus</span>
                 </span>
               </motion.div>
-              <p className="text-sm text-slate-600 mb-6">
+              <p className="text-sm text-muted-foreground mb-6">
                 Solusi manajemen sekolah #1 di Indonesia yang terpercaya, aman,
                 dan mudah digunakan.
               </p>
@@ -811,7 +811,7 @@ export default function LandingPage() {
                   <motion.a
                     key={social.label}
                     href="#"
-                    className="text-slate-400 hover:text-blue-600 transition-colors"
+                    className="text-muted-foreground hover:text-blue-600 transition-colors"
                     aria-label={social.label}
                     whileHover={{ scale: 1.2, rotate: 5 }}
                     whileTap={{ scale: 0.9 }}
@@ -824,7 +824,7 @@ export default function LandingPage() {
 
             {/* Links */}
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-4">
+              <h3 className="text-sm font-semibold text-foreground mb-4">
                 Produk
               </h3>
               <ul className="space-y-3">
@@ -837,7 +837,7 @@ export default function LandingPage() {
                     >
                       <Link
                         href="#"
-                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                        className="text-sm text-muted-foreground hover:text-blue-600 transition-colors"
                       >
                         {link}
                       </Link>
@@ -848,7 +848,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-4">
+              <h3 className="text-sm font-semibold text-foreground mb-4">
                 Perusahaan
               </h3>
               <ul className="space-y-3">
@@ -860,7 +860,7 @@ export default function LandingPage() {
                   >
                     <Link
                       href={link === "Tentang Kami" ? "/about" : "#"}
-                      className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                      className="text-sm text-muted-foreground hover:text-blue-600 transition-colors"
                     >
                       {link}
                     </Link>
@@ -870,7 +870,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-sm font-semibold text-slate-900 mb-4">
+              <h3 className="text-sm font-semibold text-foreground mb-4">
                 Legal
               </h3>
               <ul className="space-y-3">
@@ -883,7 +883,7 @@ export default function LandingPage() {
                     >
                       <Link
                         href="#"
-                        className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                        className="text-sm text-muted-foreground hover:text-blue-600 transition-colors"
                       >
                         {link}
                       </Link>
@@ -893,11 +893,11 @@ export default function LandingPage() {
               </ul>
             </div>
           </div>
-          <div className="mt-12 pt-8 border-t border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-sm text-slate-500">
+          <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-muted-foreground">
               © 2026 SIAKAD Plus. All rights reserved.
             </p>
-            <p className="text-sm text-slate-500">Jakarta, Indonesia</p>
+            <p className="text-sm text-muted-foreground">Jakarta, Indonesia</p>
           </div>
         </div>
       </footer>

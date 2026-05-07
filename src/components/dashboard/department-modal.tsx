@@ -1,9 +1,25 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { X, Loader2, Building2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import type { Department, DepartmentFormData } from '@/types/academic'
-import { useLanguage } from '@/contexts/LanguageContext'
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+  Input,
+  Textarea,
+} from '@/components/ui'
 
 interface DepartmentModalProps {
   isOpen: boolean
@@ -29,7 +45,6 @@ export default function DepartmentModal({
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const { t } = useLanguage()
 
   useEffect(() => {
     if (isOpen) {
@@ -95,123 +110,94 @@ export default function DepartmentModal({
     }))
   }
 
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
-          <h3 className="text-xl font-bold text-foreground">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && !loading && onClose()}>
+      <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-md">
+        <DialogHeader className="border-b px-6 py-4">
+          <DialogTitle>
             {mode === 'create' ? 'Tambah Jurusan' : 'Edit Jurusan'}
-          </h3>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation()
-              onClose()
-            }}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={loading}
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5 text-slate-500" />
-          </button>
-        </div>
+          </DialogTitle>
+        </DialogHeader>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          {/* Error Message */}
+        <form onSubmit={handleSubmit}>
+          <FieldGroup className="px-6 py-4">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-sm text-red-700">{error}</p>
-            </div>
+            <Alert variant="error">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
 
-          {/* Nama Jurusan */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Nama Jurusan <span className="text-red-500">*</span>
-            </label>
-            <input
+          <Field>
+            <FieldLabel required>Nama Jurusan</FieldLabel>
+            <Input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="Contoh: MIPA - Matematika dan Ilmu Pengetahuan Alam"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               required
               disabled={loading}
             />
-          </div>
+          </Field>
 
-          {/* Kode */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Kode <span className="text-red-500">*</span>
-            </label>
-            <input
+          <Field>
+            <FieldLabel required>Kode</FieldLabel>
+            <Input
               type="text"
               name="code"
               value={formData.code}
               onChange={handleChange}
               placeholder="Contoh: MIPA"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
+              className="uppercase"
               maxLength={10}
               required
               disabled={loading}
             />
-            <p className="text-xs text-slate-500 mt-1">Maksimal 10 karakter</p>
-          </div>
+            <FieldDescription>Maksimal 10 karakter</FieldDescription>
+          </Field>
 
-          {/* Deskripsi */}
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
-              Deskripsi
-            </label>
-            <textarea
+          <Field>
+            <FieldLabel>Deskripsi</FieldLabel>
+            <Textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               placeholder="Deskripsi jurusan"
               rows={3}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
               disabled={loading}
             />
-          </div>
+          </Field>
 
-          {/* Status Aktif */}
-          <div className="flex items-center gap-3">
-            <input
-              type="checkbox"
+          <Field className="flex-row items-center gap-3">
+            <Checkbox
               name="is_active"
               id="is_active"
               checked={formData.is_active}
-              onChange={handleChange}
-              className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary"
+              onCheckedChange={(checked) =>
+                setFormData((prev) => ({ ...prev, is_active: checked === true }))
+              }
               disabled={loading}
             />
-            <label htmlFor="is_active" className="text-sm font-medium text-slate-700">
+            <FieldLabel htmlFor="is_active" className="font-normal">
               Jurusan aktif
-            </label>
-          </div>
+            </FieldLabel>
+          </Field>
+          </FieldGroup>
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-4">
-            <button
+          <DialogFooter className="border-t bg-muted/40 px-6 py-4">
+            <Button
               type="button"
+              variant="outline"
               onClick={(e) => {
                 e.stopPropagation()
                 onClose()
               }}
-              className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               Batal
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
-              className="flex-1 px-4 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-medium text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-primary/20"
               disabled={loading}
             >
               {loading ? (
@@ -222,10 +208,10 @@ export default function DepartmentModal({
               ) : (
                 mode === 'create' ? 'Tambah' : 'Simpan'
               )}
-            </button>
-          </div>
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }

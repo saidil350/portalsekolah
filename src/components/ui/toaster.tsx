@@ -93,10 +93,10 @@ export function ToastProvider({
   }
 
   const colors = {
-    success: 'bg-white border-l-4 border-l-success-500 shadow-lg',
-    error: 'bg-white border-l-4 border-l-error-500 shadow-lg',
-    warning: 'bg-white border-l-4 border-l-warning-500 shadow-lg',
-    info: 'bg-white border-l-4 border-l-info-500 shadow-lg',
+    success: 'bg-card border-l-4 border-l-success-500 shadow-lg',
+    error: 'bg-card border-l-4 border-l-error-500 shadow-lg',
+    warning: 'bg-card border-l-4 border-l-warning-500 shadow-lg',
+    info: 'bg-card border-l-4 border-l-info-500 shadow-lg',
   }
 
   const iconColors = {
@@ -119,7 +119,7 @@ export function ToastProvider({
           <div
             key={toast.id}
             className={cn(
-              'pointer-events-auto min-w-[320px] max-w-md rounded-lg border border-slate-200 p-4 shadow-lg animate-in slide-in-from-right duration-300',
+              'pointer-events-auto min-w-[320px] max-w-md rounded-lg border border-border p-4 shadow-lg animate-in slide-in-from-right duration-300',
               colors[toast.type],
               index > 0 && 'mt-2'
             )}

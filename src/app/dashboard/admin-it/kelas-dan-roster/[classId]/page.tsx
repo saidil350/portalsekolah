@@ -82,7 +82,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-full bg-linear-to-br from-slate-50 to-blue-50/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-3 text-slate-600 font-medium">Memuat...</span>
+        <span className="ml-3 text-muted-foreground font-medium">Memuat...</span>
       </div>
     )
   }
@@ -184,7 +184,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
     return (
       <div className="flex-1 flex flex-col items-center justify-center h-full bg-linear-to-br from-slate-50 to-blue-50/30">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <span className="ml-3 text-slate-600 font-medium">Memuat data...</span>
+        <span className="ml-3 text-muted-foreground font-medium">Memuat data...</span>
       </div>
     )
   }
@@ -199,7 +199,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
         <button
           type="button"
           onClick={() => router.back()}
-          className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+          className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-slate-200 transition-colors"
         >
           Kembali
         </button>
@@ -244,7 +244,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1 text-sm text-slate-500 hover:text-primary transition-colors group"
+            className="flex items-center gap-1 text-sm text-muted-foreground hover:text-primary transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
             <span className="font-medium">Kembali</span>
@@ -254,15 +254,15 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
         <div className="flex items-start justify-between">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              <h1 className="text-2xl font-bold text-foreground tracking-tight">
                 {class_info.name}
               </h1>
               <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold shadow-sm ${badge.bgColor} ${badge.color}`}>
                 {badge.icon} {badge.label}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-slate-500 text-sm font-medium">
-              <span className="bg-slate-100 px-1.5 py-0.5 rounded text-xs">{class_info.code}</span>
+            <div className="flex items-center gap-2 text-muted-foreground text-sm font-medium">
+              <span className="bg-muted px-1.5 py-0.5 rounded text-xs">{class_info.code}</span>
               {class_info.class_level && <span>• {class_info.class_level.name}</span>}
               {class_info.department && <span>• {class_info.department.name}</span>}
               {class_info.academic_year && <span className="text-primary/80 font-semibold">• {class_info.academic_year.name}</span>}
@@ -298,11 +298,11 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full">
           {/* Left Column - Student List (40%) */}
-          <div className="w-2/5 border-r border-slate-200 bg-white overflow-y-auto">
+          <div className="w-2/5 border-r border-border bg-card overflow-y-auto">
             {/* Class Info */}
-            <div className="p-6 border-b border-slate-100">
+            <div className="p-6 border-b border-border/60">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <h3 className="text-sm font-bold text-foreground flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Info Kelas
                 </h3>
@@ -317,27 +317,27 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
               </div>
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Wali Kelas:</span>
-                  <span className="font-medium text-slate-900">{class_info.wali_kelas?.full_name || '-'}</span>
+                  <span className="text-muted-foreground">Wali Kelas:</span>
+                  <span className="font-medium text-foreground">{class_info.wali_kelas?.full_name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Ruang Base:</span>
-                  <span className="font-medium text-slate-900">{class_info.home_room?.name || '-'}</span>
+                  <span className="text-muted-foreground">Ruang Base:</span>
+                  <span className="font-medium text-foreground">{class_info.home_room?.name || '-'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Kapasitas:</span>
-                  <span className="font-medium text-slate-900">{class_info.capacity} siswa</span>
+                  <span className="text-muted-foreground">Kapasitas:</span>
+                  <span className="font-medium text-foreground">{class_info.capacity} siswa</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500">Terkisi:</span>
-                  <span className="font-medium text-slate-900">{class_info.current_enrollment} siswa</span>
+                  <span className="text-muted-foreground">Terkisi:</span>
+                  <span className="font-medium text-foreground">{class_info.current_enrollment} siswa</span>
                 </div>
               </div>
             </div>
 
             {/* Statistics */}
-            <div className="p-6 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-slate-900 mb-4">Statistik</h3>
+            <div className="p-6 border-b border-border/60">
+              <h3 className="text-sm font-bold text-foreground mb-4">Statistik</h3>
               <div className="grid grid-cols-2 gap-4">
                 <div className="text-center p-3 bg-blue-50 rounded-lg">
                   <Users className="w-5 h-5 text-blue-600 mx-auto mb-1" />
@@ -364,7 +364,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
 
             {/* Student List */}
             <div className="p-6">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <Users className="w-4 h-4" />
                 Daftar Siswa ({statistics.total_students})
               </h3>
@@ -381,15 +381,15 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                   students.map((student: any) => (
                     <div
                       key={student.id}
-                      className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors group"
+                      className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-accent transition-colors group"
                     >
                       <div className="flex items-center gap-3">
                         <div className="w-8 h-8 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
                           {(student.full_name || 'Siswa').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-slate-900">{student.full_name || 'Siswa'}</p>
-                          <p className="text-xs text-slate-500">{student.nisn || '-'}</p>
+                          <p className="text-sm font-medium text-foreground">{student.full_name || 'Siswa'}</p>
+                          <p className="text-xs text-muted-foreground">{student.nisn || '-'}</p>
                         </div>
                       </div>
                       <button
@@ -412,11 +412,11 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
             <div className="p-8">
               <div className="flex items-center justify-between mb-6">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-primary" />
                     Jadwal Mingguan
                   </h3>
-                  <p className="text-xs text-slate-500 font-medium">Atur dan pantau jadwal pelajaran kelas</p>
+                  <p className="text-xs text-muted-foreground font-medium">Atur dan pantau jadwal pelajaran kelas</p>
                 </div>
                 <button
                   type="button"
@@ -429,13 +429,13 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
               </div>
 
               {/* Schedule Grid */}
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/40 overflow-hidden">
+              <div className="bg-card rounded-2xl border border-border shadow-xl shadow-slate-200/40 overflow-hidden">
                 <table className="w-full text-sm border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200">
-                      <th className="w-20 px-4 py-4 text-left font-bold text-slate-600 text-[10px] uppercase tracking-wider cursor-default">Jam</th>
+                    <tr className="bg-slate-50/80 border-b border-border">
+                      <th className="w-20 px-4 py-4 text-left font-bold text-muted-foreground text-[10px] uppercase tracking-wider cursor-default">Jam</th>
                       {days.map(day => (
-                        <th key={day.value} className="px-4 py-4 text-center font-bold text-slate-700 text-[11px] uppercase tracking-wider cursor-default">
+                        <th key={day.value} className="px-4 py-4 text-center font-bold text-foreground text-[11px] uppercase tracking-wider cursor-default">
                           {day.label}
                         </th>
                       ))}
@@ -444,7 +444,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                   <tbody className="divide-y divide-slate-100">
                     {timeSlots.map((time, timeIdx) => (
                       <tr key={time} className="hover:bg-slate-50/30 transition-colors">
-                        <td className="px-4 py-4 text-slate-400 text-xs font-bold align-top whitespace-nowrap bg-slate-50/20">
+                        <td className="px-4 py-4 text-muted-foreground text-xs font-bold align-top whitespace-nowrap bg-slate-50/20">
                           {time}
                         </td>
                         {days.map(day => {
@@ -453,10 +453,10 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                             <td key={day.value} className="px-2 py-2 align-top h-24">
                               {schedule ? (
                                 <div className="h-full bg-linear-to-br from-blue-50 to-indigo-50/50 border border-blue-100 rounded-xl p-3 transition-all hover:shadow-lg hover:shadow-blue-200/40 hover:-translate-y-0.5 group cursor-pointer ring-1 ring-blue-500/0 hover:ring-blue-500/30">
-                                  <p className="font-bold text-slate-900 text-xs mb-1 group-hover:text-primary transition-colors">{schedule.subject?.name}</p>
-                                  <p className="text-[10px] text-slate-500 font-medium mb-2 truncate">{schedule.teacher?.full_name}</p>
+                                  <p className="font-bold text-foreground text-xs mb-1 group-hover:text-primary transition-colors">{schedule.subject?.name}</p>
+                                  <p className="text-[10px] text-muted-foreground font-medium mb-2 truncate">{schedule.teacher?.full_name}</p>
                                   <div className="mt-auto pt-2 border-t border-blue-100/50 flex items-center justify-between">
-                                    <span className="flex items-center gap-1 text-[10px] text-slate-400 font-bold">
+                                    <span className="flex items-center gap-1 text-[10px] text-muted-foreground font-bold">
                                       <MapPin className="w-3 h-3 text-primary/50" />
                                       {schedule.room?.code || '-'}
                                     </span>
@@ -464,7 +464,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                                   </div>
                                 </div>
                               ) : (
-                                <div className="h-full rounded-xl border-2 border-dashed border-slate-100 bg-slate-50/10 hover:bg-slate-50/50 transition-colors" />
+                                <div className="h-full rounded-xl border-2 border-dashed border-border/60 bg-slate-50/10 hover:bg-slate-50/50 transition-colors" />
                               )}
                             </td>
                           )
@@ -477,8 +477,8 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
             </div>
 
             {/* Teachers List */}
-            <div className="mt-2 p-8 border-t border-slate-100 bg-linear-to-b from-transparent to-slate-50/30">
-              <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+            <div className="mt-2 p-8 border-t border-border/60 bg-linear-to-b from-transparent to-slate-50/30">
+              <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2">
                 <GraduationCap className="w-5 h-5 text-purple-600" />
                 Guru Pengajar <span className="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full text-[10px] ml-1">{statistics.total_teachers}</span>
               </h3>
@@ -486,12 +486,12 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                 {teachers.map((teacher: any) => (
                   <div
                     key={teacher.id}
-                    className="flex items-center gap-2.5 px-3 py-2 bg-white rounded-xl border border-slate-200 shadow-sm hover:shadow-md transition-all group hover:border-purple-200"
+                    className="flex items-center gap-2.5 px-3 py-2 bg-card rounded-xl border border-border shadow-sm hover:shadow-md transition-all group hover:border-purple-200"
                   >
                     <div className="w-8 h-8 rounded-full bg-linear-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-[10px] font-bold shadow-sm group-hover:scale-110 transition-transform">
                       {(teacher.full_name || 'Guru').split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase()}
                     </div>
-                    <span className="text-xs font-bold text-slate-700">{teacher.full_name || 'Guru'}</span>
+                    <span className="text-xs font-bold text-foreground">{teacher.full_name || 'Guru'}</span>
                   </div>
                 ))}
               </div>
@@ -540,11 +540,11 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
 
       {withdrawTarget && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
-          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md">
-            <div className="p-6 border-b border-slate-200">
-              <h3 className="text-lg font-bold text-slate-900">Keluarkan Siswa</h3>
-              <p className="text-sm text-slate-500 mt-1">
-                Apakah Anda yakin ingin mengeluarkan <span className="font-medium text-slate-900">{withdrawTarget.name}</span> dari kelas?
+          <div className="bg-card rounded-xl shadow-2xl w-full max-w-md">
+            <div className="p-6 border-b border-border">
+              <h3 className="text-lg font-bold text-foreground">Keluarkan Siswa</h3>
+              <p className="text-sm text-muted-foreground mt-1">
+                Apakah Anda yakin ingin mengeluarkan <span className="font-medium text-foreground">{withdrawTarget.name}</span> dari kelas?
               </p>
             </div>
             <div className="p-6 flex items-center justify-end gap-3">
@@ -552,7 +552,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                 type="button"
                 onClick={() => setWithdrawTarget(null)}
                 disabled={withdrawing}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50"
+                className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-slate-200 transition-colors disabled:opacity-50"
               >
                 Batal
               </button>

@@ -6,15 +6,18 @@ import { cn } from '@/lib/utils'
 import { X, CheckCircle, AlertCircle, AlertTriangle, Info } from 'lucide-react'
 
 const alertVariants = cva(
-  "relative w-full rounded-lg border p-4 flex items-start gap-3",
+  "relative flex w-full items-start gap-3 rounded-lg border p-4 text-sm",
   {
     variants: {
       variant: {
-        success: "bg-success-50 border-success-200 text-success-800",
-        warning: "bg-warning-50 border-warning-200 text-warning-800",
-        error: "bg-error-50 border-error-200 text-error-800",
-        info: "bg-info-50 border-info-200 text-info-800",
-        neutral: "bg-slate-50 border-slate-200 text-slate-800",
+        default: "bg-background text-foreground",
+        destructive:
+          "border-destructive/50 text-destructive dark:border-destructive [&_svg]:text-destructive",
+        success: "border-success-500/30 bg-success-50 text-success-700 [&_svg]:text-success-700",
+        warning: "border-warning-500/30 bg-warning-50 text-warning-700 [&_svg]:text-warning-700",
+        error: "border-destructive/30 bg-error-50 text-error-700 [&_svg]:text-error-700",
+        info: "border-primary/20 bg-primary-50 text-primary-700 [&_svg]:text-primary-700",
+        neutral: "border-border bg-muted/50 text-foreground",
       },
     },
     defaultVariants: {
@@ -47,11 +50,13 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
     ref
   ) => {
     const icons = {
-      success: <CheckCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />,
-      warning: <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />,
-      error: <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />,
-      info: <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />,
-      neutral: <Info className="w-5 h-5 flex-shrink-0 mt-0.5" />,
+      default: <Info className="mt-0.5 size-4 shrink-0" />,
+      destructive: <AlertCircle className="mt-0.5 size-4 shrink-0" />,
+      success: <CheckCircle className="mt-0.5 size-4 shrink-0" />,
+      warning: <AlertTriangle className="mt-0.5 size-4 shrink-0" />,
+      error: <AlertCircle className="mt-0.5 size-4 shrink-0" />,
+      info: <Info className="mt-0.5 size-4 shrink-0" />,
+      neutral: <Info className="mt-0.5 size-4 shrink-0" />,
     }
 
     return (
@@ -62,19 +67,19 @@ const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
         {...props}
       >
         {showIcon && icons[variant || 'neutral']}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {title && (
-            <h5 className="text-sm font-semibold mb-1">{title}</h5>
+            <h5 className="mb-1 font-medium leading-none tracking-tight">{title}</h5>
           )}
-          <div className="text-sm leading-relaxed">{children}</div>
+          <div className="leading-relaxed text-current/90">{children}</div>
         </div>
         {dismissible && onDismiss && (
           <button
             onClick={onDismiss}
-            className="flex-shrink-0 opacity-70 hover:opacity-100 transition-opacity cursor-pointer"
+            className="shrink-0 rounded-sm opacity-70 transition-opacity hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             aria-label="Dismiss alert"
           >
-            <X className="w-4 h-4" />
+            <X className="size-4" />
           </button>
         )}
       </div>
@@ -90,7 +95,7 @@ const AlertTitle = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <h5
     ref={ref}
-    className={cn("text-sm font-semibold mb-1", className)}
+    className={cn("mb-1 font-medium leading-none tracking-tight", className)}
     {...props}
   />
 ))
@@ -118,23 +123,23 @@ export interface InlineAlertProps {
 
 export function InlineAlert({ variant = 'info', message, className }: InlineAlertProps) {
   const colors = {
-    success: 'bg-success-50 text-success-700 border-success-200',
-    warning: 'bg-warning-50 text-warning-700 border-warning-200',
-    error: 'bg-error-50 text-error-700 border-error-200',
-    info: 'bg-info-50 text-info-700 border-info-200',
+    success: 'border-success-500/30 bg-success-50 text-success-700',
+    warning: 'border-warning-500/30 bg-warning-50 text-warning-700',
+    error: 'border-destructive/30 bg-error-50 text-error-700',
+    info: 'border-primary/20 bg-primary-50 text-primary-700',
   }
 
   const icons = {
-    success: <CheckCircle className="w-4 h-4" />,
-    warning: <AlertTriangle className="w-4 h-4" />,
-    error: <AlertCircle className="w-4 h-4" />,
-    info: <Info className="w-4 h-4" />,
+    success: <CheckCircle className="size-4" />,
+    warning: <AlertTriangle className="size-4" />,
+    error: <AlertCircle className="size-4" />,
+    info: <Info className="size-4" />,
   }
 
   return (
     <div
       className={cn(
-        'inline-flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm',
+        'inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium',
         colors[variant],
         className
       )}

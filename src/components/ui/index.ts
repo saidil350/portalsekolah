@@ -69,6 +69,21 @@ export {
 } from './form-input'
 
 // shadcn primitives
+export {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldLegend,
+  FieldSet,
+} from './field'
+export {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupTextarea,
+} from './input-group'
 export { Label } from './label'
 export { Textarea } from './textarea'
 export { Checkbox } from './checkbox'

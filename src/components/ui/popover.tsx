@@ -20,7 +20,7 @@ const PopoverContent = React.forwardRef<
       align={align}
       sideOffset={sideOffset}
       className={cn(
-        "z-50 w-72 rounded-md border-slate-200 bg-white p-4 shadow-md outline-none animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
+        "z-50 w-72 rounded-md border-border bg-card p-4 shadow-md outline-none animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
         className
       )}
       {...props}
@@ -67,7 +67,7 @@ export function DropdownMenu({ trigger, items, align = 'end', side = 'bottom' }:
               "disabled:opacity-50 disabled:cursor-not-allowed",
               item.variant === 'danger' && "hover:bg-error-50 text-error-600",
               item.variant === 'warning' && "hover:bg-warning-50 text-warning-600",
-              (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-foreground"
+              (!item.variant || item.variant === 'default') && "hover:bg-accent text-foreground"
             )}
           >
             {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}
@@ -114,7 +114,7 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
           />
           <div
             ref={menuRef}
-            className="fixed z-50 min-w-32 overflow-hidden rounded-md border-slate-200 bg-white p-1 shadow-md animate-in fade-in-0 zoom-in-95 dynamic-point-position"
+            className="fixed z-50 min-w-32 overflow-hidden rounded-md border-border bg-card p-1 shadow-md animate-in fade-in-0 zoom-in-95 dynamic-point-position"
           >
             {items.map((item, index) => (
               <button
@@ -129,7 +129,7 @@ export function ContextMenu({ items, children }: ContextMenuProps) {
                   "disabled:opacity-50 disabled:cursor-not-allowed",
                   item.variant === 'danger' && "hover:bg-error-50 text-error-600",
                   item.variant === 'warning' && "hover:bg-warning-50 text-warning-600",
-                  (!item.variant || item.variant === 'default') && "hover:bg-slate-50 text-foreground"
+                  (!item.variant || item.variant === 'default') && "hover:bg-accent text-foreground"
                 )}
               >
                 {item.icon && <span className="w-4 h-4 shrink-0">{item.icon}</span>}

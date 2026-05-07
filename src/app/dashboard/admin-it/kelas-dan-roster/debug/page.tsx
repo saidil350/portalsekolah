@@ -120,7 +120,7 @@ export default function DebugClassPage() {
     return (
       <div className="p-8">
         <h1 className="text-2xl font-bold mb-4">Debug Class Permissions</h1>
-        <p className="text-slate-600">Loading...</p>
+        <p className="text-muted-foreground">Loading...</p>
       </div>
     )
   }
@@ -132,7 +132,7 @@ export default function DebugClassPage() {
       {/* User Info */}
       <div className="mb-6 p-4 bg-blue-50 rounded-lg">
         <h2 className="text-xl font-bold mb-3">Auth User</h2>
-        <pre className="bg-white p-3 rounded overflow-auto">
+        <pre className="bg-card p-3 rounded overflow-auto">
           {JSON.stringify(userInfo, null, 2)}
         </pre>
       </div>
@@ -141,7 +141,7 @@ export default function DebugClassPage() {
       <div className="mb-6 p-4 bg-green-50 rounded-lg">
         <h2 className="text-xl font-bold mb-3">Profile (from DB)</h2>
         {profile ? (
-          <pre className="bg-white p-3 rounded overflow-auto">
+          <pre className="bg-card p-3 rounded overflow-auto">
             {JSON.stringify(profile, null, 2)}
           </pre>
         ) : (
@@ -152,7 +152,7 @@ export default function DebugClassPage() {
       {/* Test Results */}
       <div className="mb-6 p-4 bg-yellow-50 rounded-lg">
         <h2 className="text-xl font-bold mb-3">Permission Tests</h2>
-        <pre className="bg-white p-3 rounded overflow-auto text-sm">
+        <pre className="bg-card p-3 rounded overflow-auto text-sm">
           {JSON.stringify(testResult, null, 2)}
         </pre>
       </div>
@@ -174,7 +174,7 @@ export default function DebugClassPage() {
       </div>
 
       {/* Explanation */}
-      <div className="mt-6 p-4 bg-slate-100 rounded-lg">
+      <div className="mt-6 p-4 bg-muted rounded-lg">
         <h3 className="font-bold mb-2">What to check:</h3>
         <ul className="list-disc list-inside space-y-1 text-sm">
           <li>Is your <code>role</code> in profiles set to <code>ADMIN_IT</code>?</li>

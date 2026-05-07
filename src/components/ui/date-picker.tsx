@@ -27,11 +27,11 @@ export function Calendar({
         caption_label: "text-sm font-medium text-foreground",
         nav: "flex items-center gap-1",
         button_previous: cn(
-          "flex h-7 w-7 items-center justify-center rounded-md hover:bg-slate-100 transition-colors cursor-pointer",
+          "flex h-7 w-7 items-center justify-center rounded-md hover:bg-accent transition-colors cursor-pointer",
           "disabled:opacity-50 disabled:cursor-not-allowed"
         ),
         button_next: cn(
-          "flex h-7 w-7 items-center justify-center rounded-md hover:bg-slate-100 transition-colors cursor-pointer",
+          "flex h-7 w-7 items-center justify-center rounded-md hover:bg-accent transition-colors cursor-pointer",
           "disabled:opacity-50 disabled:cursor-not-allowed"
         ),
         month_grid: "w-full border-collapse space-x-1",
@@ -40,7 +40,7 @@ export function Calendar({
         week: "flex w-full mt-2",
         day: cn(
           "relative h-9 w-9 p-0 text-sm font-normal text-foreground transition-colors",
-          "hover:bg-slate-100 hover:rounded-md cursor-pointer",
+          "hover:bg-accent hover:rounded-md cursor-pointer",
           "selected:bg-primary-500 selected:text-white selected:hover:bg-primary-600",
           "disabled:text-muted-foreground disabled:hover:bg-transparent disabled:cursor-not-allowed",
           "outside-month:text-muted-foreground"
@@ -48,7 +48,7 @@ export function Calendar({
         day_button: "h-9 w-9 p-0 font-normal",
         range_start: "rounded-l-md",
         range_end: "rounded-r-md",
-        today: "bg-slate-100 text-primary-600 font-semibold",
+        today: "bg-muted text-primary-600 font-semibold",
         selected: "bg-primary-500 text-white hover:bg-primary-600 focus:bg-primary-600",
         ...classNames,
       }}
@@ -92,8 +92,8 @@ export function DatePicker({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
-          "border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
+          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-card disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
+          "border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
           disabled && "cursor-not-allowed"
         )}
       >
@@ -107,7 +107,7 @@ export function DatePicker({
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute top-full left-0 z-20 mt-1">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-lg p-2">
+            <div className="bg-card rounded-lg border border-border shadow-lg p-2">
               <Calendar
                 mode="single"
                 selected={value}
@@ -161,8 +161,8 @@ export function DateRangePicker({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
-          "border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
+          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-card disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
+          "border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
           disabled && "cursor-not-allowed"
         )}
       >
@@ -187,7 +187,7 @@ export function DateRangePicker({
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute top-full left-0 z-20 mt-1">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-lg p-2">
+            <div className="bg-card rounded-lg border border-border shadow-lg p-2">
               <Calendar
                 mode="range"
                 selected={value}
@@ -279,8 +279,8 @@ export function DateRangePickerWithPresets({
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
         className={cn(
-          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
-          "border-slate-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
+          "w-full h-[40px] px-4 rounded-lg border text-sm text-left transition-all duration-200 bg-card disabled:opacity-50 disabled:cursor-not-allowed flex items-center",
+          "border-border focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20",
           disabled && "cursor-not-allowed"
         )}
       >
@@ -305,7 +305,7 @@ export function DateRangePickerWithPresets({
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute top-full right-0 z-20 mt-1">
-            <div className="bg-white rounded-lg border border-slate-200 shadow-lg p-4 flex gap-4">
+            <div className="bg-card rounded-lg border border-border shadow-lg p-4 flex gap-4">
               <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium text-muted-foreground">Preset</p>
                 {presets.map((preset, index) => (
@@ -315,7 +315,7 @@ export function DateRangePickerWithPresets({
                     onClick={() => handlePresetClick(preset)}
                     className={cn(
                       "text-left px-3 py-2 text-sm rounded-md transition-colors cursor-pointer",
-                      "hover:bg-slate-50",
+                      "hover:bg-accent",
                       value?.from && value.to &&
                         isSameDay(value.from, preset.range.from) &&
                         isSameDay(value.to, preset.range.to) &&

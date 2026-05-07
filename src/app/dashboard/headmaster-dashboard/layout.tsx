@@ -2,6 +2,7 @@ import HeadmasterSidebar from "./components/HeadmasterSidebar";
 import { getCurrentHeadmaster } from "./actions";
 import { authorizeDashboard } from '@/lib/auth/authorization';
 import { redirect } from 'next/navigation';
+import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 
 export default async function HeadmasterDashboardLayout({
   children,
@@ -21,7 +22,7 @@ export default async function HeadmasterDashboardLayout({
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-display antialiased">
       <HeadmasterSidebar headmaster={user as any} />
-      {children}
+      <DashboardShell>{children}</DashboardShell>
     </div>
   );
 }

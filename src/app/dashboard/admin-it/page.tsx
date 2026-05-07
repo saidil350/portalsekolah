@@ -110,7 +110,7 @@ export default function AdminDashboardPage() {
   // Helper to render the custom animated chart
   const renderAttendanceChart = () => {
     if (loading || attendanceStats.trend.length === 0) {
-      return <div className="h-48 w-full bg-slate-50 animate-pulse rounded-lg" />;
+      return <div className="h-48 w-full bg-muted/50 animate-pulse rounded-lg" />;
     }
 
     const data = attendanceStats.trend;
@@ -257,7 +257,7 @@ export default function AdminDashboardPage() {
           {/* Header Section */}
           {/* Header Section with RoleGreetingCard */}
           {loading ? (
-            <div className="h-24 w-full bg-slate-100 animate-pulse rounded-2xl mb-8" />
+            <div className="h-24 w-full bg-muted animate-pulse rounded-2xl mb-8" />
           ) : (
             <RoleGreetingCard 
               userName={userProfile?.full_name || "Administrator"} 
@@ -270,7 +270,7 @@ export default function AdminDashboardPage() {
           {/* Stats Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {/* Card 1 - Total Students */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -294,7 +294,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 2 - Total Teachers */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -318,7 +318,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 3 - Active Classes */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -327,7 +327,7 @@ export default function AdminDashboardPage() {
                     <div className="w-10 h-10 rounded-lg bg-orange-50 text-orange-600 flex items-center justify-center">
                       <School className="w-6 h-6" />
                     </div>
-                    <span className="flex items-center text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-1 rounded-full gap-1">
+                    <span className="flex items-center text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full gap-1">
                       0%
                     </span>
                   </div>
@@ -342,7 +342,7 @@ export default function AdminDashboardPage() {
             </motion.div>
 
             {/* Card 4 - Unpaid Bills */}
-            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-slate-100 group hover:border-primary/30 transition-colors">
+            <motion.div variants={itemVariants} className="bg-card rounded-xl p-6 shadow-[0_2px_10px_-3px_rgba(6,81,237,0.1)] border border-border/60 group hover:border-primary/30 transition-colors">
               {loading ? (
                 <MetricSkeleton hasTrend={false} />
               ) : (
@@ -368,7 +368,7 @@ export default function AdminDashboardPage() {
 
           {/* Chart & Status Section */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-slate-200 p-6 shadow-sm">
+            <motion.div variants={itemVariants} className="lg:col-span-2 bg-card rounded-xl border border-border p-6 shadow-sm">
               <div className="flex flex-col gap-6">
                 <div className="flex justify-between items-start">
                   <div>
@@ -395,10 +395,10 @@ export default function AdminDashboardPage() {
 
             {/* Student Status Widget */}
             <motion.div variants={itemVariants} className="lg:col-span-1 flex flex-col gap-4">
-              <div className="bg-card rounded-xl border border-slate-200 p-6 shadow-sm flex-1">
+              <div className="bg-card rounded-xl border border-border p-6 shadow-sm flex-1">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-foreground text-lg font-bold">{t('admin.db.studentStatus')}</h3>
-                  <Users className="w-5 h-5 text-slate-400" />
+                  <Users className="w-5 h-5 text-muted-foreground" />
                 </div>
                 
                 {loading ? (
@@ -413,7 +413,7 @@ export default function AdminDashboardPage() {
                         <span className="text-muted-foreground">{t('admin.db.status.active')}</span>
                         <span className="font-medium">{studentStats.active.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <motion.div
                           className="bg-green-500 h-2 rounded-full"
                           initial={{ width: 0 }}
@@ -428,7 +428,7 @@ export default function AdminDashboardPage() {
                         <span className="text-muted-foreground">{t('admin.db.status.graduated')}</span>
                         <span className="font-medium">{studentStats.graduated.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <motion.div
                           className="bg-purple-500 h-2 rounded-full"
                           initial={{ width: 0 }}
@@ -443,7 +443,7 @@ export default function AdminDashboardPage() {
                         <span className="text-muted-foreground">{t('admin.db.status.transferred')}</span>
                         <span className="font-medium">{studentStats.transferred.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <motion.div
                           className="bg-orange-400 h-2 rounded-full"
                           initial={{ width: 0 }}
@@ -458,7 +458,7 @@ export default function AdminDashboardPage() {
                         <span className="text-muted-foreground">{t('admin.db.status.dropout')}</span>
                         <span className="font-medium">{studentStats.dropout.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <motion.div
                           className="bg-red-500 h-2 rounded-full"
                           initial={{ width: 0 }}
@@ -473,7 +473,7 @@ export default function AdminDashboardPage() {
                         <span className="text-muted-foreground">{t('admin.db.status.inactive')}</span>
                         <span className="font-medium">{studentStats.inactive.toLocaleString('id-ID')}</span>
                       </div>
-                      <div className="w-full bg-slate-100 rounded-full h-2">
+                      <div className="w-full bg-muted rounded-full h-2">
                         <motion.div
                           className="bg-gray-400 h-2 rounded-full"
                           initial={{ width: 0 }}
@@ -489,8 +489,8 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Outstanding Fees Table Section */}
-          <motion.div variants={itemVariants} className="bg-card rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+          <motion.div variants={itemVariants} className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="p-6 border-b border-border/60 flex justify-between items-center">
               <div>
                 <h3 className="text-foreground text-lg font-bold">{t('admin.db.outstandingFeesTitle')}</h3>
                 <p className="text-muted-foreground text-sm">{t('admin.db.outstandingFeesDesc')}</p>
@@ -506,7 +506,7 @@ export default function AdminDashboardPage() {
                 <TableSkeleton rows={3} columns={6} />
               ) : financialStats.recentInvoices.length === 0 ? (
                 <div className="p-12 text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-slate-50 text-slate-400 mb-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-muted/50 text-muted-foreground mb-4">
                     <DollarSign className="w-8 h-8" />
                   </div>
                   <p className="text-muted-foreground font-medium">Tidak ada tunggakan biaya saat ini.</p>
@@ -514,7 +514,7 @@ export default function AdminDashboardPage() {
               ) : (
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider font-semibold border-b border-slate-100">
+                    <tr className="bg-slate-50/50 text-muted-foreground text-xs uppercase tracking-wider font-semibold border-b border-border/60">
                       <th className="px-6 py-4">{t('admin.db.table.studentName')}</th>
                       <th className="px-6 py-4">{t('admin.db.table.class')}</th>
                       <th className="px-6 py-4">{t('admin.db.table.month')}</th>
@@ -562,7 +562,7 @@ export default function AdminDashboardPage() {
                             </span>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button className="text-slate-400 hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
+                            <button className="text-muted-foreground hover:text-primary transition-colors cursor-pointer p-1" aria-label="More options">
                               <MoreVertical className="h-4 w-4" />
                             </button>
                           </td>

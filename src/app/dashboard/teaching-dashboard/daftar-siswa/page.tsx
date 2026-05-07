@@ -35,26 +35,26 @@ export default function DaftarSiswaPage() {
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
-      <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+      <header className="h-[64px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
-          <h2 className="text-slate-900 text-[20px] font-bold">{t('teacher.studentList.title')}</h2>
+          <h2 className="text-foreground text-[20px] font-bold">{t('teacher.studentList.title')}</h2>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative w-[256px]">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-[15px] w-[15px] text-slate-400" />
+              <Search className="h-[15px] w-[15px] text-muted-foreground" />
             </div>
             <input
               type="text"
               placeholder={t('teacher.studentList.search')}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 px-4 py-2 outline-none transition-colors"
+              className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 px-4 py-2 outline-none transition-colors"
             />
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent shadow-sm transition-all cursor-pointer">
             <Filter className="w-4 h-4" />
             {t('teacher.studentList.filter')}
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent shadow-sm transition-all cursor-pointer">
             <Download className="w-4 h-4" />
             {t('teacher.studentList.export')}
           </button>
@@ -66,15 +66,15 @@ export default function DaftarSiswaPage() {
 
           {/* Filter Row */}
           <div className="flex items-center gap-3">
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-all cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground shadow-sm hover:bg-accent transition-all cursor-pointer">
               {t('teacher.studentList.allClasses')}
-              <ChevronDown className="w-4 h-4 text-slate-400" />
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
             </button>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-all cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground shadow-sm hover:bg-accent transition-all cursor-pointer">
               {t('teacher.studentList.allSubjects')}
-              <ChevronDown className="w-4 h-4 text-slate-400" />
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
             </button>
-            <span className="text-sm text-slate-400 ml-2">{t('teacher.studentList.showing')} {studentsData.length} {t('teacher.studentList.students')}</span>
+            <span className="text-sm text-muted-foreground ml-2">{t('teacher.studentList.showing')} {studentsData.length} {t('teacher.studentList.students')}</span>
           </div>
 
           {/* Student Cards Grid */}
@@ -82,11 +82,11 @@ export default function DaftarSiswaPage() {
             {studentsData.map((student) => (
               <div
                 key={student.id}
-                className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                className="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-start gap-4">
                   {/* Photo */}
-                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-slate-100 relative border-2 border-primary/10">
+                  <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 bg-muted relative border-2 border-primary/10">
                     <Image src={student.photo} alt={student.name} fill className="object-cover" />
                   </div>
                   {/* Info */}
@@ -96,12 +96,12 @@ export default function DaftarSiswaPage() {
                       <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
                         student.status === 'Active'
                           ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                          : 'bg-slate-100 text-slate-500 border border-slate-200'
+                          : 'bg-muted text-muted-foreground border border-border'
                       }`}>
                         {t(`teacher.studentList.status.${student.status}` as TranslationKey)}
                       </span>
                     </div>
-                    <p className="text-xs text-slate-400 font-mono mt-0.5">NISN: {student.nisn}</p>
+                    <p className="text-xs text-muted-foreground font-mono mt-0.5">NISN: {student.nisn}</p>
                     <div className="flex items-center gap-2 mt-2">
                       <span className="inline-flex items-center px-2 py-0.5 rounded bg-blue-50 text-blue-700 text-[11px] font-medium border border-blue-100">
                         {t(student.classKey as TranslationKey)}
@@ -113,13 +113,13 @@ export default function DaftarSiswaPage() {
                   </div>
                 </div>
                 {/* Contact Info */}
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center gap-4">
-                  <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                <div className="mt-4 pt-3 border-t border-border/60 flex items-center gap-4">
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Mail className="w-3.5 h-3.5 text-muted-foreground" />
                     {student.email}
                   </span>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-500">
-                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <Phone className="w-3.5 h-3.5 text-muted-foreground" />
                     {student.phone}
                   </span>
                 </div>

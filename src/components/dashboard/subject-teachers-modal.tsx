@@ -152,20 +152,20 @@ export default function SubjectTeachersModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 shrink-0">
+        <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
           <div>
-            <h3 className="text-xl font-bold text-slate-900">Distribusi Guru Pengajar</h3>
-            <p className="text-sm text-slate-500 mt-1">{subjectName}</p>
+            <h3 className="text-xl font-bold text-foreground">Distribusi Guru Pengajar</h3>
+            <p className="text-sm text-muted-foreground mt-1">{subjectName}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={loading}
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -180,26 +180,26 @@ export default function SubjectTeachersModal({
           {loadingData ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="ml-3 text-slate-600">Memuat data...</span>
+              <span className="ml-3 text-muted-foreground">Memuat data...</span>
             </div>
           ) : (
             <>
               {/* Add Teacher Section */}
-              <div className="bg-slate-50 rounded-lg p-4">
-                <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+              <div className="bg-muted/50 rounded-lg p-4">
+                <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <UserPlus className="w-4 h-4" />
                   Tambah Guru Pengajar
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   <div className="md:col-span-1 relative">
-                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
                       placeholder="Cari guru..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+                      className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                       disabled={loading}
                     />
                   </div>
@@ -207,7 +207,7 @@ export default function SubjectTeachersModal({
                     <select
                       value={selectedTeacherId}
                       onChange={(e) => setSelectedTeacherId(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white"
+                      className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-card"
                       disabled={loading}
                     >
                       <option value="">Pilih Guru</option>
@@ -222,7 +222,7 @@ export default function SubjectTeachersModal({
                     <select
                       value={selectedTeacherRankId}
                       onChange={(e) => setSelectedTeacherRankId(e.target.value)}
-                      className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-white"
+                      className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-card"
                       disabled={loading}
                     >
                       <option value="">Tanpa Tingkat</option>
@@ -248,15 +248,15 @@ export default function SubjectTeachersModal({
 
               {/* Assigned Teachers List */}
               <div>
-                <h4 className="text-sm font-bold text-slate-900 mb-3 flex items-center gap-2">
+                <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   Guru Pengajar ({assignedTeachers.length})
                 </h4>
 
                 {assignedTeachers.length === 0 ? (
-                  <div className="text-center py-8 bg-slate-50 rounded-lg">
+                  <div className="text-center py-8 bg-muted/50 rounded-lg">
                     <Users className="w-12 h-12 text-slate-300 mx-auto mb-2" />
-                    <p className="text-sm text-slate-500">Belum ada guru yang ditugaskan</p>
+                    <p className="text-sm text-muted-foreground">Belum ada guru yang ditugaskan</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -266,7 +266,7 @@ export default function SubjectTeachersModal({
                       return (
                         <div
                           key={subjectTeacher.id}
-                          className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-lg hover:border-slate-300 transition-colors"
+                          className="flex items-center justify-between p-3 bg-card border border-border rounded-lg hover:border-slate-300 transition-colors"
                         >
                           <div className="flex items-center gap-3 flex-1">
                             {/* Avatar */}
@@ -282,7 +282,7 @@ export default function SubjectTeachersModal({
                             {/* Teacher Info */}
                             <div className="flex-1">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <p className="text-sm font-semibold text-slate-900">
+                                <p className="text-sm font-semibold text-foreground">
                                   {subjectTeacher.teacher?.full_name}
                                 </p>
                                 {rankConfig && (
@@ -292,7 +292,7 @@ export default function SubjectTeachersModal({
                                   </span>
                                 )}
                               </div>
-                              <div className="flex items-center gap-2 text-xs text-slate-500 mt-0.5">
+                              <div className="flex items-center gap-2 text-xs text-muted-foreground mt-0.5">
                                 {subjectTeacher.teacher?.nip && (
                                   <span>NIP: {subjectTeacher.teacher.nip}</span>
                                 )}
@@ -312,7 +312,7 @@ export default function SubjectTeachersModal({
                             <select
                               value={subjectTeacher.teacher_rank_id || ''}
                               onChange={(e) => e.target.value && handleUpdateRank(subjectTeacher.teacher_id, e.target.value)}
-                              className="px-2 py-1 text-xs border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-white"
+                              className="px-2 py-1 text-xs border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card"
                               disabled={loading}
                               title="Ubah tingkat guru"
                             >
@@ -343,12 +343,12 @@ export default function SubjectTeachersModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-200 shrink-0 flex justify-end">
+        <div className="p-6 border-t border-border shrink-0 flex justify-end">
           <button
             type="button"
             onClick={onClose}
             disabled={loading}
-            className="px-6 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Tutup
           </button>

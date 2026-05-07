@@ -128,16 +128,16 @@ export default function AddStudentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+      <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
               <UserPlus className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Tambah Siswa ke Kelas</h2>
-              <p className="text-sm text-slate-500">
+              <h2 className="text-lg font-bold text-foreground">Tambah Siswa ke Kelas</h2>
+              <p className="text-sm text-muted-foreground">
                 {selectedStudents.size > 0
                   ? `${selectedStudents.size} siswa dipilih`
                   : 'Pilih siswa untuk ditambahkan'}
@@ -146,23 +146,23 @@ export default function AddStudentModal({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={enrolling !== null}
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
         {/* Search */}
-        <div className="p-6 border-b border-slate-100">
+        <div className="p-6 border-b border-border/60">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
               placeholder="Cari berdasarkan nama, NISN, atau email..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               disabled={loading || enrolling !== null}
             />
           </div>
@@ -180,12 +180,12 @@ export default function AddStudentModal({
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-              <span className="ml-3 text-slate-600">Memuat data siswa...</span>
+              <span className="ml-3 text-muted-foreground">Memuat data siswa...</span>
             </div>
           ) : availableStudents.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <p className="text-slate-500">
+              <p className="text-muted-foreground">
                 {search
                   ? 'Tidak ditemukan siswa dengan pencarian tersebut'
                   : 'Tidak ada siswa tersedia'}
@@ -232,7 +232,7 @@ export default function AddStudentModal({
                     className={`flex items-center justify-between p-4 rounded-lg border-2 transition-all ${
                       isSelected
                         ? 'border-blue-500 bg-blue-50'
-                        : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50'
+                        : 'border-border hover:border-slate-300 hover:bg-accent'
                     }`}
                   >
                     <div className="flex items-center gap-3 flex-1">
@@ -255,10 +255,10 @@ export default function AddStudentModal({
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-900 truncate">
+                        <p className="text-sm font-medium text-foreground truncate">
                           {student.full_name}
                         </p>
-                        <p className="text-xs text-slate-500">
+                        <p className="text-xs text-muted-foreground">
                           {student.nisn || 'NISN tidak tersedia'}
                         </p>
                       </div>
@@ -289,14 +289,14 @@ export default function AddStudentModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-          <p className="text-sm text-slate-500">
+        <div className="p-6 border-t border-border bg-muted/50 flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
             {availableStudents.length} siswa tersedia
           </p>
           <button
             onClick={onClose}
             disabled={enrolling !== null}
-            className="px-6 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-6 py-2 bg-card border border-slate-300 text-foreground rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Tutup
           </button>

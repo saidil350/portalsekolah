@@ -80,7 +80,7 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
   return (
     <aside
       className={`
-        flex flex-col bg-white border-r border-slate-200 h-full
+        flex flex-col bg-card border-r border-border h-full
         transition-all duration-300 ease-in-out
         ${isSidebarOpen ? 'w-[288px]' : 'w-16'}
       `}
@@ -94,7 +94,7 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
             </div>
             <div className="flex flex-col">
               <h1 className="text-foreground text-sm font-semibold leading-tight">{displayName}</h1>
-              <p className="text-slate-500 text-[10px] font-bold uppercase tracking-wide mt-0.5">{roleLabel}</p>
+              <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-wide mt-0.5">{roleLabel}</p>
             </div>
           </div>
         ) : (
@@ -114,11 +114,11 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
                 className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
                   active
                     ? 'bg-primary text-white shadow-[0px_4px_6px_-1px_rgba(19,127,236,0.2),0px_2px_4px_-2px_rgba(19,127,236,0.2)]'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+                    : 'text-muted-foreground hover:bg-accent hover:text-slate-900'
                 } ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
               >
                 <IconComponent
-                  className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-slate-400 group-hover:text-slate-600'}`}
+                  className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-muted-foreground group-hover:text-slate-600'}`}
                   strokeWidth={active ? 2.2 : 1.8}
                 />
                 {isSidebarOpen && <span className="text-sm font-medium">{t(item.labelKey)}</span>}
@@ -127,11 +127,11 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
           })}
         </nav>
       </div>
-      <div className={`mt-auto border-t border-slate-100 flex flex-col gap-4 ${isSidebarOpen ? 'p-6 pt-6 pb-6' : 'p-3 pt-6 pb-6'}`}>
+      <div className={`mt-auto border-t border-border/60 flex flex-col gap-4 ${isSidebarOpen ? 'p-6 pt-6 pb-6' : 'p-3 pt-6 pb-6'}`}>
         {isSidebarOpen && <LanguageSwitcher />}
         <button
           onClick={toggleSidebar}
-          className={`flex items-center rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
           title={isSidebarOpen ? 'Minimize' : 'Expand'}
         >
           <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />

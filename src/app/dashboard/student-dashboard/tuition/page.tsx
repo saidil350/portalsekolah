@@ -17,9 +17,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 
 function getMethodIcon(type: 'card' | 'bank' | 'wallet') {
   switch (type) {
-    case 'card': return <CreditCard className="w-3.5 h-3 text-slate-400" />;
-    case 'bank': return <Landmark className="w-3.5 h-3.5 text-slate-400" />;
-    case 'wallet': return <Wallet className="w-3.5 h-3.5 text-slate-400" />;
+    case 'card': return <CreditCard className="w-3.5 h-3 text-muted-foreground" />;
+    case 'bank': return <Landmark className="w-3.5 h-3.5 text-muted-foreground" />;
+    case 'wallet': return <Wallet className="w-3.5 h-3.5 text-muted-foreground" />;
   }
 }
 
@@ -51,7 +51,7 @@ export default function TuitionPage() {
       status: t('student.tuition.bills.status.pending'),
       statusBg: 'bg-amber-100',
       statusColor: 'text-amber-600',
-      borderClass: 'border border-slate-200',
+      borderClass: 'border border-border',
       buttonType: 'soon' as const,
     },
     {
@@ -64,7 +64,7 @@ export default function TuitionPage() {
       status: t('student.tuition.bills.status.paid'),
       statusBg: 'bg-green-100',
       statusColor: 'text-green-600',
-      borderClass: 'border border-slate-200 opacity-75',
+      borderClass: 'border border-border opacity-75',
       buttonType: 'receipt' as const,
     },
   ];
@@ -113,7 +113,7 @@ export default function TuitionPage() {
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5 text-slate-600" />
+                <CreditCard className="w-5 h-5 text-muted-foreground" />
                 <h3 className="text-xl font-semibold text-foreground">{t('student.tuition.bills.title')}</h3>
               </div>
               <p className="text-sm text-muted-foreground">{t('student.tuition.bills.year').replace('{value}', '2024/2025')}</p>
@@ -123,7 +123,7 @@ export default function TuitionPage() {
               {currentBills.map((bill, i) => (
                 <div
                   key={i}
-                  className={`bg-white ${bill.borderClass} rounded-xl shadow-sm p-6 flex flex-col gap-4 relative overflow-hidden`}
+                  className={`bg-card ${bill.borderClass} rounded-xl shadow-sm p-6 flex flex-col gap-4 relative overflow-hidden`}
                 >
                   {/* Status badge */}
                   <div className="absolute top-3 right-3">
@@ -134,7 +134,7 @@ export default function TuitionPage() {
 
                   {/* Bill Info */}
                   <div>
-                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">{bill.period}</p>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{bill.period}</p>
                     <h4 className="text-xl font-semibold text-foreground">{bill.title}</h4>
                   </div>
 
@@ -158,12 +158,12 @@ export default function TuitionPage() {
                     </button>
                   )}
                   {bill.buttonType === 'soon' && (
-                    <button className="border border-slate-200 text-slate-400 rounded-lg py-2.5 text-base font-medium cursor-not-allowed">
+                    <button className="border border-border text-muted-foreground rounded-lg py-2.5 text-base font-medium cursor-not-allowed">
                       {t('student.tuition.bills.soon')}
                     </button>
                   )}
                   {bill.buttonType === 'receipt' && (
-                    <button className="bg-slate-100 text-slate-600 rounded-lg py-2.5 flex items-center justify-center gap-2 text-base font-medium hover:bg-slate-200 transition-colors cursor-pointer">
+                    <button className="bg-muted text-muted-foreground rounded-lg py-2.5 flex items-center justify-center gap-2 text-base font-medium hover:bg-slate-200 transition-colors cursor-pointer">
                       <Download className="w-3.5 h-3.5" />
                       {t('student.tuition.bills.receipt')}
                     </button>
@@ -174,10 +174,10 @@ export default function TuitionPage() {
           </div>
 
           {/* Payment History */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-6 border-b border-slate-100">
+          <div className="bg-card rounded-xl border border-border shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-6 border-b border-border/60">
               <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 text-slate-600" />
+                <Clock className="w-4 h-4 text-muted-foreground" />
                 <h3 className="text-lg font-semibold text-foreground">{t('student.tuition.history.title')}</h3>
               </div>
               <button className="flex items-center gap-1 text-primary text-sm font-medium hover:underline cursor-pointer">
@@ -189,13 +189,13 @@ export default function TuitionPage() {
             <div className="overflow-x-auto">
               <table className="w-full min-w-[800px]">
                 <thead>
-                  <tr className="bg-slate-50">
-                    <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.id')}</th>
-                    <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.date')}</th>
-                    <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.desc')}</th>
-                    <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.amount')}</th>
-                    <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.method')}</th>
-                    <th className="text-left px-4 py-4 text-xs font-semibold text-slate-400 uppercase tracking-wide">{t('student.tuition.history.table.receipt')}</th>
+                  <tr className="bg-muted/50">
+                    <th className="text-left pl-6 pr-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.id')}</th>
+                    <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.date')}</th>
+                    <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.desc')}</th>
+                    <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.amount')}</th>
+                    <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.method')}</th>
+                    <th className="text-left px-4 py-4 text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t('student.tuition.history.table.receipt')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -212,8 +212,8 @@ export default function TuitionPage() {
                         </div>
                       </td>
                       <td className="px-4 py-4">
-                        <button title={t('student.tuition.bills.receipt')} className="p-1 rounded-full hover:bg-slate-100 transition-colors cursor-pointer">
-                          <FileText className="w-4 h-4 text-slate-400" />
+                        <button title={t('student.tuition.bills.receipt')} className="p-1 rounded-full hover:bg-accent transition-colors cursor-pointer">
+                          <FileText className="w-4 h-4 text-muted-foreground" />
                         </button>
                       </td>
                     </tr>
@@ -222,7 +222,7 @@ export default function TuitionPage() {
               </table>
             </div>
 
-            <div className="border-t border-slate-100 bg-slate-50/30 py-4 flex items-center justify-center">
+            <div className="border-t border-border/60 bg-slate-50/30 py-4 flex items-center justify-center">
               <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors cursor-pointer">
                 {t('student.tuition.history.showAll')}
               </button>
@@ -240,13 +240,13 @@ export default function TuitionPage() {
                 <p className="text-sm text-blue-100">{t('student.tuition.cta.desc')}</p>
               </div>
             </div>
-            <button className="bg-white text-blue-600 rounded-lg px-6 py-2.5 text-base font-medium hover:bg-blue-50 transition-colors cursor-pointer shrink-0 w-full sm:w-auto">
+            <button className="bg-card text-blue-600 rounded-lg px-6 py-2.5 text-base font-medium hover:bg-blue-50 transition-colors cursor-pointer shrink-0 w-full sm:w-auto">
               {t('student.tuition.cta.button')}
             </button>
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-200">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-border">
             <p className="text-sm text-muted-foreground">{t('student.db.footer')}</p>
             <div className="flex items-center gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-foreground cursor-pointer">{t('student.db.help')}</Link>

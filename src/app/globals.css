@@ -89,7 +89,7 @@
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
   
-  --font-display: "Lexend", sans-serif;
+  --font-display: var(--font-geist-sans);
 }
 
 :root {
@@ -235,10 +235,30 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
   }
   button {
     @apply shadow-none;
+  }
+  h1 {
+    @apply scroll-m-20 text-4xl font-semibold tracking-tight text-balance;
+  }
+  h2 {
+    @apply scroll-m-20 text-3xl font-semibold tracking-tight text-balance;
+  }
+  h3 {
+    @apply scroll-m-20 text-2xl font-semibold tracking-tight text-balance;
+  }
+  h4 {
+    @apply scroll-m-20 text-xl font-semibold tracking-tight text-balance;
+  }
+  p {
+    @apply leading-7;
+  }
+  small {
+    @apply text-sm leading-none font-medium;
   }
 }
 

@@ -127,20 +127,20 @@ export default function UserModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h3 className="text-xl font-bold text-foreground">
             {mode === 'create' ? t('userModal.title.create') : t('userModal.title.edit')}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={loading}
             aria-label="Tutup modal"
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -155,7 +155,7 @@ export default function UserModal({
 
           {/* Nama Lengkap */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               {t('userModal.label.name')} <span className="text-red-500">*</span>
             </label>
             <input
@@ -164,7 +164,7 @@ export default function UserModal({
               value={formData.full_name}
               onChange={handleChange}
               placeholder={t('userModal.placeholder.name')}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               required
               disabled={loading}
             />
@@ -172,7 +172,7 @@ export default function UserModal({
 
           {/* Email */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               {t('userModal.label.email')} <span className="text-red-500">*</span>
             </label>
             <input
@@ -181,7 +181,7 @@ export default function UserModal({
               value={formData.email}
               onChange={handleChange}
               placeholder={t('userModal.placeholder.email')}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               required
               disabled={loading}
             />
@@ -190,7 +190,7 @@ export default function UserModal({
           {/* Password (only for create or when explicitly changing) */}
           {mode === 'create' && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 {t('userModal.label.password')} <span className="text-red-500">*</span>
               </label>
               <input
@@ -199,11 +199,11 @@ export default function UserModal({
                 value={formData.password}
                 onChange={handleChange}
                 placeholder={t('userModal.placeholder.password')}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 required
                 disabled={loading}
               />
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-muted-foreground mt-1">
                 {t('userModal.hint.password')}
               </p>
             </div>
@@ -211,7 +211,7 @@ export default function UserModal({
 
           {/* Role */}
           <div>
-            <label htmlFor="role" className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label htmlFor="role" className="block text-sm font-medium text-foreground mb-1.5">
               {t('userModal.label.role')} <span className="text-red-500">*</span>
             </label>
             <select
@@ -219,7 +219,7 @@ export default function UserModal({
               name="role"
               value={formData.role}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
               required
               disabled={loading}
             >
@@ -234,7 +234,7 @@ export default function UserModal({
           {/* NIP (for GURU and KEPALA_SEKOLAH) */}
           {showNIP && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 {t('userModal.label.nip')} {nipRequired && <span className="text-red-500">*</span>}
               </label>
               <input
@@ -243,7 +243,7 @@ export default function UserModal({
                 value={formData.nip}
                 onChange={handleChange}
                 placeholder={t('userModal.placeholder.nip')}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 required={nipRequired}
                 disabled={loading}
               />
@@ -253,7 +253,7 @@ export default function UserModal({
           {/* NISN (for SISWA) */}
           {showNISN && (
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 {t('userModal.label.nisn')} {nisnRequired && <span className="text-red-500">*</span>}
               </label>
               <input
@@ -262,7 +262,7 @@ export default function UserModal({
                 value={formData.nisn}
                 onChange={handleChange}
                 placeholder={t('userModal.placeholder.nisn')}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 required={nisnRequired}
                 disabled={loading}
               />
@@ -271,7 +271,7 @@ export default function UserModal({
 
           {/* Status */}
           <div>
-            <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label htmlFor="status" className="block text-sm font-medium text-foreground mb-1.5">
               {t('userModal.label.status')} <span className="text-red-500">*</span>
             </label>
             <select
@@ -279,7 +279,7 @@ export default function UserModal({
               name="status"
               value={formData.status}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
               required
               disabled={loading}
             >
@@ -296,7 +296,7 @@ export default function UserModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               {t('userModal.btn.cancel')}

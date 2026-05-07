@@ -2,6 +2,7 @@ import TeachingSidebar from "./components/TeachingSidebar";
 import { getCurrentTeacher } from "./actions";
 import { authorizeDashboard } from '@/lib/auth/authorization';
 import { redirect } from 'next/navigation';
+import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 
 export default async function TeachingDashboardLayout({
   children,
@@ -21,7 +22,7 @@ export default async function TeachingDashboardLayout({
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background text-foreground font-display antialiased">
       <TeachingSidebar teacher={user as any} />
-      {children}
+      <DashboardShell>{children}</DashboardShell>
     </div>
   );
 }

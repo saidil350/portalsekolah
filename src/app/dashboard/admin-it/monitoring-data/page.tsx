@@ -216,7 +216,7 @@ export default function MonitoringDataPage() {
       case 'sakit': return <span className="px-2.5 py-1 bg-[#f2f8ff] text-[#3b82f6] text-xs font-bold rounded-full">Sakit</span>
       case 'izin': return <span className="px-2.5 py-1 bg-[#fffbf0] text-[#eab308] text-xs font-bold rounded-full">Izin</span>
       case 'alpha': return <span className="px-2.5 py-1 bg-[#fef4f4] text-[#ef4444] text-xs font-bold rounded-full border border-red-200">Alpha</span>
-      default: return <span className="px-2.5 py-1 bg-slate-50 text-slate-700 text-xs font-bold rounded-full">{status}</span>
+      default: return <span className="px-2.5 py-1 bg-muted/50 text-foreground text-xs font-bold rounded-full">{status}</span>
     }
   }
 
@@ -239,17 +239,17 @@ export default function MonitoringDataPage() {
     
     return (
       <main className="flex-1 flex flex-col h-full bg-[#f8fafc] relative min-w-0 animate-in fade-in duration-200">
-        <header className="h-[72px] bg-white border-b border-slate-200 flex items-center px-8 shrink-0 shadow-sm z-10 gap-4">
+        <header className="h-[72px] bg-card border-b border-border flex items-center px-8 shrink-0 shadow-sm z-10 gap-4">
           <button 
             onClick={() => setSelectedPerson(null)}
-            className="p-2 -ml-2 text-slate-400 hover:text-primary hover:bg-primary/10 rounded-full transition-colors flex items-center justify-center"
+            className="p-2 -ml-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors flex items-center justify-center"
             title="Kembali"
           >
             <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           <div>
-            <h2 className="text-slate-900 text-lg font-bold">Detail Personal Data {selectedPerson.type === 'student' ? 'Siswa' : 'Guru'}</h2>
-            <p className="text-slate-500 text-xs mt-0.5">Informasi lengkap kehadiran dan berkas dokumen</p>
+            <h2 className="text-foreground text-lg font-bold">Detail Personal Data {selectedPerson.type === 'student' ? 'Siswa' : 'Guru'}</h2>
+            <p className="text-muted-foreground text-xs mt-0.5">Informasi lengkap kehadiran dan berkas dokumen</p>
           </div>
         </header>
 
@@ -260,46 +260,46 @@ export default function MonitoringDataPage() {
             <div className="flex flex-col gap-8">
               
               {/* Profile Card */}
-              <div className="bg-white rounded-[20px] p-8 border border-slate-200 shadow-sm flex items-center gap-6">
+              <div className="bg-card rounded-[20px] p-8 border border-border shadow-sm flex items-center gap-6">
                 <div className={`w-[88px] h-[88px] rounded-full flex items-center justify-center text-3xl font-black shrink-0 ${selectedPerson.type === 'student' ? 'bg-blue-50 text-blue-600' : 'bg-indigo-50 text-indigo-600'}`}>
                   {selectedPerson.name.charAt(0)}
                 </div>
                 <div>
                   <div className="flex items-center gap-3 mb-2">
-                    <h2 className="text-2xl font-black text-slate-900 tracking-tight">{selectedPerson.name}</h2>
-                    <span className="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200/50">
+                    <h2 className="text-2xl font-black text-foreground tracking-tight">{selectedPerson.name}</h2>
+                    <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200/50">
                       {selectedPerson.type === 'student' ? 'SISWA' : 'GURU'}
                     </span>
                   </div>
-                  <p className="text-slate-600 font-medium flex items-center gap-2 text-sm">
-                    <span className="font-bold text-slate-800">{selectedPerson.type === 'student' ? 'NISN:' : 'NIP:'}</span> {selectedPerson.idNumber}
+                  <p className="text-muted-foreground font-medium flex items-center gap-2 text-sm">
+                    <span className="font-bold text-foreground">{selectedPerson.type === 'student' ? 'NISN:' : 'NIP:'}</span> {selectedPerson.idNumber}
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-2" />
-                    <span className="bg-slate-50 px-2.5 py-1 rounded-md font-bold text-slate-700 border border-slate-100">{selectedPerson.subInfo}</span>
+                    <span className="bg-muted/50 px-2.5 py-1 rounded-md font-bold text-foreground border border-border/60">{selectedPerson.subInfo}</span>
                   </p>
                 </div>
               </div>
 
               {/* Exact Calendar Request Implementation */}
-              <div className="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+              <div className="bg-card rounded-3xl p-8 border border-border shadow-sm">
                  
                  {/* Calendar Header */}
                  <div className="flex flex-wrap justify-between items-center gap-3 mb-8">
                     <div className="flex items-center gap-3">
-                       <h3 className="text-[22px] font-extrabold text-slate-900 whitespace-nowrap">
+                       <h3 className="text-[22px] font-extrabold text-foreground whitespace-nowrap">
                           {format(currentDate, 'MMMM yyyy', { locale: id })}
                        </h3>
                        <div className="flex gap-1">
-                         <button onClick={prevMonth} className="text-slate-400 hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-slate-100" title="Bulan sebelumnya">
+                         <button onClick={prevMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title="Bulan sebelumnya">
                            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
                          </button>
-                         <button onClick={nextMonth} className="text-slate-400 hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-slate-100" title="Bulan berikutnya">
+                         <button onClick={nextMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title="Bulan berikutnya">
                            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                          </button>
                        </div>
                     </div>
                     
                     {/* Header Legend */}
-                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12px] font-semibold text-slate-500">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12px] font-semibold text-muted-foreground">
                        <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Hadir</span>
                        <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Alpha</span>
                        <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> Sakit</span>
@@ -311,17 +311,17 @@ export default function MonitoringDataPage() {
                  <div className="grid grid-cols-7 gap-y-3 gap-x-2 sm:gap-x-4 sm:gap-y-4 max-w-[850px] mx-auto w-full">
                     {/* Days Row */}
                     {['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'].map(day => (
-                      <div key={day} className="text-center text-[11px] font-extrabold text-slate-500 tracking-[0.15em] mb-1">{day}</div>
+                      <div key={day} className="text-center text-[11px] font-extrabold text-muted-foreground tracking-[0.15em] mb-1">{day}</div>
                     ))}
 
                     {/* Matrix rendering */}
                     {days.map((item, idx) => {
                       if (item.empty) {
-                        return <div key={idx} className="h-[80px] sm:h-[92px] bg-slate-50/50 rounded-2xl border border-dashed border-slate-200" />
+                        return <div key={idx} className="h-[80px] sm:h-[92px] bg-slate-50/50 rounded-2xl border border-dashed border-border" />
                       }
 
                       // Neutral Clean Aesthetic
-                      let boxStyle = "bg-white border border-slate-200 text-slate-800 shadow-sm"
+                      let boxStyle = "bg-card border border-border text-foreground shadow-sm"
                       let badge = null;
 
                       if (item.status === 'H') {
@@ -337,12 +337,12 @@ export default function MonitoringDataPage() {
                         badge = <span className="mt-1.5 bg-white/20 text-white px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">HARI INI</span>
                       } else {
                         // Future days
-                        boxStyle = "bg-slate-50 border border-slate-100 text-slate-400"
+                        boxStyle = "bg-muted/50 border border-border/60 text-muted-foreground"
                       }
 
                       return (
                         <div key={idx} className={`h-[80px] sm:h-[92px] rounded-2xl flex flex-col items-center justify-center transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${boxStyle}`}>
-                          <span className={`text-[20px] sm:text-[24px] font-black leading-none ${item.status === 'TODAY' ? 'text-white' : (item.status === 'none' ? 'text-slate-400' : 'text-slate-700')}`}>{item.date}</span>
+                          <span className={`text-[20px] sm:text-[24px] font-black leading-none ${item.status === 'TODAY' ? 'text-white' : (item.status === 'none' ? 'text-muted-foreground' : 'text-foreground')}`}>{item.date}</span>
                           {badge}
                         </div>
                       )
@@ -350,22 +350,22 @@ export default function MonitoringDataPage() {
                  </div>
 
                  {/* Summary Row */}
-                 <div className="grid grid-cols-4 gap-4 mt-8 pt-8 border-t border-slate-200">
-                    <div className="bg-white rounded-[16px] p-5 flex flex-col items-center border border-slate-200 shadow-sm transition-all hover:border-emerald-300">
+                 <div className="grid grid-cols-4 gap-4 mt-8 pt-8 border-t border-border">
+                    <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-emerald-300">
                        <span className="text-3xl font-black text-emerald-600">{summary.H}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mt-1">Hadir (HD)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Hadir (HD)</span>
                     </div>
-                    <div className="bg-white rounded-[16px] p-5 flex flex-col items-center border border-slate-200 shadow-sm transition-all hover:border-red-300">
+                    <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-red-300">
                        <span className="text-3xl font-black text-red-600">{summary.A}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mt-1">Alpha (AL)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Alpha (AL)</span>
                     </div>
-                    <div className="bg-white rounded-[16px] p-5 flex flex-col items-center border border-slate-200 shadow-sm transition-all hover:border-blue-300">
+                    <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-blue-300">
                        <span className="text-3xl font-black text-blue-600">{summary.S}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mt-1">Sakit (SK)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Sakit (SK)</span>
                     </div>
-                    <div className="bg-white rounded-[16px] p-5 flex flex-col items-center border border-slate-200 shadow-sm transition-all hover:border-amber-300">
+                    <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-amber-300">
                        <span className="text-3xl font-black text-amber-500">{summary.I}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-slate-500 mt-1">Izin (IZ)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Izin (IZ)</span>
                     </div>
                  </div>
 
@@ -374,9 +374,9 @@ export default function MonitoringDataPage() {
             
             {/* Right Column - Documents Box */}
             <div className="flex flex-col">
-               <div className="bg-white rounded-[20px] p-7 border border-slate-200 shadow-sm sticky top-[20px]">
-                  <div className="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
-                    <h4 className="font-black text-slate-900 text-lg flex items-center gap-3">
+               <div className="bg-card rounded-[20px] p-7 border border-border shadow-sm sticky top-[20px]">
+                  <div className="flex justify-between items-center mb-6 pb-4 border-b border-border/60">
+                    <h4 className="font-black text-foreground text-lg flex items-center gap-3">
                       <div className="p-1.5 bg-purple-50 rounded-lg"><FileText className="w-5 h-5 text-purple-600" /></div> 
                       Dokumen Pribadi
                     </h4>
@@ -386,50 +386,50 @@ export default function MonitoringDataPage() {
                   </div>
 
                   {newDocPrompt && (
-                    <div className="mb-5 bg-slate-50 border border-slate-200 p-4 rounded-xl flex gap-2 items-center shadow-inner">
+                    <div className="mb-5 bg-muted/50 border border-border p-4 rounded-xl flex gap-2 items-center shadow-inner">
                       <input 
                         autoFocus
                         type="text" 
                         placeholder="Nama dokumen, cth: SKCK" 
-                        className="flex-1 text-sm font-semibold px-3 py-2 bg-white border border-slate-200 rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm"
+                        className="flex-1 text-sm font-semibold px-3 py-2 bg-card border border-border rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm"
                         value={newDocName}
                         onChange={(e) => setNewDocName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddRequest()}
                       />
                       <button onClick={handleAddRequest} className="bg-primary text-white px-3 py-2 rounded-lg text-xs font-extrabold tracking-wide hover:bg-primary/90 shadow-sm">Kirim</button>
-                      <button onClick={() => {setNewDocPrompt(false); setNewDocName('');}} className="text-slate-400 hover:bg-slate-200 hover:text-slate-600 p-1.5 rounded-md transition-colors" title="Batal tambah dokumen"><X className="w-4 h-4"/></button>
+                      <button onClick={() => {setNewDocPrompt(false); setNewDocName('');}} className="text-muted-foreground hover:bg-slate-200 hover:text-slate-600 p-1.5 rounded-md transition-colors" title="Batal tambah dokumen"><X className="w-4 h-4"/></button>
                     </div>
                   )}
 
                   <div className="space-y-4 max-h-[500px] overflow-y-auto pr-1 scrollbar-none">
                     {selectedPerson.docs.map((doc, idx) => (
-                       <div key={idx} className="flex flex-col gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-primary/30 hover:shadow-md transition-all">
+                       <div key={idx} className="flex flex-col gap-3 bg-card p-4 rounded-xl border border-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-primary/30 hover:shadow-md transition-all">
                          <div className="flex items-start gap-4">
                            <div className={`p-3 rounded-xl shrink-0 ${doc.status === 'Verified' ? 'bg-emerald-50 text-emerald-600' : doc.status === 'Pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'}`}>
                               <FileText className="w-6 h-6" />
                            </div>
                            <div className="flex-1 min-w-0 flex flex-col justify-center h-12">
-                             <span className="text-sm font-bold text-slate-900 truncate mb-1">{doc.type}</span>
+                             <span className="text-sm font-bold text-foreground truncate mb-1">{doc.type}</span>
                              <div>{renderDocStatus(doc.status)}</div>
                            </div>
                          </div>
                          {doc.status !== 'Missing' && (
-                           <div className={`grid ${doc.status === 'Pending' ? 'grid-cols-3' : 'grid-cols-2'} gap-2 mt-2 pt-3 border-t border-slate-100`}>
+                           <div className={`grid ${doc.status === 'Pending' ? 'grid-cols-3' : 'grid-cols-2'} gap-2 mt-2 pt-3 border-t border-border/60`}>
                              {doc.status === 'Pending' && (
                                <button onClick={() => handleApproveDoc(idx)} className="bg-emerald-50 hover:bg-emerald-500 hover:border-emerald-600 hover:text-white border border-emerald-200 text-emerald-600 text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1 transition-colors">
                                   Setujui
                                </button>
                              )}
-                             <button className="bg-slate-50 hover:bg-primary hover:text-white hover:border-primary border border-slate-200 text-slate-700 text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
+                             <button className="bg-muted/50 hover:bg-primary hover:text-white hover:border-primary border border-border text-foreground text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
                                 <Eye className="w-3.5 h-3.5"/> Lihat
                              </button>
-                             <button className="bg-slate-50 hover:bg-primary hover:text-white hover:border-primary border border-slate-200 text-slate-700 text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
+                             <button className="bg-muted/50 hover:bg-primary hover:text-white hover:border-primary border border-border text-foreground text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
                                 <Download className="w-3.5 h-3.5"/> Unduh
                              </button>
                            </div>
                          )}
                          {doc.status === 'Missing' && (
-                           <div className="mt-2 pt-3 border-t border-slate-100 grid grid-cols-1">
+                           <div className="mt-2 pt-3 border-t border-border/60 grid grid-cols-1">
                              <button className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 text-[11px] font-extrabold tracking-wide py-2 rounded-lg transition-colors">
                                 Kirim Pengingat
                              </button>
@@ -452,24 +452,24 @@ export default function MonitoringDataPage() {
     <div className="flex w-full h-full relative overflow-hidden bg-background">
       <main className="flex-1 flex flex-col h-full relative transition-all duration-300 ease-in-out">
         
-        <header className="h-[72px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10">
+        <header className="h-[72px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0 shadow-sm z-10">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
                <UserCheck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-slate-900 text-xl font-black">{t('admin.monitoring.title')}</h2>
-              <p className="text-slate-500 text-xs hidden sm:block">Kelola Kehadiran dan Validasi Dokumen Utama</p>
+              <h2 className="text-foreground text-xl font-black">{t('admin.monitoring.title')}</h2>
+              <p className="text-muted-foreground text-xs hidden sm:block">Kelola Kehadiran dan Validasi Dokumen Utama</p>
             </div>
           </div>
         </header>
 
-        <div className="px-8 pt-6 pb-0 bg-white border-b border-slate-200 shrink-0">
+        <div className="px-8 pt-6 pb-0 bg-card border-b border-border shrink-0">
           <div className="flex gap-8">
             <button
               onClick={() => { setActiveTab('student-data'); setFilterSubInfo(''); }}
               className={`pb-4 px-2 text-sm font-semibold relative transition-colors ${
-                activeTab === 'student-data' ? 'text-primary' : 'text-slate-500 hover:text-slate-700'
+                activeTab === 'student-data' ? 'text-primary' : 'text-muted-foreground hover:text-slate-700'
               }`}
             >
               <span className="flex items-center gap-2"><Users className="w-4 h-4" /> {t('admin.monitoring.tab.studentData')}</span>
@@ -480,7 +480,7 @@ export default function MonitoringDataPage() {
             <button
               onClick={() => { setActiveTab('teacher-data'); setFilterSubInfo(''); }}
               className={`pb-4 px-2 text-sm font-semibold relative transition-colors ${
-                activeTab === 'teacher-data' ? 'text-primary' : 'text-slate-500 hover:text-slate-700'
+                activeTab === 'teacher-data' ? 'text-primary' : 'text-muted-foreground hover:text-slate-700'
               }`}
             >
               <span className="flex items-center gap-2"><GraduationCap className="w-4 h-4" /> {t('admin.monitoring.tab.teacherData')}</span>
@@ -496,23 +496,23 @@ export default function MonitoringDataPage() {
             
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full gap-4">
                 <div>
-                  <h3 className="text-slate-900 text-lg font-bold leading-7">
+                  <h3 className="text-foreground text-lg font-bold leading-7">
                     Daftar {activeTab === 'student-data' ? 'Siswa' : 'Guru'} Terdaftar
                   </h3>
-                  <p className="text-slate-500 text-sm">Pilih data untuk mengakses kalender progres absensi dan kelengkapan berkas.</p>
+                  <p className="text-muted-foreground text-sm">Pilih data untuk mengakses kalender progres absensi dan kelengkapan berkas.</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
                   <div className="relative w-full sm:w-auto min-w-[180px]">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Filter className="h-[15px] w-[15px] text-slate-400" />
+                      <Filter className="h-[15px] w-[15px] text-muted-foreground" />
                     </div>
                     <select
                       value={filterSubInfo}
                       onChange={(e) => setFilterSubInfo(e.target.value)}
                       aria-label={activeTab === 'student-data' ? 'Filter berdasarkan kelas' : 'Filter berdasarkan mata pelajaran'}
                       title={activeTab === 'student-data' ? 'Filter berdasarkan kelas' : 'Filter berdasarkan mata pelajaran'}
-                      className="w-full appearance-none bg-white border border-slate-200 text-slate-700 font-semibold text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 pr-8 py-2.5 outline-none transition-all shadow-sm"
+                      className="w-full appearance-none bg-card border border-border text-foreground font-semibold text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 pr-8 py-2.5 outline-none transition-all shadow-sm"
                     >
                       <option value="">Semua {activeTab === 'student-data' ? 'Kelas' : 'Mata Pelajaran'}</option>
                       {uniqueSubInfos.map(info => (
@@ -523,25 +523,25 @@ export default function MonitoringDataPage() {
 
                   <div className="relative w-full sm:w-[280px]">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Search className="h-[15px] w-[15px] text-slate-400" />
+                      <Search className="h-[15px] w-[15px] text-muted-foreground" />
                     </div>
                     <input
                       type="text"
                       placeholder="Cari nama atau NIP/NISN..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full bg-white text-slate-900 font-medium placeholder-slate-400 border border-slate-200 text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 px-4 py-2.5 outline-none transition-all shadow-sm"
+                      className="w-full bg-card text-foreground font-medium placeholder-slate-400 border border-border text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 px-4 py-2.5 outline-none transition-all shadow-sm"
                     />
                   </div>
 
                 </div>
             </div>
 
-            <div className="w-full border border-slate-200 rounded-[14px] overflow-hidden shadow-sm bg-white">
+            <div className="w-full border border-border rounded-[14px] overflow-hidden shadow-sm bg-card">
               <div className="overflow-x-auto w-full">
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
-                    <tr className="bg-slate-50 text-[11px] uppercase tracking-wider font-extrabold text-slate-500 border-b border-slate-200">
+                    <tr className="bg-muted/50 text-[11px] uppercase tracking-wider font-extrabold text-muted-foreground border-b border-border">
                       <th className="px-6 py-4">Nama Lengkap</th>
                       <th className="px-6 py-4">{activeTab === 'student-data' ? 'NISN' : 'NIP'}</th>
                       <th className="px-6 py-4">{activeTab === 'student-data' ? 'Kelas' : 'Mata Pelajaran'}</th>
@@ -560,19 +560,19 @@ export default function MonitoringDataPage() {
                             <div className={`w-9 h-9 rounded-full flex flex-col items-center justify-center font-bold text-sm ring-1 ring-offset-1 group-hover:ring-offset-2 transition-all ${activeTab === 'student-data' ? 'bg-blue-50 text-blue-600 ring-blue-200' : 'bg-indigo-50 text-indigo-600 ring-indigo-200'}`}>
                               {person.name.charAt(0)}
                             </div>
-                            <span className="text-sm font-bold text-slate-900 group-hover:text-primary transition-colors">{person.name}</span>
+                            <span className="text-sm font-bold text-foreground group-hover:text-primary transition-colors">{person.name}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-sm text-slate-600 font-semibold">{person.idNumber}</td>
-                        <td className="px-6 py-4 text-sm text-slate-600"><span className="bg-slate-100 border border-slate-200/60 px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wide font-bold text-slate-700">{person.subInfo}</span></td>
+                        <td className="px-6 py-4 text-sm text-muted-foreground font-semibold">{person.idNumber}</td>
+                        <td className="px-6 py-4 text-sm text-muted-foreground"><span className="bg-muted border border-slate-200/60 px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wide font-bold text-foreground">{person.subInfo}</span></td>
                         <td className="px-6 py-4">{renderAttendanceStatus(person.status)}</td>
                       </tr>
                     ))}
                     {filteredData.length === 0 && (
                        <tr>
-                          <td colSpan={4} className="px-6 py-20 text-center text-slate-500">
+                          <td colSpan={4} className="px-6 py-20 text-center text-muted-foreground">
                              <div className="flex flex-col items-center gap-3">
-                               <div className="p-4 bg-slate-50 rounded-full border border-slate-100">
+                               <div className="p-4 bg-muted/50 rounded-full border border-border/60">
                                  <Users className="w-8 h-8 text-slate-300" />
                                </div>
                                <span className="font-semibold text-sm">Tidak ada data yang ditemukan.</span>

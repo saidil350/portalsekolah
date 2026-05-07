@@ -312,25 +312,25 @@ export default function AddScheduleModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
               <Clock className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900">Tambah Jadwal Pelajaran</h2>
-              <p className="text-sm text-slate-500">Atur jadwal untuk kelas ini</p>
+              <h2 className="text-lg font-bold text-foreground">Tambah Jadwal Pelajaran</h2>
+              <p className="text-sm text-muted-foreground">Atur jadwal untuk kelas ini</p>
             </div>
           </div>
           <button
             onClick={handleClose}
             title="Tutup"
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={submitting}
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -339,7 +339,7 @@ export default function AddScheduleModal({
           {loadingData ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-              <span className="ml-3 text-slate-600">Memuat data...</span>
+              <span className="ml-3 text-muted-foreground">Memuat data...</span>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -352,7 +352,7 @@ export default function AddScheduleModal({
 
               {/* Day */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Hari <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-5 gap-2">
@@ -364,7 +364,7 @@ export default function AddScheduleModal({
                       className={`py-3 px-4 rounded-lg font-medium transition-all ${
                         formData.day_of_week === day.value
                           ? 'bg-blue-600 text-white'
-                          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                          : 'bg-muted text-foreground hover:bg-slate-200'
                       }`}
                     >
                       {day.label}
@@ -375,7 +375,7 @@ export default function AddScheduleModal({
 
               {/* Time Slot */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Jam Pelajaran <span className="text-red-500">*</span>
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -392,7 +392,7 @@ export default function AddScheduleModal({
                         className={`py-3 px-4 rounded-lg font-medium transition-all ${
                           isSelected
                             ? 'bg-blue-600 text-white'
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                            : 'bg-muted text-foreground hover:bg-slate-200'
                         }`}
                       >
                         {time} - {endTime}
@@ -406,7 +406,7 @@ export default function AddScheduleModal({
               <div>
                 <label
                   htmlFor="subject_id"
-                  className="block text-sm font-semibold text-slate-900 mb-2"
+                  className="block text-sm font-semibold text-foreground mb-2"
                 >
                   Mata Pelajaran <span className="text-red-500">*</span>
                 </label>
@@ -416,7 +416,7 @@ export default function AddScheduleModal({
                   value={formData.subject_id}
                   onChange={handleChange}
                   title="Pilih Mata Pelajaran"
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   required
                 >
                   <option value="">Pilih Mata Pelajaran</option>
@@ -430,10 +430,10 @@ export default function AddScheduleModal({
 
               {/* Teacher with Availability */}
               <div>
-                <label className="block text-sm font-semibold text-slate-900 mb-2">
+                <label className="block text-sm font-semibold text-foreground mb-2">
                   Guru <span className="text-red-500">*</span>
                   {checkingAvailability && (
-                    <span className="ml-2 text-xs font-normal text-slate-500">
+                    <span className="ml-2 text-xs font-normal text-muted-foreground">
                       <Loader2 className="w-3 h-3 inline animate-spin" />
                       Mengecek ketersediaan...
                     </span>
@@ -460,7 +460,7 @@ export default function AddScheduleModal({
                           formData.teacher_id === teacher.id
                             ? 'border-blue-500 bg-blue-50'
                             : isAvailable
-                            ? 'border-slate-200 hover:border-slate-300 bg-white'
+                            ? 'border-border hover:border-slate-300 bg-card'
                             : 'border-red-200 bg-red-50 cursor-not-allowed opacity-60'
                         }`}
                       >
@@ -468,8 +468,8 @@ export default function AddScheduleModal({
                           formData.teacher_id === teacher.id
                             ? 'text-blue-900'
                             : isAvailable
-                            ? 'text-slate-900'
-                            : 'text-slate-500'
+                            ? 'text-foreground'
+                            : 'text-muted-foreground'
                         }`}>
                           {teacher.full_name}
                         </span>
@@ -491,7 +491,7 @@ export default function AddScheduleModal({
               <div>
                 <label
                   htmlFor="room_id"
-                  className="block text-sm font-semibold text-slate-900 mb-2"
+                  className="block text-sm font-semibold text-foreground mb-2"
                 >
                   Ruangan <span className="text-red-500">*</span>
                 </label>
@@ -501,7 +501,7 @@ export default function AddScheduleModal({
                   value={formData.room_id}
                   onChange={handleChange}
                   title="Pilih Ruangan"
-                  className="w-full px-4 py-3 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
+                  className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
                   required
                 >
                   <option value="">Pilih Ruangan</option>
@@ -518,12 +518,12 @@ export default function AddScheduleModal({
         </div>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3">
+        <div className="p-6 border-t border-border bg-muted/50 flex items-center justify-end gap-3">
           <button
             type="button"
             onClick={handleClose}
             disabled={submitting}
-            className="px-6 py-2.5 border border-slate-300 text-slate-700 rounded-lg font-medium hover:bg-slate-100 transition-colors"
+            className="px-6 py-2.5 border border-slate-300 text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
           >
             Batal
           </button>

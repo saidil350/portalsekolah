@@ -113,19 +113,19 @@ export default function RoomModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <div className="bg-card rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200">
+        <div className="flex items-center justify-between p-6 border-b border-border">
           <h3 className="text-xl font-bold text-foreground">
             {mode === 'create' ? 'Tambah Ruangan' : 'Edit Ruangan'}
           </h3>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={loading}
           >
-            <X className="w-5 h-5 text-slate-500" />
+            <X className="w-5 h-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -138,7 +138,7 @@ export default function RoomModal({
           )}
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Nama Ruangan <span className="text-red-500">*</span>
             </label>
             <input
@@ -147,14 +147,14 @@ export default function RoomModal({
               value={formData.name}
               onChange={handleChange}
               placeholder="Contoh: Ruang Kelas 10A"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               required
               disabled={loading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Kode <span className="text-red-500">*</span>
             </label>
             <input
@@ -163,21 +163,21 @@ export default function RoomModal({
               value={formData.code}
               onChange={handleChange}
               placeholder="Contoh: RK-10A"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
               required
               disabled={loading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Tipe Ruangan <span className="text-red-500">*</span>
             </label>
             <select
               name="room_type"
               value={formData.room_type}
               onChange={handleChange}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-white"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
               required
               disabled={loading}
             >
@@ -191,7 +191,7 @@ export default function RoomModal({
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Kapasitas <span className="text-red-500">*</span>
               </label>
               <input
@@ -200,14 +200,14 @@ export default function RoomModal({
                 value={formData.capacity}
                 onChange={handleChange}
                 min="1"
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 required
                 disabled={loading}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-foreground mb-1.5">
                 Lantai
               </label>
               <input
@@ -216,14 +216,14 @@ export default function RoomModal({
                 value={formData.floor}
                 onChange={handleChange}
                 min="1"
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+                className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                 disabled={loading}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Gedung
             </label>
             <input
@@ -232,13 +232,13 @@ export default function RoomModal({
               value={formData.building}
               onChange={handleChange}
               placeholder="Contoh: Gedung A"
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               disabled={loading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Deskripsi
             </label>
             <textarea
@@ -247,7 +247,7 @@ export default function RoomModal({
               onChange={handleChange}
               placeholder="Deskripsi ruangan"
               rows={3}
-              className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
+              className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
               disabled={loading}
             />
           </div>
@@ -262,7 +262,7 @@ export default function RoomModal({
               className="w-4 h-4 text-primary border-slate-300 rounded focus:ring-primary"
               disabled={loading}
             />
-            <label htmlFor="is_active" className="text-sm font-medium text-slate-700">
+            <label htmlFor="is_active" className="text-sm font-medium text-foreground">
               Ruangan aktif
             </label>
           </div>
@@ -271,7 +271,7 @@ export default function RoomModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
               Batal

@@ -37,7 +37,7 @@ const gradeBook = [
 
 const statusBadge: Record<string, string> = {
   ACTIVE: 'bg-blue-50 text-blue-700 border-blue-200',
-  CLOSED: 'bg-slate-100 text-slate-600 border-slate-200',
+  CLOSED: 'bg-muted text-muted-foreground border-border',
   DRAFT: 'bg-amber-50 text-amber-700 border-amber-200',
 };
 
@@ -54,19 +54,19 @@ export default function PenilaianPage() {
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
-      <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+      <header className="h-[64px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
-          <h2 className="text-slate-900 text-[20px] font-bold">{t('teacher.grading.title')}</h2>
+          <h2 className="text-foreground text-[20px] font-bold">{t('teacher.grading.title')}</h2>
         </div>
         <div className="flex items-center gap-3">
           <div className="relative w-[256px]">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Search className="h-[15px] w-[15px] text-slate-400" />
+              <Search className="h-[15px] w-[15px] text-muted-foreground" />
             </div>
             <input
               type="text"
               placeholder={t('teacher.grading.search')}
-              className="w-full bg-slate-50 border border-slate-200 text-slate-600 text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 px-4 py-2 outline-none transition-colors"
+              className="w-full bg-muted/50 border border-border text-muted-foreground text-sm rounded-lg focus:ring-primary focus:border-primary block pl-10 px-4 py-2 outline-none transition-colors"
             />
           </div>
           <button className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-medium hover:bg-primary/90 shadow-sm shadow-primary/20 transition-all cursor-pointer">
@@ -80,17 +80,17 @@ export default function PenilaianPage() {
         <div className="max-w-7xl mx-auto flex flex-col gap-6">
 
           {/* Tabs */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-            <div className="border-b border-slate-100 px-6 flex items-center h-[56px]">
+          <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            <div className="border-b border-border/60 px-6 flex items-center h-[56px]">
               <button className="px-4 h-full flex items-center gap-2 text-sm font-semibold text-primary border-b-2 border-primary transition-colors cursor-pointer">
                 <FileText className="w-4 h-4" />
                 {t('teacher.grading.tab.assignments')}
               </button>
-              <button className="px-4 h-full flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
+              <button className="px-4 h-full flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-slate-900 transition-colors cursor-pointer">
                 <BarChart3 className="w-4 h-4" />
                 {t('teacher.grading.tab.gradeBook')}
               </button>
-              <button className="px-4 h-full flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors cursor-pointer">
+              <button className="px-4 h-full flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-slate-900 transition-colors cursor-pointer">
                 <BarChart3 className="w-4 h-4" />
                 {t('teacher.grading.tab.analytics')}
               </button>
@@ -108,34 +108,34 @@ export default function PenilaianPage() {
                       </span>
                     </div>
                     <div className="flex items-center gap-4 mt-1.5">
-                      <span className="text-xs text-slate-500">{t(assignment.subjectKey as TranslationKey)}</span>
+                      <span className="text-xs text-muted-foreground">{t(assignment.subjectKey as TranslationKey)}</span>
                       <span className="text-xs text-slate-300">•</span>
-                      <span className="text-xs text-slate-500">{t(assignment.classKey as TranslationKey)}</span>
+                      <span className="text-xs text-muted-foreground">{t(assignment.classKey as TranslationKey)}</span>
                       <span className="text-xs text-slate-300">•</span>
-                      <span className="text-xs text-slate-500">{t('teacher.grading.duePrefix')} {t(assignment.dueDateKey as TranslationKey)}</span>
+                      <span className="text-xs text-muted-foreground">{t('teacher.grading.duePrefix')} {t(assignment.dueDateKey as TranslationKey)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-6 shrink-0 ml-4">
                     <div className="text-right">
-                      <p className="text-xs text-slate-400">{t('teacher.grading.submitted')}</p>
+                      <p className="text-xs text-muted-foreground">{t('teacher.grading.submitted')}</p>
                       <p className="text-sm font-semibold text-foreground">{assignment.submitted}/{assignment.total}</p>
                     </div>
                     {assignment.avgScore > 0 && (
                       <div className="text-right">
-                        <p className="text-xs text-slate-400">{t('teacher.grading.avgScore')}</p>
+                        <p className="text-xs text-muted-foreground">{t('teacher.grading.avgScore')}</p>
                         <p className={`text-sm font-semibold ${getScoreColor(assignment.avgScore)}`}>{assignment.avgScore}</p>
                       </div>
                     )}
                     {/* Progress bar */}
                     <div className="w-[100px]">
-                      <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                      <div className="w-full bg-muted rounded-full h-1.5 overflow-hidden">
                         <div
                           className="h-full bg-primary rounded-full transition-all duration-300 ease-out"
                           style={{ width: `${assignment.total > 0 ? (assignment.submitted / assignment.total) * 100 : 0}%` } as React.CSSProperties}
                         />
                       </div>
                     </div>
-                    <button title="Options" className="text-slate-400 hover:text-slate-600 transition-colors cursor-pointer p-1">
+                    <button title="Options" className="text-muted-foreground hover:text-slate-600 transition-colors cursor-pointer p-1">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><circle cx="10" cy="4" r="2"/><circle cx="10" cy="10" r="2"/><circle cx="10" cy="16" r="2"/></svg>
                     </button>
                   </div>
@@ -145,14 +145,14 @@ export default function PenilaianPage() {
           </div>
 
           {/* Grade Book Table */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-border/60 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <h3 className="text-base font-semibold text-foreground">{t('teacher.grading.tab.gradeBook')}</h3>
-                <span className="text-xs text-slate-400">{t('teacher.subject.mathematics')} - {t('teacher.class.10a')}</span>
+                <span className="text-xs text-muted-foreground">{t('teacher.subject.mathematics')} - {t('teacher.class.10a')}</span>
               </div>
               <div className="flex items-center gap-2">
-                <button className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-200 transition-all cursor-pointer">
+                <button className="flex items-center gap-2 px-3 py-1.5 bg-muted rounded-lg text-xs font-medium text-muted-foreground hover:bg-slate-200 transition-all cursor-pointer">
                   <Calculator className="w-3.5 h-3.5" />
                   {t('teacher.grading.autoCalculate')}
                 </button>
@@ -165,27 +165,27 @@ export default function PenilaianPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/50">
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">#</th>
-                    <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.student')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.assignment1')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.assignment2')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.assignment3')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.midTerm')}</th>
-                    <th className="px-6 py-3 text-center text-xs font-semibold text-slate-400 uppercase tracking-wider">{t('teacher.grading.table.average')}</th>
+                  <tr className="border-b border-border/60 bg-slate-50/50">
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">#</th>
+                    <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.student')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.assignment1')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.assignment2')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.assignment3')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.midTerm')}</th>
+                    <th className="px-6 py-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">{t('teacher.grading.table.average')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {gradeBook.map((student, idx) => (
                     <tr key={student.id} className="border-b border-slate-50 last:border-b-0 hover:bg-slate-50/50 transition-colors">
-                      <td className="px-6 py-3 text-sm text-slate-500">{idx + 1}</td>
+                      <td className="px-6 py-3 text-sm text-muted-foreground">{idx + 1}</td>
                       <td className="px-6 py-3 text-sm font-medium text-foreground">{student.name}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment1)}`}>{student.assignment1}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment2)}`}>{student.assignment2}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.assignment3)}`}>{student.assignment3}</td>
                       <td className={`px-6 py-3 text-sm font-semibold text-center ${getScoreColor(student.midTerm)}`}>{student.midTerm}</td>
                       <td className="px-6 py-3 text-center">
-                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${getScoreColor(student.average)} bg-slate-50`}>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${getScoreColor(student.average)} bg-muted/50`}>
                           {student.average.toFixed(2)}
                         </span>
                       </td>

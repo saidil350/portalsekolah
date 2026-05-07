@@ -86,21 +86,21 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
   return (
     <aside
       className={`
-        flex flex-col bg-white border-r border-slate-200 h-full
+        flex flex-col bg-card border-r border-border h-full
         transition-all duration-300 ease-in-out
         ${isSidebarOpen ? 'w-[288px]' : 'w-16'}
       `}
     >
       {/* Profile Header */}
-      <div className={`pt-6 pb-5 border-b border-slate-100 ${isSidebarOpen ? 'px-6' : 'px-2'}`}>
+      <div className={`pt-6 pb-5 border-b border-border/60 ${isSidebarOpen ? 'px-6' : 'px-2'}`}>
         <div className={`flex items-center gap-4 ${!isSidebarOpen ? 'justify-center' : ''}`}>
           <div className="relative w-11 h-11 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-base font-bold ring-2 ring-primary ring-offset-2 shrink-0">
             {getInitials(displayName)}
           </div>
           {isSidebarOpen && (
             <div className="flex flex-col">
-              <h1 className="text-slate-900 text-base font-bold leading-tight">{displayName}</h1>
-              <p className="text-slate-500 text-xs font-medium mt-0.5">{roleLabel}</p>
+              <h1 className="text-foreground text-base font-bold leading-tight">{displayName}</h1>
+              <p className="text-muted-foreground text-xs font-medium mt-0.5">{roleLabel}</p>
             </div>
           )}
         </div>
@@ -113,7 +113,7 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
             <React.Fragment key={sIdx}>
               {section.labelKey && isSidebarOpen && (
                 <div className="px-4 pt-4 pb-2">
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">
                     {t(section.labelKey)}
                   </p>
                 </div>
@@ -128,12 +128,12 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
                     className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
                       active
                         ? 'bg-primary/10 text-primary'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                        : 'text-muted-foreground hover:bg-accent hover:text-slate-900'
                     } ${isSidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
                     title={!isSidebarOpen ? t(item.labelKey) : undefined}
                   >
                     <IconComponent
-                      className={`w-5 h-5 shrink-0 ${active ? 'text-primary' : 'text-slate-400 group-hover:text-slate-600'}`}
+                      className={`w-5 h-5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground group-hover:text-slate-600'}`}
                       strokeWidth={active ? 2.2 : 1.8}
                     />
                     {isSidebarOpen && <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{t(item.labelKey)}</span>}
@@ -146,11 +146,11 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
       </div>
 
       {/* Language & Logout */}
-      <div className={`border-t border-slate-100 flex flex-col gap-4 ${isSidebarOpen ? 'px-4 py-4' : 'py-4 px-2'}`}>
+      <div className={`border-t border-border/60 flex flex-col gap-4 ${isSidebarOpen ? 'px-4 py-4' : 'py-4 px-2'}`}>
         {isSidebarOpen && <LanguageSwitcher />}
         <button
           onClick={toggleSidebar}
-          className={`flex items-center rounded-lg text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
           title={isSidebarOpen ? 'Minimize' : 'Expand'}
         >
           <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />

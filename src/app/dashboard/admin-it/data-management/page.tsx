@@ -677,7 +677,7 @@ export default function DataManagementPage() {
 
   const getAvatarGradient = (initials: string) => {
     const colors = [
-      'bg-slate-200 text-slate-700',
+      'bg-slate-200 text-foreground',
       'bg-orange-100 text-orange-700',
       'bg-emerald-100 text-emerald-700',
       'bg-blue-100 text-blue-700',
@@ -693,15 +693,15 @@ export default function DataManagementPage() {
       {/* Confirm Dialog */}
       {confirmDialog.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Hapus Data</h3>
-            <p className="text-slate-600 mb-6">
+          <div className="bg-card rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 className="text-lg font-bold text-foreground mb-2">Hapus Data</h3>
+            <p className="text-muted-foreground mb-6">
               Apakah Anda yakin ingin menghapus <strong>{confirmDialog.name}</strong>? Tindakan ini tidak dapat dibatalkan.
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDialog({ isOpen: false, type: null, id: null, name: '' })}
-                className="flex-1 px-4 py-2.5 border border-slate-200 text-slate-700 rounded-lg hover:bg-slate-50 transition-all font-medium text-sm"
+                className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm"
               >
                 Batal
               </button>
@@ -728,11 +728,11 @@ export default function DataManagementPage() {
       )}
 
       {/* Header */}
-      <header className="pt-8 px-8 pb-0 bg-white border-b border-slate-200 shrink-0">
+      <header className="pt-8 px-8 pb-0 bg-card border-b border-border shrink-0">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-slate-900 text-[22px] font-bold tracking-tight mb-1">Manajemen Data Master</h2>
-            <p className="text-slate-500 text-[13px] font-medium">Kelola data kelas, ruangan, dan mata pelajaran</p>
+            <h2 className="text-foreground text-[22px] font-bold tracking-tight mb-1">Manajemen Data Master</h2>
+            <p className="text-muted-foreground text-[13px] font-medium">Kelola data kelas, ruangan, dan mata pelajaran</p>
           </div>
         </div>
 
@@ -741,7 +741,7 @@ export default function DataManagementPage() {
           <button
             onClick={() => setActiveTab('kelas_dan_roster')}
             className={`pb-3 border-b-2 font-bold text-sm transition-colors ${
-              activeTab === 'kelas_dan_roster' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'kelas_dan_roster' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
             Kelas & Roster
@@ -749,7 +749,7 @@ export default function DataManagementPage() {
           <button
             onClick={() => setActiveTab('ruangan')}
             className={`pb-3 border-b-2 font-bold text-sm transition-colors ${
-              activeTab === 'ruangan' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'ruangan' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
             Ruangan
@@ -757,7 +757,7 @@ export default function DataManagementPage() {
           <button
             onClick={() => setActiveTab('mata_pelajaran')}
             className={`pb-3 border-b-2 font-bold text-sm transition-colors ${
-              activeTab === 'mata_pelajaran' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'mata_pelajaran' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
             Mata Pelajaran
@@ -765,7 +765,7 @@ export default function DataManagementPage() {
           <button
             onClick={() => setActiveTab('master_data')}
             className={`pb-3 border-b-2 font-bold text-sm transition-colors ${
-              activeTab === 'master_data' ? 'border-primary text-primary' : 'border-transparent text-slate-500 hover:text-slate-700'
+              activeTab === 'master_data' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
             Master Data
@@ -778,12 +778,12 @@ export default function DataManagementPage() {
         <div className="max-w-[1200px] mx-auto w-full">
 
           {/* Table Container */}
-          <div className="bg-white border flex flex-col border-slate-200 rounded-xl shadow-sm overflow-hidden min-h-[500px]">
+          <div className="bg-card border flex flex-col border-border rounded-xl shadow-sm overflow-hidden min-h-[500px]">
 
             {/* Toolbar */}
-            <div className="p-4 flex items-center justify-between border-b border-slate-100 bg-white gap-3">
+            <div className="p-4 flex items-center justify-between border-b border-border/60 bg-card gap-3">
               <div className="relative w-full max-w-[320px]">
-                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   aria-label="Cari data"
@@ -794,7 +794,7 @@ export default function DataManagementPage() {
                     else if (activeTab === 'ruangan') setRoomsSearch(e.target.value);
                     else setSubjectsSearch(e.target.value);
                   }}
-                  className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
+                  className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
                 />
               </div>
 
@@ -803,7 +803,7 @@ export default function DataManagementPage() {
                 {/* Level/Type Filter */}
                 <div className="relative">
                   <select
-                    className="appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 cursor-pointer min-w-[150px]"
+                    className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
                     value={activeTab === 'kelas_dan_roster' ? classesLevelFilter : activeTab === 'ruangan' ? roomsTypeFilter : subjectsTypeFilter}
                     aria-label={activeTab === 'kelas_dan_roster' ? 'Filter Level' : 'Filter Tipe'}
                     onChange={(e) => {
@@ -833,14 +833,14 @@ export default function DataManagementPage() {
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                   </select>
-                  <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
 
                 {/* Department Filter (Only for Classes and Subjects) */}
                 {(activeTab === 'kelas_dan_roster' || activeTab === 'mata_pelajaran') && (
                   <div className="relative">
                     <select
-                      className="appearance-none bg-slate-50 border border-slate-200 rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-slate-700 cursor-pointer min-w-[150px]"
+                      className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
                       value={activeTab === 'kelas_dan_roster' ? classesDeptFilter : subjectsDeptFilter}
                       aria-label="Filter Jurusan"
                       onChange={(e) => {
@@ -853,7 +853,7 @@ export default function DataManagementPage() {
                         <option key={dept.id} value={dept.id}>{dept.name}</option>
                       ))}
                     </select>
-                    <ChevronDown className="w-4 h-4 text-slate-500 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                   </div>
                 )}
 
@@ -884,7 +884,7 @@ export default function DataManagementPage() {
               {(activeTab === 'kelas_dan_roster' && classesLoading) || (activeTab === 'ruangan' && roomsLoading) || (activeTab === 'mata_pelajaran' && subjectsLoading) ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <span className="ml-3 text-slate-600 font-medium">Memuat data...</span>
+                  <span className="ml-3 text-muted-foreground font-medium">Memuat data...</span>
                 </div>
               ) : (
                 <>
@@ -922,13 +922,13 @@ export default function DataManagementPage() {
                                   <div
                                     key={cls.id}
                                     onClick={() => handleClassClick(cls.id)}
-                                    className="bg-white border border-slate-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
+                                    className="bg-card border border-border rounded-xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer group"
                                   >
                                     {/* Header */}
                                     <div className="flex items-start justify-between mb-4">
                                       <div className="flex-1">
-                                        <h3 className="text-lg font-bold text-slate-900 mb-1">{cls.name}</h3>
-                                        <p className="text-xs text-slate-500 font-mono">{cls.code}</p>
+                                        <h3 className="text-lg font-bold text-foreground mb-1">{cls.name}</h3>
+                                        <p className="text-xs text-muted-foreground font-mono">{cls.code}</p>
                                       </div>
                                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold ${badge.bgColor} ${badge.color}`}>
                                         {badge.icon} {badge.label}
@@ -938,28 +938,28 @@ export default function DataManagementPage() {
                                     {/* Info */}
                                     <div className="space-y-2 mb-4">
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-slate-500">Level</span>
-                                        <span className="font-medium text-slate-900">{cls.class_level?.name || '-'}</span>
+                                        <span className="text-muted-foreground">Level</span>
+                                        <span className="font-medium text-foreground">{cls.class_level?.name || '-'}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-slate-500">Jurusan</span>
-                                        <span className="font-medium text-slate-900">{cls.department?.name || '-'}</span>
+                                        <span className="text-muted-foreground">Jurusan</span>
+                                        <span className="font-medium text-foreground">{cls.department?.name || '-'}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-slate-500">Siswa</span>
-                                        <span className="font-medium text-slate-900">{cls.current_enrollment} / {cls.capacity}</span>
+                                        <span className="text-muted-foreground">Siswa</span>
+                                        <span className="font-medium text-foreground">{cls.current_enrollment} / {cls.capacity}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-slate-500">Wali Kelas</span>
-                                        <span className="font-medium text-slate-900">{cls.wali_kelas?.full_name || '-'}</span>
+                                        <span className="text-muted-foreground">Wali Kelas</span>
+                                        <span className="font-medium text-foreground">{cls.wali_kelas?.full_name || '-'}</span>
                                       </div>
                                     </div>
 
                                     {/* Footer with action buttons */}
-                                    <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+                                    <div className="flex items-center justify-between pt-3 border-t border-border/60">
                                       <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${cls.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                                        <span className={`text-xs font-bold ${cls.is_active ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                        <span className={`text-xs font-bold ${cls.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                                           {cls.is_active ? 'Aktif' : 'Nonaktif'}
                                         </span>
                                       </div>
@@ -969,7 +969,7 @@ export default function DataManagementPage() {
                                             e.stopPropagation();
                                             setConfirmDialog({ isOpen: true, type: 'class', id: cls.id, name: cls.name });
                                           }}
-                                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                           title="Hapus"
                                         >
                                           <Trash2 className="w-4 h-4" />
@@ -1003,13 +1003,13 @@ export default function DataManagementPage() {
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
-                              <tr className="bg-slate-50/50 border-b border-slate-200">
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">KAPASITAS & LANTAI</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GEDUNG</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                              <tr className="bg-slate-50/50 border-b border-border">
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TIPE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">KAPASITAS & LANTAI</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">GEDUNG</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -1020,7 +1020,7 @@ export default function DataManagementPage() {
                                   <tr key={room.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col">
-                                        <span className="text-slate-900 font-bold text-sm tracking-tight">{room.name}</span>
+                                        <span className="text-foreground font-bold text-sm tracking-tight">{room.name}</span>
                                         <span className={`inline-flex items-center w-fit px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-1 ${typeConfig.bgColor} ${typeConfig.color}`}>
                                           {room.code}
                                         </span>
@@ -1034,12 +1034,12 @@ export default function DataManagementPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col">
-                                        <span className="text-slate-600 text-sm">{room.capacity} orang</span>
-                                        <span className="text-slate-500 text-xs">Lantai {room.floor}</span>
+                                        <span className="text-muted-foreground text-sm">{room.capacity} orang</span>
+                                        <span className="text-muted-foreground text-xs">Lantai {room.floor}</span>
                                       </div>
                                     </td>
                                     <td className="px-6 py-4">
-                                      <span className="text-slate-600 text-sm">{room.building || '-'}</span>
+                                      <span className="text-muted-foreground text-sm">{room.building || '-'}</span>
                                     </td>
                                     <td className="px-6 py-4">
                                       <div className="flex items-center gap-2">
@@ -1051,14 +1051,14 @@ export default function DataManagementPage() {
                                       <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                         <button
                                           onClick={() => setRoomModal({ isOpen: true, mode: 'edit', room })}
-                                          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                          className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                           title="Edit"
                                         >
                                           <Edit2 className="w-4 h-4" />
                                         </button>
                                         <button
                                           onClick={() => setConfirmDialog({ isOpen: true, type: 'room', id: room.id, name: room.name })}
-                                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                           title="Hapus"
                                         >
                                           <Trash2 className="w-4 h-4" />
@@ -1092,12 +1092,12 @@ export default function DataManagementPage() {
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
-                              <tr className="bg-slate-50/50 border-b border-slate-200">
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TIPE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">GURU PENGAJAR</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                              <tr className="bg-slate-50/50 border-b border-border">
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TIPE</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">GURU PENGAJAR</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -1111,8 +1111,8 @@ export default function DataManagementPage() {
                                   <tr key={subject.id} className="hover:bg-slate-50/50 transition-colors group">
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col">
-                                        <span className="text-slate-900 font-bold text-sm tracking-tight">{subject.name}</span>
-                                        <span className={`inline-flex items-center w-fit px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-1 bg-slate-100 text-slate-700`}>
+                                        <span className="text-foreground font-bold text-sm tracking-tight">{subject.name}</span>
+                                        <span className={`inline-flex items-center w-fit px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-1 bg-muted text-foreground`}>
                                           {subject.code}
                                         </span>
                                       </div>
@@ -1125,7 +1125,7 @@ export default function DataManagementPage() {
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col gap-1">
                                         {teachers.length === 0 ? (
-                                          <span className="text-slate-400 text-xs italic">Belum ada guru</span>
+                                          <span className="text-muted-foreground text-xs italic">Belum ada guru</span>
                                         ) : (
                                           <>
                                             {teachers.slice(0, 2).map((subjectTeacher) => {
@@ -1143,7 +1143,7 @@ export default function DataManagementPage() {
                                                   </div>
                                                   <div className="flex flex-col">
                                                     <div className="flex items-center gap-1.5">
-                                                      <span className="text-xs font-semibold text-slate-900">{subjectTeacher.teacher?.full_name}</span>
+                                                      <span className="text-xs font-semibold text-foreground">{subjectTeacher.teacher?.full_name}</span>
                                                       {rankConfig && (
                                                         <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold ${rankConfig.bgColor} ${rankConfig.color}`}>
                                                           {rankConfig.icon}
@@ -1160,7 +1160,7 @@ export default function DataManagementPage() {
                                               );
                                             })}
                                             {teachers.length > 2 && (
-                                              <span className="text-[10px] text-slate-500">
+                                              <span className="text-[10px] text-muted-foreground">
                                                 +{teachers.length - 2} guru lainnya
                                               </span>
                                             )}
@@ -1186,14 +1186,14 @@ export default function DataManagementPage() {
                                         </button>
                                         <button
                                           onClick={() => setSubjectModal({ isOpen: true, mode: 'edit', subject })}
-                                          className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                          className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                           title="Edit"
                                         >
                                           <Edit2 className="w-4 h-4" />
                                         </button>
                                         <button
                                           onClick={() => setConfirmDialog({ isOpen: true, type: 'subject', id: subject.id, name: subject.name })}
-                                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                          className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                           title="Hapus"
                                         >
                                           <Trash2 className="w-4 h-4" />
@@ -1212,13 +1212,13 @@ export default function DataManagementPage() {
                       {activeTab === 'master_data' && (
                         <div className="w-full">
                           {/* Sub-tabs */}
-                          <div className="flex items-center gap-1 p-2 bg-slate-50 border-b border-slate-200">
+                          <div className="flex items-center gap-1 p-2 bg-muted/50 border-b border-border">
                             <button
                               onClick={() => setMasterDataSubTab('academic_years')}
                               className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                                 masterDataSubTab === 'academic_years'
                                   ? 'bg-blue-600 text-white shadow-sm'
-                                  : 'text-slate-600 hover:bg-slate-200'
+                                  : 'text-muted-foreground hover:bg-slate-200'
                               }`}
                             >
                               <Calendar className="w-3.5 h-3.5 inline mr-1.5" />
@@ -1229,7 +1229,7 @@ export default function DataManagementPage() {
                               className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                                 masterDataSubTab === 'semesters'
                                   ? 'bg-purple-600 text-white shadow-sm'
-                                  : 'text-slate-600 hover:bg-slate-200'
+                                  : 'text-muted-foreground hover:bg-slate-200'
                               }`}
                             >
                               <BookOpen className="w-3.5 h-3.5 inline mr-1.5" />
@@ -1240,7 +1240,7 @@ export default function DataManagementPage() {
                               className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                                 masterDataSubTab === 'class_levels'
                                   ? 'bg-emerald-600 text-white shadow-sm'
-                                  : 'text-slate-600 hover:bg-slate-200'
+                                  : 'text-muted-foreground hover:bg-slate-200'
                               }`}
                             >
                               <Users className="w-3.5 h-3.5 inline mr-1.5" />
@@ -1251,7 +1251,7 @@ export default function DataManagementPage() {
                               className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
                                 masterDataSubTab === 'departments'
                                   ? 'bg-orange-600 text-white shadow-sm'
-                                  : 'text-slate-600 hover:bg-slate-200'
+                                  : 'text-muted-foreground hover:bg-slate-200'
                               }`}
                             >
                               <UserPlus className="w-3.5 h-3.5 inline mr-1.5" />
@@ -1264,7 +1264,7 @@ export default function DataManagementPage() {
                             {masterDataLoading ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                <span className="mt-3 text-slate-600 font-medium">Memuat data...</span>
+                                <span className="mt-3 text-muted-foreground font-medium">Memuat data...</span>
                               </div>
                             ) : masterDataError ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
@@ -1288,29 +1288,29 @@ export default function DataManagementPage() {
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-200">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                                        <tr className="bg-slate-50/50 border-b border-border">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">PERIODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
                                         {academicYears.map((ay) => (
                                           <tr key={ay.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
-                                              <span className="text-slate-900 font-bold text-sm tracking-tight">{ay.name}</span>
+                                              <span className="text-foreground font-bold text-sm tracking-tight">{ay.name}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col text-sm">
-                                                <span className="text-slate-600">{ay.start_date}</span>
-                                                <span className="text-slate-500">s.d. {ay.end_date}</span>
+                                                <span className="text-muted-foreground">{ay.start_date}</span>
+                                                <span className="text-muted-foreground">s.d. {ay.end_date}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${ay.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                                                <span className={`text-xs font-bold ${ay.is_active ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                                <span className={`text-xs font-bold ${ay.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                                                   {ay.is_active ? 'Aktif' : 'Nonaktif'}
                                                 </span>
                                               </div>
@@ -1319,14 +1319,14 @@ export default function DataManagementPage() {
                                               <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                   onClick={() => setAcademicYearModal({ isOpen: true, mode: 'edit', academicYear: ay })}
-                                                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                                   title="Edit"
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'academic_year', id: ay.id, name: ay.name })}
-                                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                   title="Hapus"
                                                 >
                                                   <Trash2 className="w-4 h-4" />
@@ -1353,11 +1353,11 @@ export default function DataManagementPage() {
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-200">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">TAHUN AJARAN</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">PERIODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                                        <tr className="bg-slate-50/50 border-b border-border">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TAHUN AJARAN</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">PERIODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1365,31 +1365,31 @@ export default function DataManagementPage() {
                                           <tr key={sem.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
-                                                <span className="text-slate-900 font-bold text-sm tracking-tight">{sem.name}</span>
-                                                <span className="text-xs text-slate-500 mt-0.5">Semester {sem.semester_number}</span>
+                                                <span className="text-foreground font-bold text-sm tracking-tight">{sem.name}</span>
+                                                <span className="text-xs text-muted-foreground mt-0.5">Semester {sem.semester_number}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                              <span className="text-slate-600 text-sm">{academicYears.find(ay => ay.id === sem.academic_year_id)?.name || '-'}</span>
+                                              <span className="text-muted-foreground text-sm">{academicYears.find(ay => ay.id === sem.academic_year_id)?.name || '-'}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col text-sm">
-                                                <span className="text-slate-600">{sem.start_date}</span>
-                                                <span className="text-slate-500">s.d. {sem.end_date}</span>
+                                                <span className="text-muted-foreground">{sem.start_date}</span>
+                                                <span className="text-muted-foreground">s.d. {sem.end_date}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                   onClick={() => setSemesterModal({ isOpen: true, mode: 'edit', semester: sem })}
-                                                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                                   title="Edit"
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'semester', id: sem.id, name: sem.name })}
-                                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                   title="Hapus"
                                                 >
                                                   <Trash2 className="w-4 h-4" />
@@ -1418,11 +1418,11 @@ export default function DataManagementPage() {
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-200">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">LEVEL</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                                        <tr className="bg-slate-50/50 border-b border-border">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">LEVEL</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1430,19 +1430,19 @@ export default function DataManagementPage() {
                                           <tr key={cl.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
-                                                <span className="text-slate-900 font-bold text-sm tracking-tight">{cl.name}</span>
+                                                <span className="text-foreground font-bold text-sm tracking-tight">{cl.name}</span>
                                                 <span className="inline-flex items-center w-fit px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-1 bg-emerald-100 text-emerald-700">
                                                   {cl.code}
                                                 </span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
-                                              <span className="text-slate-600 text-sm font-bold">{cl.level_order}</span>
+                                              <span className="text-muted-foreground text-sm font-bold">{cl.level_order}</span>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${cl.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                                                <span className={`text-xs font-bold ${cl.is_active ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                                <span className={`text-xs font-bold ${cl.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                                                   {cl.is_active ? 'Aktif' : 'Nonaktif'}
                                                 </span>
                                               </div>
@@ -1451,14 +1451,14 @@ export default function DataManagementPage() {
                                               <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                   onClick={() => setClassLevelModal({ isOpen: true, mode: 'edit', classLevel: cl })}
-                                                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                                   title="Edit"
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'class_level', id: cl.id, name: cl.name })}
-                                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                   title="Hapus"
                                                 >
                                                   <Trash2 className="w-4 h-4" />
@@ -1487,10 +1487,10 @@ export default function DataManagementPage() {
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
-                                        <tr className="bg-slate-50/50 border-b border-slate-200">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">NAMA & KODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-slate-500 text-center">AKSI</th>
+                                        <tr className="bg-slate-50/50 border-b border-border">
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1498,19 +1498,19 @@ export default function DataManagementPage() {
                                           <tr key={dept.id} className="hover:bg-slate-50/50 transition-colors group">
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
-                                                <span className="text-slate-900 font-bold text-sm tracking-tight">{dept.name}</span>
+                                                <span className="text-foreground font-bold text-sm tracking-tight">{dept.name}</span>
                                                 <span className="inline-flex items-center w-fit px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mt-1 bg-orange-100 text-orange-700">
                                                   {dept.code}
                                                 </span>
                                                 {dept.description && (
-                                                  <span className="text-xs text-slate-500 mt-1 line-clamp-1">{dept.description}</span>
+                                                  <span className="text-xs text-muted-foreground mt-1 line-clamp-1">{dept.description}</span>
                                                 )}
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${dept.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-                                                <span className={`text-xs font-bold ${dept.is_active ? 'text-emerald-600' : 'text-slate-500'}`}>
+                                                <span className={`text-xs font-bold ${dept.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
                                                   {dept.is_active ? 'Aktif' : 'Nonaktif'}
                                                 </span>
                                               </div>
@@ -1519,14 +1519,14 @@ export default function DataManagementPage() {
                                               <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                                 <button
                                                   onClick={() => setDepartmentModal({ isOpen: true, mode: 'edit', department: dept })}
-                                                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
                                                   title="Edit"
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'department', id: dept.id, name: dept.name })}
-                                                  className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                                                  className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                                   title="Hapus"
                                                 >
                                                   <Trash2 className="w-4 h-4" />
@@ -1551,8 +1551,8 @@ export default function DataManagementPage() {
             </div>
 
             {/* Pagination footer */}
-            <div className="mt-auto border-t border-slate-100 p-4 px-6 flex items-center justify-between bg-white text-sm">
-              <span className="text-slate-500 font-medium text-[13px]">
+            <div className="mt-auto border-t border-border/60 p-4 px-6 flex items-center justify-between bg-card text-sm">
+              <span className="text-muted-foreground font-medium text-[13px]">
                 Menampilkan {activeTab === 'kelas_dan_roster' ? ((classesPage - 1) * 12 + 1) : activeTab === 'ruangan' ? ((roomsPage - 1) * 10 + 1) : ((subjectsPage - 1) * 10 + 1)}
                 -{activeTab === 'kelas_dan_roster' ? Math.min(classesPage * 12, classesTotal) : activeTab === 'ruangan' ? Math.min(roomsPage * 10, roomsTotal) : Math.min(subjectsPage * 10, subjectsTotal)}
                 dari {activeTab === 'kelas_dan_roster' ? classesTotal : activeTab === 'ruangan' ? roomsTotal : subjectsTotal} data
@@ -1565,7 +1565,7 @@ export default function DataManagementPage() {
                     else if (activeTab === 'mata_pelajaran' && subjectsPage > 1) setSubjectsPage(subjectsPage - 1);
                   }}
                   disabled={(activeTab === 'kelas_dan_roster' && classesPage <= 1) || (activeTab === 'ruangan' && roomsPage <= 1) || (activeTab === 'mata_pelajaran' && subjectsPage <= 1)}
-                  className="px-4 py-1.5 border border-slate-200 rounded-md text-slate-600 font-semibold text-[13px] hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-1.5 border border-border rounded-md text-muted-foreground font-semibold text-[13px] hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Sebelumnya
                 </button>
@@ -1577,7 +1577,7 @@ export default function DataManagementPage() {
                     else if (activeTab === 'mata_pelajaran' && subjectsPage < maxPage) setSubjectsPage(subjectsPage + 1);
                   }}
                   disabled={(activeTab === 'kelas_dan_roster' && classesPage >= Math.ceil(classesTotal / 12)) || (activeTab === 'ruangan' && roomsPage >= Math.ceil(roomsTotal / 10)) || (activeTab === 'mata_pelajaran' && subjectsPage >= Math.ceil(subjectsTotal / 10))}
-                  className="px-4 py-1.5 border border-slate-200 rounded-md text-slate-600 font-semibold text-[13px] hover:bg-slate-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-1.5 border border-border rounded-md text-muted-foreground font-semibold text-[13px] hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Selanjutnya
                 </button>

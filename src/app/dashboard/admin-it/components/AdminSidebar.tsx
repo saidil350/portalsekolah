@@ -71,7 +71,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
   return (
     <aside
       className={`
-        flex flex-col bg-white border-r border-slate-100 h-full overflow-hidden
+        flex flex-col bg-card border-r border-border/60 h-full overflow-hidden
         transition-[width] duration-300 ease-in-out
         ${isSidebarOpen ? 'w-[280px]' : 'w-[64px]'}
       `}
@@ -91,10 +91,10 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
             </div>
             {/* Name + role */}
             <div className="flex flex-col min-w-0">
-              <span className="text-slate-800 text-sm font-semibold leading-tight truncate">
+              <span className="text-foreground text-sm font-semibold leading-tight truncate">
                 {displayName}
               </span>
-              <span className="text-slate-400 text-[11px] font-medium uppercase tracking-wider mt-0.5 truncate">
+              <span className="text-muted-foreground text-[11px] font-medium uppercase tracking-wider mt-0.5 truncate">
                 {roleLabel}
               </span>
             </div>
@@ -118,7 +118,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
                   flex items-center rounded-lg transition-all duration-150 cursor-pointer relative overflow-hidden
                   ${active
                     ? 'bg-primary text-white shadow-sm'
-                    : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+                    : 'text-muted-foreground hover:bg-accent hover:text-slate-800'
                   }
                   ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}
                 `}
@@ -154,7 +154,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
       {/* ── Footer ── */}
       <div
         className={`
-          mt-auto border-t border-slate-100
+          mt-auto border-t border-border/60
           ${isSidebarOpen ? 'px-4 py-4 flex flex-col gap-1' : 'px-2 py-4 flex flex-col gap-1 items-center'}
         `}
       >
@@ -168,7 +168,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
         <button
           onClick={toggleSidebar}
           className={`
-            flex items-center rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-700
+            flex items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-slate-700
             transition-colors duration-150 cursor-pointer
             ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
           `}

@@ -66,12 +66,12 @@ export default function JadwalMengajarPage() {
   return (
     <main className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Header */}
-      <header className="h-[64px] bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+      <header className="h-[64px] bg-card border-b border-border flex items-center justify-between px-8 shrink-0">
         <div className="flex items-center">
-          <h2 className="text-slate-900 text-[20px] font-bold">Teaching Schedule</h2>
+          <h2 className="text-foreground text-[20px] font-bold">Teaching Schedule</h2>
         </div>
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
+          <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent shadow-sm transition-all cursor-pointer">
             <Filter className="w-4 h-4" />
             Filter
           </button>
@@ -88,45 +88,45 @@ export default function JadwalMengajarPage() {
           {/* Controls Row */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             {/* Week/Month Toggle */}
-            <div className="bg-white border border-slate-200 rounded-lg p-[5px] shadow-sm flex">
+            <div className="bg-card border border-border rounded-lg p-[5px] shadow-sm flex">
               <button className="px-4 py-1.5 bg-primary text-white rounded-md text-sm font-medium transition-all cursor-pointer">
                 Week
               </button>
-              <button className="px-4 py-1.5 text-slate-500 rounded-md text-sm font-medium hover:text-slate-900 transition-all cursor-pointer">
+              <button className="px-4 py-1.5 text-muted-foreground rounded-md text-sm font-medium hover:text-slate-900 transition-all cursor-pointer">
                 Month
               </button>
             </div>
             {/* Download PDF */}
-            <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 shadow-sm transition-all cursor-pointer">
+            <button className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm font-medium text-foreground hover:bg-accent shadow-sm transition-all cursor-pointer">
               <Download className="w-4 h-4" />
               Download PDF
             </button>
           </div>
 
           {/* Week Navigation */}
-          <div className="flex items-center justify-between bg-white border border-slate-200 rounded-xl px-6 py-4 shadow-sm">
-            <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">
+          <div className="flex items-center justify-between bg-card border border-border rounded-xl px-6 py-4 shadow-sm">
+            <button className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors cursor-pointer">
               <ChevronLeft className="w-4 h-4" />
               Previous Week
             </button>
             <h3 className="text-foreground text-lg font-semibold">Jan 20 - Jan 24, 2025</h3>
-            <button className="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-primary transition-colors cursor-pointer">
+            <button className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary transition-colors cursor-pointer">
               Next Week
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* Schedule Grid */}
-          <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden">
+          <div className="bg-card border border-border rounded-xl shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px]">
                 <thead>
-                  <tr className="border-b border-slate-100">
-                    <th className="w-[100px] px-4 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                  <tr className="border-b border-border/60">
+                    <th className="w-[100px] px-4 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                       Time
                     </th>
                     {days.map((day) => (
-                      <th key={day} className="px-4 py-4 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                      <th key={day} className="px-4 py-4 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         {day}
                       </th>
                     ))}
@@ -135,7 +135,7 @@ export default function JadwalMengajarPage() {
                 <tbody>
                   {timeSlots.map((time, timeIdx) => (
                     <tr key={time} className="border-b border-slate-50 last:border-b-0">
-                      <td className="px-4 py-3 text-sm font-medium text-slate-500 align-top whitespace-nowrap">
+                      <td className="px-4 py-3 text-sm font-medium text-muted-foreground align-top whitespace-nowrap">
                         {time}
                       </td>
                       {dayKeys.map((dayKey) => {
@@ -158,7 +158,7 @@ export default function JadwalMengajarPage() {
                                 </div>
                               </div>
                             ) : (
-                              <div className="min-h-[80px] rounded-lg border border-dashed border-slate-100 bg-slate-50/30" />
+                              <div className="min-h-[80px] rounded-lg border border-dashed border-border/60 bg-slate-50/30" />
                             )}
                           </td>
                         );

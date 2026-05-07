@@ -60,21 +60,21 @@ const RoleGreetingCard: React.FC<RoleGreetingCardProps> = ({
       className="mb-8"
     >
       {/* Dynamic Greeting Label */}
-      <div className="flex items-center gap-2 text-slate-500 mb-1">
+      <div className="flex items-center gap-2 text-muted-foreground mb-1">
         <Icon className="w-4 h-4 text-primary/70" />
         <span className="text-sm font-medium uppercase tracking-wider">{greeting}</span>
       </div>
       
       {/* Name and Identity Details */}
       <div className="flex flex-col md:flex-row md:items-end gap-2 md:gap-4 mt-2">
-        <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        <h1 className="text-4xl font-extrabold text-foreground tracking-tight leading-tight">
           {userName} <span className="inline-block animate-bounce-slow">👋</span>
         </h1>
         
-        <div className="flex flex-wrap items-center gap-2 text-slate-500 text-sm md:border-l md:border-slate-200 md:pl-4 md:mb-2 lg:mb-3">
-          <div className="flex items-center gap-1.5 py-1 px-3 bg-slate-50 rounded-lg border border-slate-100">
-            <School className="w-4 h-4 text-slate-400" />
-            <span className="font-semibold text-slate-700">{schoolName}</span>
+        <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm md:border-l md:border-slate-200 md:pl-4 md:mb-2 lg:mb-3">
+          <div className="flex items-center gap-1.5 py-1 px-3 bg-muted/50 rounded-lg border border-border/60">
+            <School className="w-4 h-4 text-muted-foreground" />
+            <span className="font-semibold text-foreground">{schoolName}</span>
           </div>
           
           <span className="bg-primary/5 px-2 py-1 rounded text-[10px] font-bold text-primary uppercase tracking-tighter">
@@ -82,7 +82,7 @@ const RoleGreetingCard: React.FC<RoleGreetingCardProps> = ({
           </span>
 
           {className && (
-            <span className="flex items-center gap-1.5 text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5 text-muted-foreground font-medium">
               <span className="w-1 h-1 bg-slate-300 rounded-full" />
               {className}
             </span>
