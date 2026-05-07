@@ -1,10 +1,11 @@
 'use client'
 
 import React, { useState, useMemo } from 'react'
-import { Search, UserCheck, FileText, Download, Filter, FileCheck, AlertCircle, Eye, Loader2, Users, GraduationCap, ArrowLeft, Calendar as CalendarIcon, ChevronLeft, ChevronRight, Plus, X } from 'lucide-react'
+import { Search, UserCheck, FileText, Download, Filter, FileCheck, AlertCircle, Eye, Loader2, Users, GraduationCap, ArrowLeft, ChevronLeft, ChevronRight, Plus, X } from 'lucide-react'
 import { useLanguage } from '@/contexts/LanguageContext'
+import type { TranslationKey } from '@/utils/dictionary'
 import { format } from 'date-fns'
-import { id } from 'date-fns/locale'
+import { enUS, id } from 'date-fns/locale'
 
 type TabType = 'student-data' | 'teacher-data'
 
@@ -24,11 +25,41 @@ type Person = {
   docs: DocItem[];
 }
 
+const dayLabelKeys: TranslationKey[] = [
+  'admin.monitoring.calendar.day.sun',
+  'admin.monitoring.calendar.day.mon',
+  'admin.monitoring.calendar.day.tue',
+  'admin.monitoring.calendar.day.wed',
+  'admin.monitoring.calendar.day.thu',
+  'admin.monitoring.calendar.day.fri',
+  'admin.monitoring.calendar.day.sat',
+]
+
+const subInfoTranslationMap: Record<string, TranslationKey> = {
+  'X A (MIPA)': 'admin.class.xa',
+  'XI B (IPS)': 'admin.class.xib',
+  'XII C (Kejuruan)': 'admin.class.xiic',
+  'Matematika': 'admin.monitoring.subject.math',
+  'Bahasa Indonesia': 'admin.monitoring.subject.indonesian',
+  'Fisika': 'admin.monitoring.subject.physics',
+}
+
+const docTranslationMap: Record<string, TranslationKey> = {
+  'Kartu Keluarga (KK)': 'admin.monitoring.doc.familyCard',
+  'Akte Kelahiran': 'admin.monitoring.doc.birthCertificate',
+  'Ijazah SMP': 'admin.monitoring.doc.middleSchoolDiploma',
+  'Ijazah Lulus': 'admin.monitoring.doc.graduationDiploma',
+  'KTP': 'admin.monitoring.doc.idCard',
+  'Ijazah S1': 'admin.monitoring.doc.bachelorDiploma',
+  'Ijazah S2': 'admin.monitoring.doc.masterDiploma',
+  'Sertifikasi Guru': 'admin.monitoring.doc.teacherCertification',
+}
+
 // Pseudo-random generator for stable mock data
 const generateMonthData = (year: number, month: number, personId: number, baseAttendance: number) => {
   const seed = (year * 10000) + (month * 100) + personId;
   const hash = (n: number) => {
-    let h = Math.sin(n) * 10000;
+    const h = Math.sin(n) * 10000;
     return h - Math.floor(h);
   }
 
@@ -42,10 +73,9 @@ const generateMonthData = (year: number, month: number, personId: number, baseAt
     days.push({ empty: true, date: 0, status: 'none', isToday: false });
   }
 
-  let summary = { H: 0, A: 0, S: 0, I: 0 }
+  const summary = { H: 0, A: 0, S: 0, I: 0 }
   
   for (let i = 1; i <= daysInMonth; i++) {
-     const dayOfWeek = Object.keys(days).length % 7; // or use new Date.getDay()
      let status = 'none';
      
      // Mock "Today" as May 20, 2024
@@ -151,7 +181,7 @@ const MOCK_TEACHERS: Person[] = [
 ]
 
 export default function MonitoringDataPage() {
-  const { t } = useLanguage()
+  const { t, language } = useLanguage()
   const [activeTab, setActiveTab] = useState<TabType>('student-data')
   const [searchQuery, setSearchQuery] = useState('')
   const [filterSubInfo, setFilterSubInfo] = useState<string>('')
@@ -165,6 +195,31 @@ export default function MonitoringDataPage() {
 
   const currentData = activeTab === 'student-data' ? MOCK_STUDENTS : MOCK_TEACHERS
   const uniqueSubInfos = Array.from(new Set(currentData.map(item => item.subInfo)))
+  const dateLocale = language === 'id' ? id : enUS
+
+  const getSubInfoLabel = (subInfo: string) => {
+    const key = subInfoTranslationMap[subInfo]
+    return key ? t(key) : subInfo
+  }
+
+  const getDocTypeLabel = (type: string) => {
+    const key = docTranslationMap[type]
+    return key ? t(key) : type
+  }
+
+  const getPersonTypeLabel = (type: Person['type']) => {
+    return type === 'student' ? t('admin.monitoring.person.student') : t('admin.monitoring.person.teacher')
+  }
+
+  const getAttendanceStatusLabel = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'hadir': return t('admin.monitoring.attendance.present')
+      case 'sakit': return t('admin.monitoring.attendance.sick')
+      case 'izin': return t('admin.monitoring.attendance.leave')
+      case 'alpha': return t('admin.monitoring.attendance.absent')
+      default: return status
+    }
+  }
 
   const [newDocPrompt, setNewDocPrompt] = useState(false)
   const [newDocName, setNewDocName] = useState('')
@@ -208,14 +263,14 @@ export default function MonitoringDataPage() {
   const calendarData = useMemo(() => {
     if (!selectedPerson) return null;
     return generateMonthData(currentDate.getFullYear(), currentDate.getMonth(), selectedPerson.id, selectedPerson.attendancePercentage);
-  }, [selectedPerson, currentDate.getTime()])
+  }, [selectedPerson, currentDate])
 
   const renderAttendanceStatus = (status: string) => {
     switch (status.toLowerCase()) {
-      case 'hadir': return <span className="px-2.5 py-1 bg-[#f1fcf5] text-[#22c55e] text-xs font-bold rounded-full">Hadir</span>
-      case 'sakit': return <span className="px-2.5 py-1 bg-[#f2f8ff] text-[#3b82f6] text-xs font-bold rounded-full">Sakit</span>
-      case 'izin': return <span className="px-2.5 py-1 bg-[#fffbf0] text-[#eab308] text-xs font-bold rounded-full">Izin</span>
-      case 'alpha': return <span className="px-2.5 py-1 bg-[#fef4f4] text-[#ef4444] text-xs font-bold rounded-full border border-red-200">Alpha</span>
+      case 'hadir': return <span className="px-2.5 py-1 bg-[#f1fcf5] text-[#22c55e] text-xs font-bold rounded-full">{getAttendanceStatusLabel(status)}</span>
+      case 'sakit': return <span className="px-2.5 py-1 bg-[#f2f8ff] text-[#3b82f6] text-xs font-bold rounded-full">{getAttendanceStatusLabel(status)}</span>
+      case 'izin': return <span className="px-2.5 py-1 bg-[#fffbf0] text-[#eab308] text-xs font-bold rounded-full">{getAttendanceStatusLabel(status)}</span>
+      case 'alpha': return <span className="px-2.5 py-1 bg-[#fef4f4] text-[#ef4444] text-xs font-bold rounded-full border border-red-200">{getAttendanceStatusLabel(status)}</span>
       default: return <span className="px-2.5 py-1 bg-muted/50 text-foreground text-xs font-bold rounded-full">{status}</span>
     }
   }
@@ -223,11 +278,11 @@ export default function MonitoringDataPage() {
   const renderDocStatus = (status: string) => {
     switch (status.toLowerCase()) {
       case 'verified':
-        return <span className="flex items-center gap-1.5 text-emerald-600 text-[11px] font-bold tracking-wide"><FileCheck className="w-3.5 h-3.5" /> TERVERIFIKASI</span>
+        return <span className="flex items-center gap-1.5 text-emerald-600 text-[11px] font-bold tracking-wide"><FileCheck className="w-3.5 h-3.5" /> {t('admin.monitoring.docStatus.verified')}</span>
       case 'pending':
-        return <span className="flex items-center gap-1.5 text-amber-600 text-[11px] font-bold tracking-wide"><Loader2 className="w-3.5 h-3.5 animate-spin" /> DIREVIEW</span>
+        return <span className="flex items-center gap-1.5 text-amber-600 text-[11px] font-bold tracking-wide"><Loader2 className="w-3.5 h-3.5 animate-spin" /> {t('admin.monitoring.docStatus.pending')}</span>
       case 'missing':
-        return <span className="flex items-center gap-1.5 text-red-600 text-[11px] font-bold tracking-wide"><AlertCircle className="w-3.5 h-3.5" /> BELUM DIUPLOAD</span>
+        return <span className="flex items-center gap-1.5 text-red-600 text-[11px] font-bold tracking-wide"><AlertCircle className="w-3.5 h-3.5" /> {t('admin.monitoring.docStatus.missing')}</span>
       default:
         return <span>{status}</span>
     }
@@ -243,13 +298,15 @@ export default function MonitoringDataPage() {
           <button 
             onClick={() => setSelectedPerson(null)}
             className="p-2 -ml-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors flex items-center justify-center"
-            title="Kembali"
+            title={t('admin.monitoring.detail.back')}
           >
             <ArrowLeft className="w-5 h-5 stroke-[2.5]" />
           </button>
           <div>
-            <h2 className="text-foreground text-lg font-bold">Detail Personal Data {selectedPerson.type === 'student' ? 'Siswa' : 'Guru'}</h2>
-            <p className="text-muted-foreground text-xs mt-0.5">Informasi lengkap kehadiran dan berkas dokumen</p>
+            <h2 className="text-foreground text-lg font-bold">
+              {selectedPerson.type === 'student' ? t('admin.monitoring.detail.title.student') : t('admin.monitoring.detail.title.teacher')}
+            </h2>
+            <p className="text-muted-foreground text-xs mt-0.5">{t('admin.monitoring.detail.subtitle')}</p>
           </div>
         </header>
 
@@ -268,13 +325,13 @@ export default function MonitoringDataPage() {
                   <div className="flex items-center gap-3 mb-2">
                     <h2 className="text-2xl font-black text-foreground tracking-tight">{selectedPerson.name}</h2>
                     <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest border border-slate-200/50">
-                      {selectedPerson.type === 'student' ? 'SISWA' : 'GURU'}
+                      {getPersonTypeLabel(selectedPerson.type)}
                     </span>
                   </div>
                   <p className="text-muted-foreground font-medium flex items-center gap-2 text-sm">
                     <span className="font-bold text-foreground">{selectedPerson.type === 'student' ? 'NISN:' : 'NIP:'}</span> {selectedPerson.idNumber}
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300 mx-2" />
-                    <span className="bg-muted/50 px-2.5 py-1 rounded-md font-bold text-foreground border border-border/60">{selectedPerson.subInfo}</span>
+                    <span className="bg-muted/50 px-2.5 py-1 rounded-md font-bold text-foreground border border-border/60">{getSubInfoLabel(selectedPerson.subInfo)}</span>
                   </p>
                 </div>
               </div>
@@ -286,13 +343,13 @@ export default function MonitoringDataPage() {
                  <div className="flex flex-wrap justify-between items-center gap-3 mb-8">
                     <div className="flex items-center gap-3">
                        <h3 className="text-[22px] font-extrabold text-foreground whitespace-nowrap">
-                          {format(currentDate, 'MMMM yyyy', { locale: id })}
+                          {format(currentDate, 'MMMM yyyy', { locale: dateLocale })}
                        </h3>
                        <div className="flex gap-1">
-                         <button onClick={prevMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title="Bulan sebelumnya">
+                         <button onClick={prevMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title={t('admin.monitoring.calendar.prev')}>
                            <ChevronLeft className="w-4 h-4 stroke-[2.5]" />
                          </button>
-                         <button onClick={nextMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title="Bulan berikutnya">
+                         <button onClick={nextMonth} className="text-muted-foreground hover:text-slate-800 transition-colors p-1.5 rounded-lg hover:bg-accent" title={t('admin.monitoring.calendar.next')}>
                            <ChevronRight className="w-4 h-4 stroke-[2.5]" />
                          </button>
                        </div>
@@ -300,18 +357,18 @@ export default function MonitoringDataPage() {
                     
                     {/* Header Legend */}
                     <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-[12px] font-semibold text-muted-foreground">
-                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> Hadir</span>
-                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Alpha</span>
-                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> Sakit</span>
-                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#eab308]" /> Izin/Telat</span>
+                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#10b981]" /> {t('admin.monitoring.attendance.present')}</span>
+                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> {t('admin.monitoring.attendance.absent')}</span>
+                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> {t('admin.monitoring.attendance.sick')}</span>
+                       <span className="flex items-center gap-1.5 whitespace-nowrap"><div className="w-2.5 h-2.5 rounded-full bg-[#eab308]" /> {t('admin.monitoring.attendance.lateLeave')}</span>
                     </div>
                  </div>
 
                  {/* Grid Design */}
                  <div className="grid grid-cols-7 gap-y-3 gap-x-2 sm:gap-x-4 sm:gap-y-4 max-w-[850px] mx-auto w-full">
                     {/* Days Row */}
-                    {['MIN', 'SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB'].map(day => (
-                      <div key={day} className="text-center text-[11px] font-extrabold text-muted-foreground tracking-[0.15em] mb-1">{day}</div>
+                    {dayLabelKeys.map(dayKey => (
+                      <div key={dayKey} className="text-center text-[11px] font-extrabold text-muted-foreground tracking-[0.15em] mb-1">{t(dayKey)}</div>
                     ))}
 
                     {/* Matrix rendering */}
@@ -334,7 +391,7 @@ export default function MonitoringDataPage() {
                         badge = <span className="mt-1.5 bg-amber-100 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">IZ</span>
                       } else if (item.status === 'TODAY') {
                         boxStyle = "bg-primary text-white shadow-md border border-primary/80"
-                        badge = <span className="mt-1.5 bg-white/20 text-white px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">HARI INI</span>
+                        badge = <span className="mt-1.5 bg-white/20 text-white px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">{t('admin.monitoring.calendar.today')}</span>
                       } else {
                         // Future days
                         boxStyle = "bg-muted/50 border border-border/60 text-muted-foreground"
@@ -353,19 +410,19 @@ export default function MonitoringDataPage() {
                  <div className="grid grid-cols-4 gap-4 mt-8 pt-8 border-t border-border">
                     <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-emerald-300">
                        <span className="text-3xl font-black text-emerald-600">{summary.H}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Hadir (HD)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">{t('admin.monitoring.attendance.present')} (HD)</span>
                     </div>
                     <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-red-300">
                        <span className="text-3xl font-black text-red-600">{summary.A}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Alpha (AL)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">{t('admin.monitoring.attendance.absent')} (AL)</span>
                     </div>
                     <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-blue-300">
                        <span className="text-3xl font-black text-blue-600">{summary.S}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Sakit (SK)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">{t('admin.monitoring.attendance.sick')} (SK)</span>
                     </div>
                     <div className="bg-card rounded-[16px] p-5 flex flex-col items-center border border-border shadow-sm transition-all hover:border-amber-300">
                        <span className="text-3xl font-black text-amber-500">{summary.I}</span>
-                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">Izin (IZ)</span>
+                       <span className="text-[11px] font-extrabold uppercase tracking-widest text-muted-foreground mt-1">{t('admin.monitoring.attendance.leave')} (IZ)</span>
                     </div>
                  </div>
 
@@ -378,10 +435,10 @@ export default function MonitoringDataPage() {
                   <div className="flex justify-between items-center mb-6 pb-4 border-b border-border/60">
                     <h4 className="font-black text-foreground text-lg flex items-center gap-3">
                       <div className="p-1.5 bg-purple-50 rounded-lg"><FileText className="w-5 h-5 text-purple-600" /></div> 
-                      Dokumen Pribadi
+                      {t('admin.monitoring.documents.title')}
                     </h4>
                     <button onClick={() => setNewDocPrompt(true)} className="bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors">
-                      <Plus className="w-4 h-4"/> Tambah
+                      <Plus className="w-4 h-4"/> {t('admin.monitoring.documents.add')}
                     </button>
                   </div>
 
@@ -390,14 +447,14 @@ export default function MonitoringDataPage() {
                       <input 
                         autoFocus
                         type="text" 
-                        placeholder="Nama dokumen, cth: SKCK" 
+                        placeholder={t('admin.monitoring.documents.placeholder')} 
                         className="flex-1 text-sm font-semibold px-3 py-2 bg-card border border-border rounded-lg outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm"
                         value={newDocName}
                         onChange={(e) => setNewDocName(e.target.value)}
                         onKeyDown={(e) => e.key === 'Enter' && handleAddRequest()}
                       />
-                      <button onClick={handleAddRequest} className="bg-primary text-white px-3 py-2 rounded-lg text-xs font-extrabold tracking-wide hover:bg-primary/90 shadow-sm">Kirim</button>
-                      <button onClick={() => {setNewDocPrompt(false); setNewDocName('');}} className="text-muted-foreground hover:bg-slate-200 hover:text-slate-600 p-1.5 rounded-md transition-colors" title="Batal tambah dokumen"><X className="w-4 h-4"/></button>
+                      <button onClick={handleAddRequest} className="bg-primary text-white px-3 py-2 rounded-lg text-xs font-extrabold tracking-wide hover:bg-primary/90 shadow-sm">{t('admin.monitoring.documents.send')}</button>
+                      <button onClick={() => {setNewDocPrompt(false); setNewDocName('');}} className="text-muted-foreground hover:bg-slate-200 hover:text-slate-600 p-1.5 rounded-md transition-colors" title={t('admin.monitoring.documents.cancelAdd')}><X className="w-4 h-4"/></button>
                     </div>
                   )}
 
@@ -409,7 +466,7 @@ export default function MonitoringDataPage() {
                               <FileText className="w-6 h-6" />
                            </div>
                            <div className="flex-1 min-w-0 flex flex-col justify-center h-12">
-                             <span className="text-sm font-bold text-foreground truncate mb-1">{doc.type}</span>
+                             <span className="text-sm font-bold text-foreground truncate mb-1">{getDocTypeLabel(doc.type)}</span>
                              <div>{renderDocStatus(doc.status)}</div>
                            </div>
                          </div>
@@ -417,21 +474,21 @@ export default function MonitoringDataPage() {
                            <div className={`grid ${doc.status === 'Pending' ? 'grid-cols-3' : 'grid-cols-2'} gap-2 mt-2 pt-3 border-t border-border/60`}>
                              {doc.status === 'Pending' && (
                                <button onClick={() => handleApproveDoc(idx)} className="bg-emerald-50 hover:bg-emerald-500 hover:border-emerald-600 hover:text-white border border-emerald-200 text-emerald-600 text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1 transition-colors">
-                                  Setujui
+                                  {t('admin.monitoring.documents.approve')}
                                </button>
                              )}
                              <button className="bg-muted/50 hover:bg-primary hover:text-white hover:border-primary border border-border text-foreground text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
-                                <Eye className="w-3.5 h-3.5"/> Lihat
+                                <Eye className="w-3.5 h-3.5"/> {t('admin.monitoring.documents.view')}
                              </button>
                              <button className="bg-muted/50 hover:bg-primary hover:text-white hover:border-primary border border-border text-foreground text-[11px] font-extrabold tracking-wide py-2 rounded-lg flex items-center justify-center gap-1.5 transition-colors">
-                                <Download className="w-3.5 h-3.5"/> Unduh
+                                <Download className="w-3.5 h-3.5"/> {t('admin.monitoring.documents.download')}
                              </button>
                            </div>
                          )}
                          {doc.status === 'Missing' && (
                            <div className="mt-2 pt-3 border-t border-border/60 grid grid-cols-1">
                              <button className="bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 text-[11px] font-extrabold tracking-wide py-2 rounded-lg transition-colors">
-                                Kirim Pengingat
+                                {t('admin.monitoring.documents.remind')}
                              </button>
                            </div>
                          )}
@@ -459,7 +516,7 @@ export default function MonitoringDataPage() {
             </div>
             <div>
               <h2 className="text-foreground text-xl font-black">{t('admin.monitoring.title')}</h2>
-              <p className="text-muted-foreground text-xs hidden sm:block">Kelola Kehadiran dan Validasi Dokumen Utama</p>
+              <p className="text-muted-foreground text-xs hidden sm:block">{t('admin.monitoring.subtitle')}</p>
             </div>
           </div>
         </header>
@@ -497,9 +554,9 @@ export default function MonitoringDataPage() {
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center w-full gap-4">
                 <div>
                   <h3 className="text-foreground text-lg font-bold leading-7">
-                    Daftar {activeTab === 'student-data' ? 'Siswa' : 'Guru'} Terdaftar
+                    {activeTab === 'student-data' ? t('admin.monitoring.listTitle.student') : t('admin.monitoring.listTitle.teacher')}
                   </h3>
-                  <p className="text-muted-foreground text-sm">Pilih data untuk mengakses kalender progres absensi dan kelengkapan berkas.</p>
+                  <p className="text-muted-foreground text-sm">{t('admin.monitoring.listSubtitle')}</p>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto">
@@ -510,13 +567,13 @@ export default function MonitoringDataPage() {
                     <select
                       value={filterSubInfo}
                       onChange={(e) => setFilterSubInfo(e.target.value)}
-                      aria-label={activeTab === 'student-data' ? 'Filter berdasarkan kelas' : 'Filter berdasarkan mata pelajaran'}
-                      title={activeTab === 'student-data' ? 'Filter berdasarkan kelas' : 'Filter berdasarkan mata pelajaran'}
+                      aria-label={activeTab === 'student-data' ? t('admin.monitoring.filter.class') : t('admin.monitoring.filter.subject')}
+                      title={activeTab === 'student-data' ? t('admin.monitoring.filter.class') : t('admin.monitoring.filter.subject')}
                       className="w-full appearance-none bg-card border border-border text-foreground font-semibold text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 pr-8 py-2.5 outline-none transition-all shadow-sm"
                     >
-                      <option value="">Semua {activeTab === 'student-data' ? 'Kelas' : 'Mata Pelajaran'}</option>
+                      <option value="">{activeTab === 'student-data' ? t('admin.monitoring.filter.allClasses') : t('admin.monitoring.filter.allSubjects')}</option>
                       {uniqueSubInfos.map(info => (
-                        <option key={info} value={info}>{info}</option>
+                        <option key={info} value={info}>{getSubInfoLabel(info)}</option>
                       ))}
                     </select>
                   </div>
@@ -527,7 +584,7 @@ export default function MonitoringDataPage() {
                     </div>
                     <input
                       type="text"
-                      placeholder="Cari nama atau NIP/NISN..."
+                      placeholder={t('admin.monitoring.search.placeholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full bg-card text-foreground font-medium placeholder-slate-400 border border-border text-sm rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary block pl-10 px-4 py-2.5 outline-none transition-all shadow-sm"
@@ -542,10 +599,10 @@ export default function MonitoringDataPage() {
                 <table className="w-full text-left border-collapse min-w-[600px]">
                   <thead>
                     <tr className="bg-muted/50 text-[11px] uppercase tracking-wider font-extrabold text-muted-foreground border-b border-border">
-                      <th className="px-6 py-4">Nama Lengkap</th>
+                      <th className="px-6 py-4">{t('admin.monitoring.table.fullName')}</th>
                       <th className="px-6 py-4">{activeTab === 'student-data' ? 'NISN' : 'NIP'}</th>
-                      <th className="px-6 py-4">{activeTab === 'student-data' ? 'Kelas' : 'Mata Pelajaran'}</th>
-                      <th className="px-6 py-4">Status Kehadiran Update Terakhir</th>
+                      <th className="px-6 py-4">{activeTab === 'student-data' ? t('admin.monitoring.table.class') : t('admin.monitoring.table.subject')}</th>
+                      <th className="px-6 py-4">{t('admin.monitoring.table.attendanceStatus')}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -564,7 +621,7 @@ export default function MonitoringDataPage() {
                           </div>
                         </td>
                         <td className="px-6 py-4 text-sm text-muted-foreground font-semibold">{person.idNumber}</td>
-                        <td className="px-6 py-4 text-sm text-muted-foreground"><span className="bg-muted border border-slate-200/60 px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wide font-bold text-foreground">{person.subInfo}</span></td>
+                        <td className="px-6 py-4 text-sm text-muted-foreground"><span className="bg-muted border border-slate-200/60 px-2.5 py-1 rounded-md text-[11px] uppercase tracking-wide font-bold text-foreground">{getSubInfoLabel(person.subInfo)}</span></td>
                         <td className="px-6 py-4">{renderAttendanceStatus(person.status)}</td>
                       </tr>
                     ))}
@@ -575,7 +632,7 @@ export default function MonitoringDataPage() {
                                <div className="p-4 bg-muted/50 rounded-full border border-border/60">
                                  <Users className="w-8 h-8 text-slate-300" />
                                </div>
-                               <span className="font-semibold text-sm">Tidak ada data yang ditemukan.</span>
+                               <span className="font-semibold text-sm">{t('admin.monitoring.empty')}</span>
                              </div>
                           </td>
                        </tr>

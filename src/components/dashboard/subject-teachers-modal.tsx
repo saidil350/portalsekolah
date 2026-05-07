@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react'
 import { X, Loader2, UserPlus, UserMinus, Search, Users } from 'lucide-react'
 import type { SubjectTeacher, TeacherRank } from '@/types/data-management'
-import { getTeacherRankConfig } from '@/types/data-management'
+import { getTeacherRankConfig, type TeacherRankCode } from '@/types/data-management'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Teacher {
   id: string
@@ -31,6 +32,7 @@ export default function SubjectTeachersModal({
   onRemove,
   onUpdateRank
 }: SubjectTeachersModalProps) {
+  const { t } = useLanguage()
   const [assignedTeachers, setAssignedTeachers] = useState<SubjectTeacher[]>([])
   const [availableTeachers, setAvailableTeachers] = useState<Teacher[]>([])
   const [teacherRanks, setTeacherRanks] = useState<TeacherRank[]>([])
@@ -40,6 +42,22 @@ export default function SubjectTeachersModal({
   const [error, setError] = useState('')
   const [selectedTeacherId, setSelectedTeacherId] = useState('')
   const [selectedTeacherRankId, setSelectedTeacherRankId] = useState('')
+
+  const getTeacherRankLabel = (rankCode: TeacherRankCode | undefined | null, fallback?: string) => {
+    if (!rankCode) return fallback || ''
+
+    const rankKeys: Record<TeacherRankCode, Parameters<typeof t>[0]> = {
+      HONORER: 'admin.dataManagement.teacherRank.honorer',
+      MAGANG: 'admin.dataManagement.teacherRank.magang',
+      PERTAMA: 'admin.dataManagement.teacherRank.pertama',
+      MUDA: 'admin.dataManagement.teacherRank.muda',
+      MADYA: 'admin.dataManagement.teacherRank.madya',
+      UTAMA: 'admin.dataManagement.teacherRank.utama',
+      AHLI: 'admin.dataManagement.teacherRank.ahli',
+    }
+
+    return t(rankKeys[rankCode])
+  }
 
   // Fetch data when modal opens
   useEffect(() => {
@@ -64,7 +82,7 @@ export default function SubjectTeachersModal({
       if (teachersResult.success && teachersResult.data) {
         setAssignedTeachers(teachersResult.data)
       } else {
-        setError(teachersResult.error || 'Gagal memuat data guru pengajar')
+        setError(teachersResult.error || t('admin.dataManagement.modal.subjectTeachers.loadTeachingTeachersFailed'))
       }
 
       // Fetch available teachers (all active teachers)
@@ -73,7 +91,7 @@ export default function SubjectTeachersModal({
       if (dropdownResult.success && dropdownResult.teachers) {
         setAvailableTeachers(dropdownResult.teachers)
       } else {
-        setError(dropdownResult.error || 'Gagal memuat data guru')
+        setError(dropdownResult.error || t('admin.dataManagement.modal.subjectTeachers.loadTeachersFailed'))
       }
 
       // Fetch teacher ranks
@@ -82,11 +100,11 @@ export default function SubjectTeachersModal({
       if (ranksResult.success && ranksResult.teacherRanks) {
         setTeacherRanks(ranksResult.teacherRanks)
       } else {
-        setError(ranksResult.error || 'Gagal memuat data tingkat guru')
+        setError(ranksResult.error || t('admin.dataManagement.modal.subjectTeachers.loadRanksFailed'))
       }
     } catch (err) {
       console.error('Error fetching data:', err)
-      setError('Gagal memuat data')
+      setError(t('admin.dataManagement.modal.subjectTeachers.loadFailed'))
     } finally {
       setLoadingData(false)
     }
@@ -94,7 +112,7 @@ export default function SubjectTeachersModal({
 
   const handleAssignTeacher = async () => {
     if (!selectedTeacherId) {
-      setError('Pilih guru terlebih dahulu')
+      setError(t('admin.dataManagement.modal.subjectTeachers.selectTeacherRequired'))
       return
     }
 
@@ -105,8 +123,8 @@ export default function SubjectTeachersModal({
       await fetchData() // Refresh data
       setSelectedTeacherId('')
       setSelectedTeacherRankId('')
-    } catch (err: any) {
-      setError(err.message || 'Gagal menugaskan guru')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.subjectTeachers.assignFailed'))
     } finally {
       setLoading(false)
     }
@@ -118,8 +136,8 @@ export default function SubjectTeachersModal({
     try {
       await onRemove(teacherId)
       await fetchData() // Refresh data
-    } catch (err: any) {
-      setError(err.message || 'Gagal menghapus guru')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.subjectTeachers.removeFailed'))
     } finally {
       setLoading(false)
     }
@@ -131,8 +149,8 @@ export default function SubjectTeachersModal({
     try {
       await onUpdateRank(teacherId, teacherRankId)
       await fetchData() // Refresh data
-    } catch (err: any) {
-      setError(err.message || 'Gagal mengupdate tingkat guru')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.subjectTeachers.updateRankFailed'))
     } finally {
       setLoading(false)
     }
@@ -156,7 +174,9 @@ export default function SubjectTeachersModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border shrink-0">
           <div>
-            <h3 className="text-xl font-bold text-foreground">Distribusi Guru Pengajar</h3>
+            <h3 className="text-xl font-bold text-foreground">
+              {t('admin.dataManagement.modal.subjectTeachers.title')}
+            </h3>
             <p className="text-sm text-muted-foreground mt-1">{subjectName}</p>
           </div>
           <button
@@ -180,7 +200,7 @@ export default function SubjectTeachersModal({
           {loadingData ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-primary" />
-              <span className="ml-3 text-muted-foreground">Memuat data...</span>
+              <span className="ml-3 text-muted-foreground">{t('common.state.loadingData')}</span>
             </div>
           ) : (
             <>
@@ -188,7 +208,7 @@ export default function SubjectTeachersModal({
               <div className="bg-muted/50 rounded-lg p-4">
                 <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <UserPlus className="w-4 h-4" />
-                  Tambah Guru Pengajar
+                  {t('admin.dataManagement.modal.subjectTeachers.addTitle')}
                 </h4>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -196,7 +216,7 @@ export default function SubjectTeachersModal({
                     <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                     <input
                       type="text"
-                      placeholder="Cari guru..."
+                      placeholder={t('admin.dataManagement.modal.subjectTeachers.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full pl-9 pr-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
@@ -210,7 +230,7 @@ export default function SubjectTeachersModal({
                       className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-card"
                       disabled={loading}
                     >
-                      <option value="">Pilih Guru</option>
+                      <option value="">{t('admin.dataManagement.modal.subjectTeachers.selectTeacher')}</option>
                       {filteredAvailableTeachers.map(teacher => (
                         <option key={teacher.id} value={teacher.id}>
                           {teacher.full_name} {teacher.nip ? `(${teacher.nip})` : ''}
@@ -225,10 +245,10 @@ export default function SubjectTeachersModal({
                       className="w-full px-4 py-2 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all bg-card"
                       disabled={loading}
                     >
-                      <option value="">Tanpa Tingkat</option>
+                      <option value="">{t('admin.dataManagement.modal.subjectTeachers.noRank')}</option>
                       {teacherRanks.map(rank => (
                         <option key={rank.id} value={rank.id}>
-                          {rank.icon ? `${rank.icon} ` : ''}{rank.name}
+                          {rank.icon ? `${rank.icon} ` : ''}{getTeacherRankLabel(rank.code, rank.name)}
                         </option>
                       ))}
                     </select>
@@ -241,7 +261,7 @@ export default function SubjectTeachersModal({
                     className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     <UserPlus className="w-4 h-4" />
-                    Tambah Guru
+                    {t('admin.dataManagement.modal.subjectTeachers.addTeacher')}
                   </button>
                 </div>
               </div>
@@ -250,13 +270,17 @@ export default function SubjectTeachersModal({
               <div>
                 <h4 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
                   <Users className="w-4 h-4" />
-                  Guru Pengajar ({assignedTeachers.length})
+                  {t('admin.dataManagement.modal.subjectTeachers.assignedTitle', {
+                    count: assignedTeachers.length,
+                  })}
                 </h4>
 
                 {assignedTeachers.length === 0 ? (
                   <div className="text-center py-8 bg-muted/50 rounded-lg">
                     <Users className="w-12 h-12 text-slate-300 mx-auto mb-2" />
-                    <p className="text-sm text-muted-foreground">Belum ada guru yang ditugaskan</p>
+                    <p className="text-sm text-muted-foreground">
+                      {t('admin.dataManagement.modal.subjectTeachers.empty')}
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -288,7 +312,7 @@ export default function SubjectTeachersModal({
                                 {rankConfig && (
                                   <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold ${rankConfig.bgColor} ${rankConfig.color}`}>
                                     {rankConfig.icon && <span>{rankConfig.icon}</span>}
-                                    {rankConfig.label}
+                                    {getTeacherRankLabel(rankConfig.value, rankConfig.label)}
                                   </span>
                                 )}
                               </div>
@@ -314,12 +338,12 @@ export default function SubjectTeachersModal({
                               onChange={(e) => e.target.value && handleUpdateRank(subjectTeacher.teacher_id, e.target.value)}
                               className="px-2 py-1 text-xs border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary bg-card"
                               disabled={loading}
-                              title="Ubah tingkat guru"
+                              title={t('admin.dataManagement.modal.subjectTeachers.changeRank')}
                             >
-                              <option value="">Tanpa Tingkat</option>
+                              <option value="">{t('admin.dataManagement.modal.subjectTeachers.noRank')}</option>
                               {teacherRanks.map(rank => (
                                 <option key={rank.id} value={rank.id}>
-                                  {rank.icon ? `${rank.icon} ` : ''}{rank.name}
+                                  {rank.icon ? `${rank.icon} ` : ''}{getTeacherRankLabel(rank.code, rank.name)}
                                 </option>
                               ))}
                             </select>
@@ -327,7 +351,7 @@ export default function SubjectTeachersModal({
                               onClick={() => handleRemoveTeacher(subjectTeacher.teacher_id)}
                               disabled={loading}
                               className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                              title="Hapus Guru"
+                              title={t('admin.dataManagement.modal.subjectTeachers.removeTeacher')}
                             >
                               <UserMinus className="w-4 h-4" />
                             </button>
@@ -350,7 +374,7 @@ export default function SubjectTeachersModal({
             disabled={loading}
             className="px-6 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Tutup
+            {t('admin.dataManagement.modal.close')}
           </button>
         </div>
       </div>

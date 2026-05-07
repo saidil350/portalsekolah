@@ -1,17 +1,16 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { DownloadCloud, Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus, GraduationCap } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import type { TranslationKey } from '@/utils/dictionary';
 import { useToastHelpers } from '@/components/ui/toaster';
-import { Button, Input, EmptyTableState } from '@/components/ui';
+import { EmptyTableState } from '@/components/ui';
 import {
   fetchRooms, createRoom, updateRoom, deleteRoom,
   fetchSubjects, createSubject, updateSubject, deleteSubject,
   fetchSemesters, createSemester, updateSemester, deleteSemester,
-  fetchSubjectDropdownData, fetchSubjectTeachers, fetchTeachersForDropdown,
-  fetchTeacherRanks, updateTeacherRank
 } from './actions';
 import {
   fetchAcademicYears, createAcademicYear, updateAcademicYear, deleteAcademicYear,
@@ -20,8 +19,9 @@ import {
 } from '@/app/dashboard/admin-it/data-akademik/actions';
 import { fetchClasses } from '@/app/dashboard/admin-it/kelas-dan-roster/actions';
 import { getOccupancyBadge } from '@/types/class-roster';
-import { getRoomTypeConfig, getSubjectTypeConfig, getStatusConfig, type Room, type Subject, type RoomFormData, type SubjectFormData } from '@/types/data-management';
+import { getRoomTypeConfig, getSubjectTypeConfig, getStatusConfig, type Room, type Subject, type RoomFormData, type SubjectFormData, type RoomType, type SubjectType } from '@/types/data-management';
 import type { Class, AcademicYear, Semester, ClassLevel, Department } from '@/types/class-roster';
+import type { AcademicYearFormData, ClassLevelFormData, DepartmentFormData, SemesterFormData } from '@/types';
 import { getTeacherRankConfig } from '@/types/data-management';
 import RoomModal from '@/components/dashboard/room-modal';
 import SubjectModal from '@/components/dashboard/subject-modal';
@@ -33,6 +33,9 @@ import DepartmentModal from '@/components/dashboard/department-modal';
 
 type Tab = 'kelas_dan_roster' | 'ruangan' | 'mata_pelajaran' | 'master_data';
 type MasterDataSubTab = 'academic_years' | 'semesters' | 'class_levels' | 'departments';
+
+const getErrorMessage = (err: unknown, fallback: string) =>
+  err instanceof Error && err.message ? err.message : fallback;
 
 interface ConfirmDialog {
   isOpen: boolean;
@@ -220,8 +223,8 @@ export default function DataManagementPage() {
 
       setClasses(data || []);
       setClassesTotal(count || 0);
-    } catch (err: any) {
-      setClassesError(err.message || 'Gagal memuat data kelas');
+    } catch (err: unknown) {
+      setClassesError(getErrorMessage(err, t('admin.dataManagement.error.loadClasses')));
     } finally {
       setClassesLoading(false);
     }
@@ -233,7 +236,7 @@ export default function DataManagementPage() {
     try {
       const result = await fetchRooms({
         search: roomsSearch,
-        room_type: roomsTypeFilter as any,
+        room_type: roomsTypeFilter ? (roomsTypeFilter as RoomType) : undefined,
         is_active: roomsActiveFilter,
         page: roomsPage,
         limit: 10
@@ -243,10 +246,10 @@ export default function DataManagementPage() {
         setRooms(result.data);
         setRoomsTotal(result.total || 0);
       } else {
-        setRoomsError(result.error || 'Gagal memuat data ruangan');
+        setRoomsError(result.error || t('admin.dataManagement.error.loadRooms'));
       }
-    } catch (err: any) {
-      setRoomsError(err.message || 'Gagal memuat data ruangan');
+    } catch (err: unknown) {
+      setRoomsError(getErrorMessage(err, t('admin.dataManagement.error.loadRooms')));
     } finally {
       setRoomsLoading(false);
     }
@@ -258,7 +261,7 @@ export default function DataManagementPage() {
     try {
       const result = await fetchSubjects({
         search: subjectsSearch,
-        subject_type: subjectsTypeFilter as any,
+        subject_type: subjectsTypeFilter ? (subjectsTypeFilter as SubjectType) : undefined,
         department_id: subjectsDeptFilter,
         page: subjectsPage,
         limit: 10
@@ -279,10 +282,10 @@ export default function DataManagementPage() {
         setSubjects(subjectsWithTeachers);
         setSubjectsTotal(result.total || 0);
       } else {
-        setSubjectsError(result.error || 'Gagal memuat data mata pelajaran');
+        setSubjectsError(result.error || t('admin.dataManagement.error.loadSubjects'));
       }
-    } catch (err: any) {
-      setSubjectsError(err.message || 'Gagal memuat data mata pelajaran');
+    } catch (err: unknown) {
+      setSubjectsError(getErrorMessage(err, t('admin.dataManagement.error.loadSubjects')));
     } finally {
       setSubjectsLoading(false);
     }
@@ -295,7 +298,7 @@ export default function DataManagementPage() {
       if (masterDataSubTab === 'academic_years') {
         const result = await fetchAcademicYears({ page: 1, limit: 50 });
         if (result.success && result.data) setAcademicYears(result.data);
-        else setMasterDataError(result.error || 'Gagal memuat data tahun ajaran');
+        else setMasterDataError(result.error || t('admin.dataManagement.error.loadAcademicYears'));
       } else if (masterDataSubTab === 'semesters') {
         // Fetch semesters AND academic years in parallel (academicYears needed for modal dropdown & table display)
         const [semResult, ayResult] = await Promise.all([
@@ -303,19 +306,19 @@ export default function DataManagementPage() {
           academicYears.length === 0 ? fetchAcademicYears({ page: 1, limit: 100 }) : Promise.resolve({ success: true as const, data: academicYears })
         ]);
         if (semResult.success && semResult.data) setSemesters(semResult.data);
-        else setMasterDataError(semResult.error || 'Gagal memuat data semester');
+        else setMasterDataError(semResult.error || t('admin.dataManagement.error.loadSemesters'));
         if (ayResult.success && ayResult.data) setAcademicYears(ayResult.data);
       } else if (masterDataSubTab === 'class_levels') {
         const result = await fetchClassLevels({ page: 1, limit: 50 });
         if (result.success && result.data) setClassLevels(result.data);
-        else setMasterDataError(result.error || 'Gagal memuat data tingkat kelas');
+        else setMasterDataError(result.error || t('admin.dataManagement.error.loadClassLevels'));
       } else if (masterDataSubTab === 'departments') {
         const result = await fetchDepartments({ page: 1, limit: 50 });
         if (result.success && result.data) setDepartments(result.data);
-        else setMasterDataError(result.error || 'Gagal memuat data jurusan');
+        else setMasterDataError(result.error || t('admin.dataManagement.error.loadDepartments'));
       }
-    } catch (err: any) {
-      setMasterDataError(err.message || 'Gagal memuat data');
+    } catch (err: unknown) {
+      setMasterDataError(getErrorMessage(err, t('admin.dataManagement.error.loadData')));
     } finally {
       setMasterDataLoading(false);
     }
@@ -326,13 +329,13 @@ export default function DataManagementPage() {
     try {
       const result = await createRoom(data);
       if (result.success) {
-        success('Ruangan berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.roomCreated'));
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal menambahkan ruangan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createRoom'), getErrorMessage(err, t('admin.dataManagement.error.createRoom')));
       throw err;
     }
   };
@@ -342,13 +345,13 @@ export default function DataManagementPage() {
     try {
       const result = await updateRoom(roomModal.room.id, data);
       if (result.success) {
-        success('Ruangan berhasil diupdate');
+        success(t('admin.dataManagement.toast.roomUpdated'));
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal mengupdate ruangan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateRoom'), getErrorMessage(err, t('admin.dataManagement.error.updateRoom')));
       throw err;
     }
   };
@@ -357,13 +360,13 @@ export default function DataManagementPage() {
     try {
       const result = await deleteRoom(id);
       if (result.success) {
-        success('Ruangan berhasil dihapus');
+        success(t('admin.dataManagement.toast.roomDeleted'));
         fetchRoomsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal menghapus ruangan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteRoom'), getErrorMessage(err, t('admin.dataManagement.error.deleteRoom')));
     }
   };
 
@@ -372,13 +375,13 @@ export default function DataManagementPage() {
     try {
       const result = await createSubject(data);
       if (result.success) {
-        success('Mata pelajaran berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.subjectCreated'));
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal menambahkan mata pelajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createSubject'), getErrorMessage(err, t('admin.dataManagement.error.createSubject')));
       throw err;
     }
   };
@@ -388,13 +391,13 @@ export default function DataManagementPage() {
     try {
       const result = await updateSubject(subjectModal.subject.id, data);
       if (result.success) {
-        success('Mata pelajaran berhasil diupdate');
+        success(t('admin.dataManagement.toast.subjectUpdated'));
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal mengupdate mata pelajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateSubject'), getErrorMessage(err, t('admin.dataManagement.error.updateSubject')));
       throw err;
     }
   };
@@ -403,13 +406,13 @@ export default function DataManagementPage() {
     try {
       const result = await deleteSubject(id);
       if (result.success) {
-        success('Mata pelajaran berhasil dihapus');
+        success(t('admin.dataManagement.toast.subjectDeleted'));
         fetchSubjectsData();
       } else {
         throw new Error(result.error);
       }
-    } catch (err: any) {
-      error('Gagal menghapus mata pelajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteSubject'), getErrorMessage(err, t('admin.dataManagement.error.deleteSubject')));
     }
   };
 
@@ -418,10 +421,10 @@ export default function DataManagementPage() {
     const { assignTeacherToSubject } = await import('./actions');
     try {
       await assignTeacherToSubject(subjectTeachersModal.subjectId, teacherId, teacherRankId);
-      success('Guru berhasil ditugaskan');
+      success(t('admin.dataManagement.toast.teacherAssigned'));
       fetchSubjectsData();
-    } catch (err: any) {
-      error('Gagal menugaskan guru', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.assignTeacher'), getErrorMessage(err, t('admin.dataManagement.error.assignTeacher')));
       throw err;
     }
   };
@@ -430,10 +433,10 @@ export default function DataManagementPage() {
     const { removeTeacherFromSubject } = await import('./actions');
     try {
       await removeTeacherFromSubject(subjectTeachersModal.subjectId, teacherId);
-      success('Guru berhasil dihapus dari mata pelajaran');
+      success(t('admin.dataManagement.toast.teacherRemoved'));
       fetchSubjectsData();
-    } catch (err: any) {
-      error('Gagal menghapus guru', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.removeTeacher'), getErrorMessage(err, t('admin.dataManagement.error.removeTeacher')));
       throw err;
     }
   };
@@ -442,10 +445,10 @@ export default function DataManagementPage() {
     const { updateTeacherRank } = await import('./actions');
     try {
       await updateTeacherRank(subjectTeachersModal.subjectId, teacherId, teacherRankId);
-      success('Tingkat guru berhasil diperbarui');
+      success(t('admin.dataManagement.toast.teacherRankUpdated'));
       fetchSubjectsData();
-    } catch (err: any) {
-      error('Gagal mengupdate tingkat guru', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateTeacherRank'), getErrorMessage(err, t('admin.dataManagement.error.updateTeacherRank')));
       throw err;
     }
   };
@@ -463,10 +466,10 @@ export default function DataManagementPage() {
 
       if (error) throw error;
 
-      success('Kelas berhasil dihapus');
+      success(t('admin.dataManagement.toast.classDeleted'));
       fetchClassesData();
-    } catch (err: any) {
-      error('Gagal menghapus kelas', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteClass'), getErrorMessage(err, t('admin.dataManagement.error.deleteClass')));
     }
   };
 
@@ -475,29 +478,29 @@ export default function DataManagementPage() {
   };
 
   // CRUD operations for Master Data
-  const handleCreateAcademicYear = async (data: any) => {
+  const handleCreateAcademicYear = async (data: AcademicYearFormData) => {
     try {
       const result = await createAcademicYear(data);
       if (result.success) {
-        success('Tahun ajaran berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.academicYearCreated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menambahkan tahun ajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createAcademicYear'), getErrorMessage(err, t('admin.dataManagement.error.createAcademicYear')));
       throw err;
     }
   };
 
-  const handleUpdateAcademicYear = async (data: any) => {
+  const handleUpdateAcademicYear = async (data: AcademicYearFormData) => {
     if (!academicYearModal.academicYear) return;
     try {
       const result = await updateAcademicYear(academicYearModal.academicYear.id, data);
       if (result.success) {
-        success('Tahun ajaran berhasil diupdate');
+        success(t('admin.dataManagement.toast.academicYearUpdated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal mengupdate tahun ajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateAcademicYear'), getErrorMessage(err, t('admin.dataManagement.error.updateAcademicYear')));
       throw err;
     }
   };
@@ -506,37 +509,37 @@ export default function DataManagementPage() {
     try {
       const result = await deleteAcademicYear(id);
       if (result.success) {
-        success('Tahun ajaran berhasil dihapus');
+        success(t('admin.dataManagement.toast.academicYearDeleted'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menghapus tahun ajaran', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteAcademicYear'), getErrorMessage(err, t('admin.dataManagement.error.deleteAcademicYear')));
     }
   };
 
-  const handleCreateSemester = async (data: any) => {
+  const handleCreateSemester = async (data: SemesterFormData) => {
     try {
       const result = await createSemester(data);
       if (result.success) {
-        success('Semester berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.semesterCreated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menambahkan semester', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createSemester'), getErrorMessage(err, t('admin.dataManagement.error.createSemester')));
       throw err;
     }
   };
 
-  const handleUpdateSemester = async (data: any) => {
+  const handleUpdateSemester = async (data: SemesterFormData) => {
     if (!semesterModal.semester) return;
     try {
       const result = await updateSemester(semesterModal.semester.id, data);
       if (result.success) {
-        success('Semester berhasil diupdate');
+        success(t('admin.dataManagement.toast.semesterUpdated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal mengupdate semester', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateSemester'), getErrorMessage(err, t('admin.dataManagement.error.updateSemester')));
       throw err;
     }
   };
@@ -545,37 +548,37 @@ export default function DataManagementPage() {
     try {
       const result = await deleteSemester(id);
       if (result.success) {
-        success('Semester berhasil dihapus');
+        success(t('admin.dataManagement.toast.semesterDeleted'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menghapus semester', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteSemester'), getErrorMessage(err, t('admin.dataManagement.error.deleteSemester')));
     }
   };
 
-  const handleCreateClassLevel = async (data: any) => {
+  const handleCreateClassLevel = async (data: ClassLevelFormData) => {
     try {
       const result = await createClassLevel(data);
       if (result.success) {
-        success('Tingkat kelas berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.classLevelCreated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menambahkan tingkat kelas', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createClassLevel'), getErrorMessage(err, t('admin.dataManagement.error.createClassLevel')));
       throw err;
     }
   };
 
-  const handleUpdateClassLevel = async (data: any) => {
+  const handleUpdateClassLevel = async (data: ClassLevelFormData) => {
     if (!classLevelModal.classLevel) return;
     try {
       const result = await updateClassLevel(classLevelModal.classLevel.id, data);
       if (result.success) {
-        success('Tingkat kelas berhasil diupdate');
+        success(t('admin.dataManagement.toast.classLevelUpdated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal mengupdate tingkat kelas', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateClassLevel'), getErrorMessage(err, t('admin.dataManagement.error.updateClassLevel')));
       throw err;
     }
   };
@@ -584,37 +587,37 @@ export default function DataManagementPage() {
     try {
       const result = await deleteClassLevel(id);
       if (result.success) {
-        success('Tingkat kelas berhasil dihapus');
+        success(t('admin.dataManagement.toast.classLevelDeleted'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menghapus tingkat kelas', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteClassLevel'), getErrorMessage(err, t('admin.dataManagement.error.deleteClassLevel')));
     }
   };
 
-  const handleCreateDepartment = async (data: any) => {
+  const handleCreateDepartment = async (data: DepartmentFormData) => {
     try {
       const result = await createDepartment(data);
       if (result.success) {
-        success('Jurusan berhasil ditambahkan');
+        success(t('admin.dataManagement.toast.departmentCreated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menambahkan jurusan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.createDepartment'), getErrorMessage(err, t('admin.dataManagement.error.createDepartment')));
       throw err;
     }
   };
 
-  const handleUpdateDepartment = async (data: any) => {
+  const handleUpdateDepartment = async (data: DepartmentFormData) => {
     if (!departmentModal.department) return;
     try {
       const result = await updateDepartment(departmentModal.department.id, data);
       if (result.success) {
-        success('Jurusan berhasil diupdate');
+        success(t('admin.dataManagement.toast.departmentUpdated'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal mengupdate jurusan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.updateDepartment'), getErrorMessage(err, t('admin.dataManagement.error.updateDepartment')));
       throw err;
     }
   };
@@ -623,11 +626,11 @@ export default function DataManagementPage() {
     try {
       const result = await deleteDepartment(id);
       if (result.success) {
-        success('Jurusan berhasil dihapus');
+        success(t('admin.dataManagement.toast.departmentDeleted'));
         fetchMasterData();
       } else throw new Error(result.error);
-    } catch (err: any) {
-      error('Gagal menghapus jurusan', err.message);
+    } catch (err: unknown) {
+      error(t('admin.dataManagement.error.deleteDepartment'), getErrorMessage(err, t('admin.dataManagement.error.deleteDepartment')));
     }
   };
 
@@ -638,21 +641,21 @@ export default function DataManagementPage() {
 
     if (activeTab === 'kelas_dan_roster') {
       filename = `data-kelas-${new Date().toISOString().split('T')[0]}.csv`;
-      csv = 'Nama,Kode,Level,Kapasitas,Terisi,Jurusan,Status\n';
+      csv = `${t('admin.dataManagement.csv.classesHeader')}\n`;
       classes.forEach(cls => {
-        csv += `"${cls.name}","${cls.code}","${cls.class_level?.name || '-'}","${cls.capacity}","${cls.current_enrollment}","${cls.department?.name || '-'}","${cls.is_active ? 'Aktif' : 'Nonaktif'}"\n`;
+        csv += `"${cls.name}","${cls.code}","${cls.class_level?.name || '-'}","${cls.capacity}","${cls.current_enrollment}","${cls.department?.name || '-'}","${getActiveLabel(cls.is_active)}"\n`;
       });
     } else if (activeTab === 'ruangan') {
       filename = `data-ruangan-${new Date().toISOString().split('T')[0]}.csv`;
-      csv = 'Nama,Kode,Tipe,Kapasitas,Lantai,Gedung,Status\n';
+      csv = `${t('admin.dataManagement.csv.roomsHeader')}\n`;
       rooms.forEach(room => {
-        csv += `"${room.name}","${room.code}","${getRoomTypeConfig(room.room_type).label}","${room.capacity}","${room.floor}","${room.building || '-'}","${room.is_active ? 'Aktif' : 'Nonaktif'}"\n`;
+        csv += `"${room.name}","${room.code}","${getRoomTypeLabel(room.room_type)}","${room.capacity}","${room.floor}","${room.building || '-'}","${getActiveLabel(room.is_active)}"\n`;
       });
     } else if (activeTab === 'mata_pelajaran') {
       filename = `data-mata-pelajaran-${new Date().toISOString().split('T')[0]}.csv`;
-      csv = 'Nama,Kode,Tipe,Status\n';
+      csv = `${t('admin.dataManagement.csv.subjectsHeader')}\n`;
       subjects.forEach(subject => {
-        csv += `"${subject.name}","${subject.code}","${getSubjectTypeConfig(subject.subject_type).label}","${subject.is_active ? 'Aktif' : 'Nonaktif'}"\n`;
+        csv += `"${subject.name}","${subject.code}","${getSubjectTypeLabel(subject.subject_type)}","${getActiveLabel(subject.is_active)}"\n`;
       });
     }
 
@@ -662,7 +665,7 @@ export default function DataManagementPage() {
     link.href = URL.createObjectURL(blob);
     link.download = filename;
     link.click();
-    success('Data berhasil diekspor');
+    success(t('admin.dataManagement.toast.exportSuccess'));
   };
 
   // Get initials for avatar
@@ -688,22 +691,56 @@ export default function DataManagementPage() {
     return colors[index];
   };
 
+  const getActiveLabel = (isActive: boolean) => (
+    isActive ? t('common.state.active') : t('common.state.inactive')
+  );
+
+  const getRoomTypeLabel = (roomType: string) => {
+    const labels: Record<string, TranslationKey> = {
+      CLASSROOM: 'admin.dataManagement.roomType.classroom',
+      LAB: 'admin.dataManagement.roomType.lab',
+      OFFICE: 'admin.dataManagement.roomType.office',
+      AUDITORIUM: 'admin.dataManagement.roomType.auditorium',
+      OTHER: 'admin.dataManagement.roomType.other',
+    };
+    return t(labels[roomType] || 'admin.dataManagement.roomType.other');
+  };
+
+  const getSubjectTypeLabel = (subjectType: string) => {
+    const labels: Record<string, TranslationKey> = {
+      MANDATORY: 'admin.dataManagement.subjectType.mandatory',
+      ELECTIVE: 'admin.dataManagement.subjectType.elective',
+      EXTRACURRICULAR: 'admin.dataManagement.subjectType.extracurricular',
+    };
+    return t(labels[subjectType] || 'admin.dataManagement.subjectType.mandatory');
+  };
+
+  const getOccupancyLabel = (label: string) => {
+    const labels: Record<string, TranslationKey> = {
+      'Hampir Penuh': 'admin.dataManagement.occupancy.nearlyFull',
+      'Tersedia': 'admin.dataManagement.occupancy.available',
+      'Kurang Siswa': 'admin.dataManagement.occupancy.lowStudents',
+    };
+    return labels[label] ? t(labels[label]) : label;
+  };
+
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA] relative min-w-0 overflow-hidden text-sm">
       {/* Confirm Dialog */}
       {confirmDialog.isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
           <div className="bg-card rounded-xl shadow-xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold text-foreground mb-2">Hapus Data</h3>
+            <h3 className="text-lg font-bold text-foreground mb-2">{t('admin.dataManagement.dialog.delete.title')}</h3>
             <p className="text-muted-foreground mb-6">
-              Apakah Anda yakin ingin menghapus <strong>{confirmDialog.name}</strong>? Tindakan ini tidak dapat dibatalkan.
+              {t('admin.dataManagement.dialog.delete.message')
+                .replace('{name}', confirmDialog.name)}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmDialog({ isOpen: false, type: null, id: null, name: '' })}
                 className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm"
               >
-                Batal
+                {t('common.action.cancel')}
               </button>
               <button
                 onClick={async () => {
@@ -720,7 +757,7 @@ export default function DataManagementPage() {
                 }}
                 className="flex-1 px-4 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all font-medium text-sm"
               >
-                Hapus
+                {t('common.action.delete')}
               </button>
             </div>
           </div>
@@ -731,8 +768,8 @@ export default function DataManagementPage() {
       <header className="pt-8 px-8 pb-0 bg-card border-b border-border shrink-0">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-foreground text-[22px] font-bold tracking-tight mb-1">Manajemen Data Master</h2>
-            <p className="text-muted-foreground text-[13px] font-medium">Kelola data kelas, ruangan, dan mata pelajaran</p>
+            <h2 className="text-foreground text-[22px] font-bold tracking-tight mb-1">{t('admin.dataManagement.title')}</h2>
+            <p className="text-muted-foreground text-[13px] font-medium">{t('admin.dataManagement.subtitle')}</p>
           </div>
         </div>
 
@@ -744,7 +781,7 @@ export default function DataManagementPage() {
               activeTab === 'kelas_dan_roster' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
-            Kelas & Roster
+            {t('admin.dataManagement.tab.classes')}
           </button>
           <button
             onClick={() => setActiveTab('ruangan')}
@@ -752,7 +789,7 @@ export default function DataManagementPage() {
               activeTab === 'ruangan' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
-            Ruangan
+            {t('admin.dataManagement.tab.rooms')}
           </button>
           <button
             onClick={() => setActiveTab('mata_pelajaran')}
@@ -760,7 +797,7 @@ export default function DataManagementPage() {
               activeTab === 'mata_pelajaran' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
-            Mata Pelajaran
+            {t('admin.dataManagement.tab.subjects')}
           </button>
           <button
             onClick={() => setActiveTab('master_data')}
@@ -768,7 +805,7 @@ export default function DataManagementPage() {
               activeTab === 'master_data' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground hover:text-slate-700'
             }`}
           >
-            Master Data
+            {t('admin.dataManagement.tab.masterData')}
           </button>
         </div>
       </header>
@@ -786,8 +823,8 @@ export default function DataManagementPage() {
                 <Search className="w-4 h-4 text-muted-foreground absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  aria-label="Cari data"
-                  placeholder="Cari data..."
+                  aria-label={t('admin.dataManagement.search.label')}
+                  placeholder={t('admin.dataManagement.search.placeholder')}
                   value={activeTab === 'kelas_dan_roster' ? classesSearch : activeTab === 'ruangan' ? roomsSearch : subjectsSearch}
                   onChange={(e) => {
                     if (activeTab === 'kelas_dan_roster') setClassesSearch(e.target.value);
@@ -805,30 +842,30 @@ export default function DataManagementPage() {
                   <select
                     className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
                     value={activeTab === 'kelas_dan_roster' ? classesLevelFilter : activeTab === 'ruangan' ? roomsTypeFilter : subjectsTypeFilter}
-                    aria-label={activeTab === 'kelas_dan_roster' ? 'Filter Level' : 'Filter Tipe'}
+                    aria-label={activeTab === 'kelas_dan_roster' ? t('admin.dataManagement.filter.level') : t('admin.dataManagement.filter.type')}
                     onChange={(e) => {
                       if (activeTab === 'kelas_dan_roster') { setClassesLevelFilter(e.target.value); setClassesPage(1); }
                       else if (activeTab === 'ruangan') { setRoomsTypeFilter(e.target.value); setRoomsPage(1); }
                       else { setSubjectsTypeFilter(e.target.value); setSubjectsPage(1); }
                     }}
                   >
-                    <option value="">{activeTab === 'kelas_dan_roster' ? 'Semua Level' : activeTab === 'ruangan' ? 'Semua Tipe' : 'Semua Tipe'}</option>
+                    <option value="">{activeTab === 'kelas_dan_roster' ? t('admin.dataManagement.filter.allLevels') : t('admin.dataManagement.filter.allTypes')}</option>
                     {activeTab === 'kelas_dan_roster' && classLevels.map(level => (
                       <option key={level.id} value={level.id}>{level.name}</option>
                     ))}
                     {activeTab === 'ruangan' && [
-                      { value: 'CLASSROOM', label: 'Ruang Kelas' },
-                      { value: 'LAB', label: 'Laboratorium' },
-                      { value: 'OFFICE', label: 'Kantor' },
-                      { value: 'AUDITORIUM', label: 'Aula' },
-                      { value: 'OTHER', label: 'Lainnya' }
+                      { value: 'CLASSROOM', label: getRoomTypeLabel('CLASSROOM') },
+                      { value: 'LAB', label: getRoomTypeLabel('LAB') },
+                      { value: 'OFFICE', label: getRoomTypeLabel('OFFICE') },
+                      { value: 'AUDITORIUM', label: getRoomTypeLabel('AUDITORIUM') },
+                      { value: 'OTHER', label: getRoomTypeLabel('OTHER') }
                     ].map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
                     {activeTab === 'mata_pelajaran' && [
-                      { value: 'MANDATORY', label: 'Wajib' },
-                      { value: 'ELECTIVE', label: 'Pilihan' },
-                      { value: 'EXTRACURRICULAR', label: 'Ekstrakurikuler' }
+                      { value: 'MANDATORY', label: getSubjectTypeLabel('MANDATORY') },
+                      { value: 'ELECTIVE', label: getSubjectTypeLabel('ELECTIVE') },
+                      { value: 'EXTRACURRICULAR', label: getSubjectTypeLabel('EXTRACURRICULAR') }
                     ].map(type => (
                       <option key={type.value} value={type.value}>{type.label}</option>
                     ))}
@@ -842,13 +879,13 @@ export default function DataManagementPage() {
                     <select
                       className="appearance-none bg-muted/50 border border-border rounded-lg py-2.5 pl-4 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-foreground cursor-pointer min-w-[150px]"
                       value={activeTab === 'kelas_dan_roster' ? classesDeptFilter : subjectsDeptFilter}
-                      aria-label="Filter Jurusan"
+                      aria-label={t('admin.dataManagement.filter.department')}
                       onChange={(e) => {
                         if (activeTab === 'kelas_dan_roster') { setClassesDeptFilter(e.target.value); setClassesPage(1); }
                         else { setSubjectsDeptFilter(e.target.value); setSubjectsPage(1); }
                       }}
                     >
-                      <option value="">Semua Jurusan</option>
+                      <option value="">{t('admin.dataManagement.filter.allDepartments')}</option>
                       {departments.map(dept => (
                         <option key={dept.id} value={dept.id}>{dept.name}</option>
                       ))}
@@ -873,7 +910,7 @@ export default function DataManagementPage() {
                   className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary text-white rounded-lg font-semibold shadow-[0px_2px_4px_rgba(19,127,236,0.1)] hover:bg-primary/90 transition-all active:scale-[0.97] whitespace-nowrap"
                 >
                   <Plus className="w-4 h-4" strokeWidth={3} />
-                  Tambah Baru
+                  {t('common.action.addNew')}
                 </button>
               </div>
             </div>
@@ -884,7 +921,7 @@ export default function DataManagementPage() {
               {(activeTab === 'kelas_dan_roster' && classesLoading) || (activeTab === 'ruangan' && roomsLoading) || (activeTab === 'mata_pelajaran' && subjectsLoading) ? (
                 <div className="flex-1 flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                  <span className="ml-3 text-muted-foreground font-medium">Memuat data...</span>
+                  <span className="ml-3 text-muted-foreground font-medium">{t('common.state.loadingData')}</span>
                 </div>
               ) : (
                 <>
@@ -931,26 +968,26 @@ export default function DataManagementPage() {
                                         <p className="text-xs text-muted-foreground font-mono">{cls.code}</p>
                                       </div>
                                       <span className={`inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold ${badge.bgColor} ${badge.color}`}>
-                                        {badge.icon} {badge.label}
+                                        {badge.icon} {getOccupancyLabel(badge.label)}
                                       </span>
                                     </div>
 
                                     {/* Info */}
                                     <div className="space-y-2 mb-4">
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">Level</span>
+                                        <span className="text-muted-foreground">{t('common.label.level')}</span>
                                         <span className="font-medium text-foreground">{cls.class_level?.name || '-'}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">Jurusan</span>
+                                        <span className="text-muted-foreground">{t('common.label.department')}</span>
                                         <span className="font-medium text-foreground">{cls.department?.name || '-'}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">Siswa</span>
+                                        <span className="text-muted-foreground">{t('common.label.students')}</span>
                                         <span className="font-medium text-foreground">{cls.current_enrollment} / {cls.capacity}</span>
                                       </div>
                                       <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">Wali Kelas</span>
+                                        <span className="text-muted-foreground">{t('common.label.homeroomTeacher')}</span>
                                         <span className="font-medium text-foreground">{cls.wali_kelas?.full_name || '-'}</span>
                                       </div>
                                     </div>
@@ -960,7 +997,7 @@ export default function DataManagementPage() {
                                       <div className="flex items-center gap-2">
                                         <div className={`w-2 h-2 rounded-full ${cls.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                         <span className={`text-xs font-bold ${cls.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                                          {cls.is_active ? 'Aktif' : 'Nonaktif'}
+                                          {getActiveLabel(cls.is_active)}
                                         </span>
                                       </div>
                                       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -970,7 +1007,7 @@ export default function DataManagementPage() {
                                             setConfirmDialog({ isOpen: true, type: 'class', id: cls.id, name: cls.name });
                                           }}
                                           className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                          title="Hapus"
+                                          title={t('common.action.delete')}
                                         >
                                           <Trash2 className="w-4 h-4" />
                                         </button>
@@ -998,18 +1035,18 @@ export default function DataManagementPage() {
                               setRoomsActiveFilter(undefined);
                               setRoomsPage(1);
                             }}
-                            addLabel="Tambah Ruangan"
+                            addLabel={t('admin.dataManagement.add.room')}
                           />
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
                               <tr className="bg-slate-50/50 border-b border-border">
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TIPE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">KAPASITAS & LANTAI</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">GEDUNG</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.nameCode')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.type')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.capacity')} & {t('admin.dataManagement.table.floor')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.building')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -1029,13 +1066,13 @@ export default function DataManagementPage() {
                                     <td className="px-6 py-4">
                                       <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
                                         <span>{typeConfig.icon}</span>
-                                        {typeConfig.label}
+                                        {getRoomTypeLabel(room.room_type)}
                                       </span>
                                     </td>
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col">
-                                        <span className="text-muted-foreground text-sm">{room.capacity} orang</span>
-                                        <span className="text-muted-foreground text-xs">Lantai {room.floor}</span>
+                                        <span className="text-muted-foreground text-sm">{room.capacity} {t('common.label.people')}</span>
+                                        <span className="text-muted-foreground text-xs">{t('admin.dataManagement.table.floor')} {room.floor}</span>
                                       </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -1044,7 +1081,7 @@ export default function DataManagementPage() {
                                     <td className="px-6 py-4">
                                       <div className="flex items-center gap-2">
                                         <div className={`w-[6px] h-[6px] rounded-full ${statusConfig.dotColor}`} />
-                                        <span className={`text-xs font-bold ${statusConfig.color}`}>{statusConfig.label}</span>
+                                        <span className={`text-xs font-bold ${statusConfig.color}`}>{getActiveLabel(room.is_active)}</span>
                                       </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -1052,14 +1089,14 @@ export default function DataManagementPage() {
                                         <button
                                           onClick={() => setRoomModal({ isOpen: true, mode: 'edit', room })}
                                           className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                          title="Edit"
+                                          title={t('common.action.edit')}
                                         >
                                           <Edit2 className="w-4 h-4" />
                                         </button>
                                         <button
                                           onClick={() => setConfirmDialog({ isOpen: true, type: 'room', id: room.id, name: room.name })}
                                           className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                          title="Hapus"
+                                          title={t('common.action.delete')}
                                         >
                                           <Trash2 className="w-4 h-4" />
                                         </button>
@@ -1087,17 +1124,17 @@ export default function DataManagementPage() {
                               setSubjectsDeptFilter('');
                               setSubjectsPage(1);
                             }}
-                            addLabel="Tambah Mata Pelajaran"
+                            addLabel={t('admin.dataManagement.add.subject')}
                           />
                         ) : (
                           <table className="w-full text-left border-collapse">
                             <thead>
                               <tr className="bg-slate-50/50 border-b border-border">
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TIPE</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">GURU PENGAJAR</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
-                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.nameCode')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.type')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.assignedTeachers')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
+                                <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                               </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -1119,13 +1156,13 @@ export default function DataManagementPage() {
                                     </td>
                                     <td className="px-6 py-4">
                                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium ${typeConfig.bgColor} ${typeConfig.color}`}>
-                                        {typeConfig.label}
+                                        {getSubjectTypeLabel(subject.subject_type)}
                                       </span>
                                     </td>
                                     <td className="px-6 py-4">
                                       <div className="flex flex-col gap-1">
                                         {teachers.length === 0 ? (
-                                          <span className="text-muted-foreground text-xs italic">Belum ada guru</span>
+                                          <span className="text-muted-foreground text-xs italic">{t('admin.dataManagement.empty.noTeachers')}</span>
                                         ) : (
                                           <>
                                             {teachers.slice(0, 2).map((subjectTeacher) => {
@@ -1161,7 +1198,7 @@ export default function DataManagementPage() {
                                             })}
                                             {teachers.length > 2 && (
                                               <span className="text-[10px] text-muted-foreground">
-                                                +{teachers.length - 2} guru lainnya
+                                                {t('admin.dataManagement.moreTeachers').replace('{count}', String(teachers.length - 2))}
                                               </span>
                                             )}
                                           </>
@@ -1172,7 +1209,7 @@ export default function DataManagementPage() {
                                     <td className="px-6 py-4">
                                       <div className="flex items-center gap-2">
                                         <div className={`w-[6px] h-[6px] rounded-full ${statusConfig.dotColor}`} />
-                                        <span className={`text-xs font-bold ${statusConfig.color}`}>{statusConfig.label}</span>
+                                        <span className={`text-xs font-bold ${statusConfig.color}`}>{getActiveLabel(subject.is_active)}</span>
                                       </div>
                                     </td>
                                     <td className="px-6 py-4">
@@ -1180,21 +1217,21 @@ export default function DataManagementPage() {
                                         <button
                                           onClick={() => setSubjectTeachersModal({ isOpen: true, subjectId: subject.id, subjectName: subject.name })}
                                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
-                                          title="Distribusi Guru"
+                                          title={t('admin.dataManagement.table.assignedTeachers')}
                                         >
                                           <UserPlus className="w-4 h-4" />
                                         </button>
                                         <button
                                           onClick={() => setSubjectModal({ isOpen: true, mode: 'edit', subject })}
                                           className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                          title="Edit"
+                                          title={t('common.action.edit')}
                                         >
                                           <Edit2 className="w-4 h-4" />
                                         </button>
                                         <button
                                           onClick={() => setConfirmDialog({ isOpen: true, type: 'subject', id: subject.id, name: subject.name })}
                                           className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                          title="Hapus"
+                                          title={t('common.action.delete')}
                                         >
                                           <Trash2 className="w-4 h-4" />
                                         </button>
@@ -1222,7 +1259,7 @@ export default function DataManagementPage() {
                               }`}
                             >
                               <Calendar className="w-3.5 h-3.5 inline mr-1.5" />
-                              Tahun Ajaran
+                              {t('admin.dataManagement.master.academicYears')}
                             </button>
                             <button
                               onClick={() => setMasterDataSubTab('semesters')}
@@ -1233,7 +1270,7 @@ export default function DataManagementPage() {
                               }`}
                             >
                               <BookOpen className="w-3.5 h-3.5 inline mr-1.5" />
-                              Semester
+                              {t('admin.dataManagement.master.semesters')}
                             </button>
                             <button
                               onClick={() => setMasterDataSubTab('class_levels')}
@@ -1244,7 +1281,7 @@ export default function DataManagementPage() {
                               }`}
                             >
                               <Users className="w-3.5 h-3.5 inline mr-1.5" />
-                              Tingkat Kelas
+                              {t('admin.dataManagement.master.classLevels')}
                             </button>
                             <button
                               onClick={() => setMasterDataSubTab('departments')}
@@ -1255,7 +1292,7 @@ export default function DataManagementPage() {
                               }`}
                             >
                               <UserPlus className="w-3.5 h-3.5 inline mr-1.5" />
-                              Jurusan
+                              {t('admin.dataManagement.master.departments')}
                             </button>
                           </div>
 
@@ -1264,7 +1301,7 @@ export default function DataManagementPage() {
                             {masterDataLoading ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                                <span className="mt-3 text-muted-foreground font-medium">Memuat data...</span>
+                                <span className="mt-3 text-muted-foreground font-medium">{t('common.state.loadingData')}</span>
                               </div>
                             ) : masterDataError ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
@@ -1283,16 +1320,16 @@ export default function DataManagementPage() {
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setAcademicYearModal({ isOpen: true, mode: 'create', academicYear: null })}
-                                      addLabel="Tambah Tahun Ajaran"
+                                      addLabel={t('admin.dataManagement.add.academicYear')}
                                     />
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
                                         <tr className="bg-slate-50/50 border-b border-border">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">PERIODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.name')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.period')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1304,14 +1341,14 @@ export default function DataManagementPage() {
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col text-sm">
                                                 <span className="text-muted-foreground">{ay.start_date}</span>
-                                                <span className="text-muted-foreground">s.d. {ay.end_date}</span>
+                                                <span className="text-muted-foreground">{t('common.label.until')} {ay.end_date}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${ay.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                                 <span className={`text-xs font-bold ${ay.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                                                  {ay.is_active ? 'Aktif' : 'Nonaktif'}
+                                                  {getActiveLabel(ay.is_active)}
                                                 </span>
                                               </div>
                                             </td>
@@ -1320,14 +1357,14 @@ export default function DataManagementPage() {
                                                 <button
                                                   onClick={() => setAcademicYearModal({ isOpen: true, mode: 'edit', academicYear: ay })}
                                                   className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                                  title="Edit"
+                                                  title={t('common.action.edit')}
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'academic_year', id: ay.id, name: ay.name })}
                                                   className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                                  title="Hapus"
+                                                  title={t('common.action.delete')}
                                                 >
                                                   <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -1348,16 +1385,16 @@ export default function DataManagementPage() {
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setSemesterModal({ isOpen: true, mode: 'create', semester: null })}
-                                      addLabel="Tambah Semester"
+                                      addLabel={t('admin.dataManagement.add.semester')}
                                     />
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
                                         <tr className="bg-slate-50/50 border-b border-border">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">TAHUN AJARAN</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">PERIODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.name')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.academicYear')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.period')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1366,7 +1403,7 @@ export default function DataManagementPage() {
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col">
                                                 <span className="text-foreground font-bold text-sm tracking-tight">{sem.name}</span>
-                                                <span className="text-xs text-muted-foreground mt-0.5">Semester {sem.semester_number}</span>
+                                                <span className="text-xs text-muted-foreground mt-0.5">{t('common.label.semester')} {sem.semester_number}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -1375,7 +1412,7 @@ export default function DataManagementPage() {
                                             <td className="px-6 py-4">
                                               <div className="flex flex-col text-sm">
                                                 <span className="text-muted-foreground">{sem.start_date}</span>
-                                                <span className="text-muted-foreground">s.d. {sem.end_date}</span>
+                                                <span className="text-muted-foreground">{t('common.label.until')} {sem.end_date}</span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">
@@ -1383,14 +1420,14 @@ export default function DataManagementPage() {
                                                 <button
                                                   onClick={() => setSemesterModal({ isOpen: true, mode: 'edit', semester: sem })}
                                                   className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                                  title="Edit"
+                                                  title={t('common.action.edit')}
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'semester', id: sem.id, name: sem.name })}
                                                   className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                                  title="Hapus"
+                                                  title={t('common.action.delete')}
                                                 >
                                                   <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -1408,21 +1445,21 @@ export default function DataManagementPage() {
                                   classLevels.length === 0 ? (
                                     <EmptyTableState
                                       type="generic"
-                                      title="Belum ada tingkat kelas"
-                                      description="Tambahkan tingkat kelas seperti X, XI, atau XII untuk organisasi data."
+                                      title={t('admin.dataManagement.empty.noClassLevels.title')}
+                                      description={t('admin.dataManagement.empty.noClassLevels.desc')}
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setClassLevelModal({ isOpen: true, mode: 'create', classLevel: null })}
-                                      addLabel="Tambah Tingkat"
+                                      addLabel={t('admin.dataManagement.add.classLevel')}
                                     />
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
                                         <tr className="bg-slate-50/50 border-b border-border">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">LEVEL</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.nameCode')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.level')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1443,7 +1480,7 @@ export default function DataManagementPage() {
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${cl.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                                 <span className={`text-xs font-bold ${cl.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                                                  {cl.is_active ? 'Aktif' : 'Nonaktif'}
+                                                  {getActiveLabel(cl.is_active)}
                                                 </span>
                                               </div>
                                             </td>
@@ -1452,14 +1489,14 @@ export default function DataManagementPage() {
                                                 <button
                                                   onClick={() => setClassLevelModal({ isOpen: true, mode: 'edit', classLevel: cl })}
                                                   className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                                  title="Edit"
+                                                  title={t('common.action.edit')}
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'class_level', id: cl.id, name: cl.name })}
                                                   className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                                  title="Hapus"
+                                                  title={t('common.action.delete')}
                                                 >
                                                   <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -1477,20 +1514,20 @@ export default function DataManagementPage() {
                                   departments.length === 0 ? (
                                     <EmptyTableState
                                       type="generic"
-                                      title="Belum ada data jurusan"
-                                      description="Tambahkan jurusan atau kompetensi keahlian yang ada di sekolah."
+                                      title={t('admin.dataManagement.empty.noDepartments.title')}
+                                      description={t('admin.dataManagement.empty.noDepartments.desc')}
                                       hasSearch={false}
                                       hasFilters={false}
                                       onAdd={() => setDepartmentModal({ isOpen: true, mode: 'create', department: null })}
-                                      addLabel="Tambah Jurusan"
+                                      addLabel={t('admin.dataManagement.add.department')}
                                     />
                                   ) : (
                                     <table className="w-full text-left border-collapse">
                                       <thead>
                                         <tr className="bg-slate-50/50 border-b border-border">
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">NAMA & KODE</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">STATUS</th>
-                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">AKSI</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('admin.dataManagement.table.nameCode')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-slate-100">
@@ -1511,7 +1548,7 @@ export default function DataManagementPage() {
                                               <div className="flex items-center gap-2">
                                                 <div className={`w-[6px] h-[6px] rounded-full ${dept.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
                                                 <span className={`text-xs font-bold ${dept.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
-                                                  {dept.is_active ? 'Aktif' : 'Nonaktif'}
+                                                  {getActiveLabel(dept.is_active)}
                                                 </span>
                                               </div>
                                             </td>
@@ -1520,14 +1557,14 @@ export default function DataManagementPage() {
                                                 <button
                                                   onClick={() => setDepartmentModal({ isOpen: true, mode: 'edit', department: dept })}
                                                   className="p-2 text-muted-foreground hover:text-slate-600 hover:bg-accent rounded-md transition-colors"
-                                                  title="Edit"
+                                                  title={t('common.action.edit')}
                                                 >
                                                   <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                   onClick={() => setConfirmDialog({ isOpen: true, type: 'department', id: dept.id, name: dept.name })}
                                                   className="p-2 text-muted-foreground hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
-                                                  title="Hapus"
+                                                  title={t('common.action.delete')}
                                                 >
                                                   <Trash2 className="w-4 h-4" />
                                                 </button>
@@ -1553,9 +1590,10 @@ export default function DataManagementPage() {
             {/* Pagination footer */}
             <div className="mt-auto border-t border-border/60 p-4 px-6 flex items-center justify-between bg-card text-sm">
               <span className="text-muted-foreground font-medium text-[13px]">
-                Menampilkan {activeTab === 'kelas_dan_roster' ? ((classesPage - 1) * 12 + 1) : activeTab === 'ruangan' ? ((roomsPage - 1) * 10 + 1) : ((subjectsPage - 1) * 10 + 1)}
-                -{activeTab === 'kelas_dan_roster' ? Math.min(classesPage * 12, classesTotal) : activeTab === 'ruangan' ? Math.min(roomsPage * 10, roomsTotal) : Math.min(subjectsPage * 10, subjectsTotal)}
-                dari {activeTab === 'kelas_dan_roster' ? classesTotal : activeTab === 'ruangan' ? roomsTotal : subjectsTotal} data
+                {t('admin.dataManagement.pagination.showing')
+                  .replace('{start}', String(activeTab === 'kelas_dan_roster' ? ((classesPage - 1) * 12 + 1) : activeTab === 'ruangan' ? ((roomsPage - 1) * 10 + 1) : ((subjectsPage - 1) * 10 + 1)))
+                  .replace('{end}', String(activeTab === 'kelas_dan_roster' ? Math.min(classesPage * 12, classesTotal) : activeTab === 'ruangan' ? Math.min(roomsPage * 10, roomsTotal) : Math.min(subjectsPage * 10, subjectsTotal)))
+                  .replace('{total}', String(activeTab === 'kelas_dan_roster' ? classesTotal : activeTab === 'ruangan' ? roomsTotal : subjectsTotal))}
               </span>
               <div className="flex items-center gap-2">
                 <button
@@ -1567,7 +1605,7 @@ export default function DataManagementPage() {
                   disabled={(activeTab === 'kelas_dan_roster' && classesPage <= 1) || (activeTab === 'ruangan' && roomsPage <= 1) || (activeTab === 'mata_pelajaran' && subjectsPage <= 1)}
                   className="px-4 py-1.5 border border-border rounded-md text-muted-foreground font-semibold text-[13px] hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Sebelumnya
+                  {t('common.action.previous')}
                 </button>
                 <button
                   onClick={() => {
@@ -1579,7 +1617,7 @@ export default function DataManagementPage() {
                   disabled={(activeTab === 'kelas_dan_roster' && classesPage >= Math.ceil(classesTotal / 12)) || (activeTab === 'ruangan' && roomsPage >= Math.ceil(roomsTotal / 10)) || (activeTab === 'mata_pelajaran' && subjectsPage >= Math.ceil(subjectsTotal / 10))}
                   className="px-4 py-1.5 border border-border rounded-md text-muted-foreground font-semibold text-[13px] hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Selanjutnya
+                  {t('common.action.next')}
                 </button>
               </div>
             </div>

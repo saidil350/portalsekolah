@@ -72,17 +72,17 @@ export default function RoomModal({
     setError('')
 
     if (!formData.name.trim()) {
-      setError('Nama ruangan wajib diisi')
+      setError(t('admin.dataManagement.modal.room.nameRequired'))
       return
     }
 
     if (!formData.code.trim()) {
-      setError('Kode ruangan wajib diisi')
+      setError(t('admin.dataManagement.modal.room.codeRequired'))
       return
     }
 
     if (formData.capacity < 1) {
-      setError('Kapasitas harus minimal 1')
+      setError(t('admin.dataManagement.modal.room.capacityMin'))
       return
     }
 
@@ -90,8 +90,8 @@ export default function RoomModal({
     try {
       await onSubmit(formData)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan data')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.saveFailed'))
     } finally {
       setLoading(false)
     }
@@ -117,7 +117,7 @@ export default function RoomModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <h3 className="text-xl font-bold text-foreground">
-            {mode === 'create' ? 'Tambah Ruangan' : 'Edit Ruangan'}
+            {mode === 'create' ? t('admin.dataManagement.modal.room.create') : t('admin.dataManagement.modal.room.edit')}
           </h3>
           <button
             type="button"
@@ -139,14 +139,14 @@ export default function RoomModal({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
-              Nama Ruangan <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.room.name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Contoh: Ruang Kelas 10A"
+              placeholder={t('admin.dataManagement.modal.room.namePlaceholder')}
               className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               required
               disabled={loading}
@@ -155,14 +155,14 @@ export default function RoomModal({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
-              Kode <span className="text-red-500">*</span>
+              {t('common.label.code')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               name="code"
               value={formData.code}
               onChange={handleChange}
-              placeholder="Contoh: RK-10A"
+              placeholder={t('admin.dataManagement.modal.room.codePlaceholder')}
               className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
               required
               disabled={loading}
@@ -171,7 +171,7 @@ export default function RoomModal({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
-              Tipe Ruangan <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.room.type')} <span className="text-red-500">*</span>
             </label>
             <select
               name="room_type"
@@ -183,7 +183,7 @@ export default function RoomModal({
             >
               {ROOM_TYPE_CONFIGS.map(type => (
                 <option key={type.value} value={type.value}>
-                  {type.icon} {type.label}
+                  {type.icon} {type.value === 'CLASSROOM' ? t('admin.dataManagement.roomType.classroom') : type.value === 'LAB' ? t('admin.dataManagement.roomType.lab') : type.value === 'OFFICE' ? t('admin.dataManagement.roomType.office') : type.value === 'AUDITORIUM' ? t('admin.dataManagement.roomType.auditorium') : t('admin.dataManagement.roomType.other')}
                 </option>
               ))}
             </select>
@@ -192,7 +192,7 @@ export default function RoomModal({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">
-                Kapasitas <span className="text-red-500">*</span>
+                {t('common.label.capacity')} <span className="text-red-500">*</span>
               </label>
               <input
                 type="number"
@@ -208,7 +208,7 @@ export default function RoomModal({
 
             <div>
               <label className="block text-sm font-medium text-foreground mb-1.5">
-                Lantai
+                {t('admin.dataManagement.table.floor')}
               </label>
               <input
                 type="number"
@@ -224,14 +224,14 @@ export default function RoomModal({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
-              Gedung
+              {t('admin.dataManagement.table.building')}
             </label>
             <input
               type="text"
               name="building"
               value={formData.building}
               onChange={handleChange}
-              placeholder="Contoh: Gedung A"
+              placeholder={t('admin.dataManagement.modal.room.buildingPlaceholder')}
               className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
               disabled={loading}
             />
@@ -239,13 +239,13 @@ export default function RoomModal({
 
           <div>
             <label className="block text-sm font-medium text-foreground mb-1.5">
-              Deskripsi
+              {t('admin.dataManagement.modal.room.description')}
             </label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Deskripsi ruangan"
+              placeholder={t('admin.dataManagement.modal.room.descriptionPlaceholder')}
               rows={3}
               className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
               disabled={loading}
@@ -263,7 +263,7 @@ export default function RoomModal({
               disabled={loading}
             />
             <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-              Ruangan aktif
+              {t('admin.dataManagement.modal.room.active')}
             </label>
           </div>
 
@@ -274,7 +274,7 @@ export default function RoomModal({
               className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
             >
-              Batal
+              {t('common.action.cancel')}
             </button>
             <button
               type="submit"
@@ -284,10 +284,10 @@ export default function RoomModal({
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Menyimpan...
+                  {t('admin.dataManagement.modal.saving')}
                 </>
               ) : (
-                mode === 'create' ? 'Tambah' : 'Simpan'
+                mode === 'create' ? t('common.action.add') : t('common.action.save')
               )}
             </button>
           </div>

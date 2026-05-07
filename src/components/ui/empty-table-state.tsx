@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { motion } from 'framer-motion'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export interface EmptyTableStateProps {
   type: 'classes' | 'students' | 'rooms' | 'subjects' | 'schedules' | 'teachers' | 'users' | 'generic'
@@ -41,72 +42,73 @@ export function EmptyTableState({
   description,
   className
 }: EmptyTableStateProps) {
+  const { t } = useLanguage()
   const isFiltering = hasFilters || hasSearch
 
   const messages = {
     classes: {
-      title: isFiltering ? 'Tidak ada kelas yang cocok' : 'Belum ada kelas',
+      title: isFiltering ? t('common.empty.classes.filtered') : t('common.empty.classes.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Mulai dengan membuat kelas baru untuk tahun ajaran ini',
+        ? t('common.empty.searchHint')
+        : t('common.empty.classes.desc'),
       icon: <GraduationCap className="w-8 h-8" />,
-      addLabel: 'Buat Kelas Baru'
+      addLabel: t('common.empty.classes.add')
     },
     students: {
-      title: isFiltering ? 'Tidak ada siswa yang cocok' : 'Belum ada siswa di kelas ini',
+      title: isFiltering ? t('common.empty.students.filtered') : t('common.empty.students.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Daftar siswa akan muncul setelah mereka ditambahkan ke kelas ini',
+        ? t('common.empty.searchHint')
+        : t('common.empty.students.desc'),
       icon: <Users className="w-8 h-8" />,
-      addLabel: 'Tambah Siswa'
+      addLabel: t('common.empty.students.add')
     },
     rooms: {
-      title: isFiltering ? 'Tidak ada ruangan yang cocok' : 'Belum ada data ruangan',
+      title: isFiltering ? t('common.empty.rooms.filtered') : t('common.empty.rooms.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Tambahkan ruangan kelas, laboratorium, atau ruangan lainnya',
+        ? t('common.empty.searchHint')
+        : t('common.empty.rooms.desc'),
       icon: <DoorOpen className="w-8 h-8" />,
-      addLabel: 'Tambah Ruangan'
+      addLabel: t('common.empty.rooms.add')
     },
     subjects: {
-      title: isFiltering ? 'Tidak ada mata pelajaran yang cocok' : 'Belum ada mata pelajaran',
+      title: isFiltering ? t('common.empty.subjects.filtered') : t('common.empty.subjects.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Buat mata pelajaran baru untuk kurikulum sekolah',
+        ? t('common.empty.searchHint')
+        : t('common.empty.subjects.desc'),
       icon: <BookOpen className="w-8 h-8" />,
-      addLabel: 'Tambah Mata Pelajaran'
+      addLabel: t('common.empty.subjects.add')
     },
     schedules: {
-      title: isFiltering ? 'Tidak ada jadwal yang cocok' : 'Belum ada jadwal pelajaran',
+      title: isFiltering ? t('common.empty.schedules.filtered') : t('common.empty.schedules.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Buat jadwal pelajaran untuk mengisi waktu kelas ini',
+        ? t('common.empty.searchHint')
+        : t('common.empty.schedules.desc'),
       icon: <Calendar className="w-8 h-8" />,
-      addLabel: 'Tambah Jadwal'
+      addLabel: t('common.empty.schedules.add')
     },
     teachers: {
-      title: isFiltering ? 'Tidak ada guru yang cocok' : 'Belum ada data guru',
+      title: isFiltering ? t('common.empty.teachers.filtered') : t('common.empty.teachers.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Data guru akan muncul setelah mereka ditambahkan ke sistem',
+        ? t('common.empty.searchHint')
+        : t('common.empty.teachers.desc'),
       icon: <User className="w-8 h-8" />,
-      addLabel: 'Tambah Guru'
+      addLabel: t('common.empty.teachers.add')
     },
     users: {
-      title: isFiltering ? 'Tidak ada pengguna yang cocok' : 'Belum ada data pengguna',
+      title: isFiltering ? t('common.empty.users.filtered') : t('common.empty.users.title'),
       description: isFiltering
-        ? 'Coba ubah kata kunci pencarian atau filter yang aktif'
-        : 'Silakan tambahkan pengguna baru untuk memberikan akses ke sistem',
+        ? t('common.empty.searchHint')
+        : t('common.empty.users.desc'),
       icon: <Users className="w-8 h-8" />,
-      addLabel: 'Tambah Pengguna'
+      addLabel: t('common.empty.users.add')
     },
     generic: {
-      title: 'Tidak ada data',
+      title: t('common.empty.generic.title'),
       description: isFiltering
-        ? 'Tidak ada data yang cocok dengan filter atau pencarian'
-        : 'Belum ada data yang tersedia saat ini',
+        ? t('common.empty.generic.filtered')
+        : t('common.empty.generic.desc'),
       icon: <Inbox className="w-8 h-8" />,
-      addLabel: 'Tambah Data'
+      addLabel: t('common.empty.generic.add')
     }
   }
 
@@ -154,7 +156,7 @@ export function EmptyTableState({
             className="bg-card hover:bg-accent border-border text-foreground font-bold px-8 rounded-xl"
             leftIcon={<X className="w-5 h-5" />}
           >
-            Hapus Filter
+            {t('common.action.clearFilter')}
           </Button>
         )}
 

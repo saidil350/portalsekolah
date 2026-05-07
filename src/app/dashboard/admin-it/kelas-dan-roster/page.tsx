@@ -7,6 +7,7 @@ import { fetchClasses, fetchFilterDropdownData } from './actions'
 import type { Class, ClassFilters } from '@/types/class-roster'
 import { getOccupancyBadge } from '@/types/class-roster'
 import { EmptyTableState } from '@/components/ui'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface ClassLevel {
   id: string
@@ -22,6 +23,7 @@ interface Department {
 
 export default function KelasDanRosterPage() {
   const router = useRouter()
+  const { t } = useLanguage()
 
   const [loading, setLoading] = useState(true)
   const [classes, setClasses] = useState<Class[]>([])
@@ -57,10 +59,10 @@ export default function KelasDanRosterPage() {
       if (result.success && result.data) {
         setClasses(result.data)
       } else {
-        setError(result.error || 'Gagal memuat data kelas')
+        setError(result.error || t('admin.roster.error.loadClasses'))
       }
-    } catch (err: any) {
-      setError(err.message || 'Gagal memuat data kelas')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.roster.error.loadClasses'))
     } finally {
       setLoading(false)
     }
@@ -97,9 +99,9 @@ export default function KelasDanRosterPage() {
               <Users className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-foreground">Kelas & Roster</h1>
+              <h1 className="text-2xl font-bold text-foreground">{t('admin.roster.title')}</h1>
               <p className="text-muted-foreground text-sm">
-                Kelola kelas, jadwal, dan daftar siswa
+                {t('admin.roster.subtitle')}
               </p>
             </div>
           </div>
@@ -109,7 +111,7 @@ export default function KelasDanRosterPage() {
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-all shadow-sm shadow-blue-600/30"
           >
             <Plus className="w-4 h-4" />
-            Buat Kelas Baru
+            {t('admin.roster.createClass')}
           </button>
         </div>
       </header>
@@ -122,7 +124,7 @@ export default function KelasDanRosterPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Cari berdasarkan nama atau kode kelas..."
+              placeholder={t('admin.roster.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
@@ -135,10 +137,10 @@ export default function KelasDanRosterPage() {
             <select
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
-              title="Filter berdasarkan tingkat kelas"
+              title={t('admin.roster.filter.level')}
               className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
-              <option value="">Semua Tingkat</option>
+              <option value="">{t('admin.roster.filter.allLevels')}</option>
               {classLevels.map(level => (
                 <option key={level.id} value={level.id}>
                   {level.name}
@@ -153,10 +155,10 @@ export default function KelasDanRosterPage() {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              title="Filter berdasarkan jurusan"
+              title={t('admin.roster.filter.department')}
               className="pl-9 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent text-sm bg-card appearance-none cursor-pointer hover:border-slate-300 transition-colors"
             >
-              <option value="">Semua Jurusan</option>
+              <option value="">{t('admin.roster.filter.allDepartments')}</option>
               {departments.map(dept => (
                 <option key={dept.id} value={dept.id}>
                   {dept.name}
@@ -175,14 +177,14 @@ export default function KelasDanRosterPage() {
               }}
               className="px-4 py-2.5 text-muted-foreground hover:text-slate-900 text-sm font-medium hover:bg-accent rounded-lg transition-colors"
             >
-              Reset Filter
+              {t('common.action.clearFilter')}
             </button>
           )}
         </div>
 
         {/* Result count */}
         <div className="mt-3 text-sm text-muted-foreground">
-          {classes.length} kelas ditemukan
+          {t('admin.roster.resultCount', { count: classes.length })}
         </div>
       </div>
 
@@ -191,7 +193,7 @@ export default function KelasDanRosterPage() {
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-            <span className="ml-3 text-muted-foreground">Memuat data...</span>
+            <span className="ml-3 text-muted-foreground">{t('common.state.loadingData')}</span>
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center h-full">
@@ -203,7 +205,7 @@ export default function KelasDanRosterPage() {
               onClick={fetchClassesData}
               className="px-4 py-2 bg-muted text-foreground rounded-lg hover:bg-slate-200 transition-colors"
             >
-              Coba Lagi
+              {t('admin.roster.retry')}
             </button>
           </div>
         ) : classes.length === 0 ? (
@@ -217,7 +219,7 @@ export default function KelasDanRosterPage() {
               setLevelFilter('')
               setDepartmentFilter('')
             }}
-            addLabel="Buat Kelas Pertama"
+            addLabel={t('admin.roster.firstClass')}
           />
         ) : (
           /* Class Grid */
@@ -264,7 +266,7 @@ export default function KelasDanRosterPage() {
                           <Users className="w-4 h-4 text-blue-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Siswa</p>
+                          <p className="text-xs text-muted-foreground">{t('common.label.students')}</p>
                           <p className="text-sm font-semibold text-foreground">
                             {cls.current_enrollment}/{cls.capacity}
                           </p>
@@ -276,7 +278,7 @@ export default function KelasDanRosterPage() {
                           <BookOpen className="w-4 h-4 text-purple-600" />
                         </div>
                         <div>
-                          <p className="text-xs text-muted-foreground">Jam/Minggu</p>
+                          <p className="text-xs text-muted-foreground">{t('admin.roster.hoursPerWeek')}</p>
                           <p className="text-sm font-semibold text-foreground">
                             {cls.total_hours_per_week || 0}
                           </p>
@@ -287,7 +289,7 @@ export default function KelasDanRosterPage() {
                     {/* Wali Kelas */}
                     {cls.wali_kelas && (
                       <div className="mt-4 pt-4 border-t border-border/60">
-                        <p className="text-xs text-muted-foreground mb-1">Wali Kelas</p>
+                        <p className="text-xs text-muted-foreground mb-1">{t('common.label.homeroomTeacher')}</p>
                         <p className="text-sm font-medium text-foreground">
                           {cls.wali_kelas.full_name}
                         </p>
@@ -297,7 +299,7 @@ export default function KelasDanRosterPage() {
                     {/* Room */}
                     {cls.home_room && (
                       <div className="mt-3">
-                        <p className="text-xs text-muted-foreground">Ruang Base</p>
+                        <p className="text-xs text-muted-foreground">{t('common.label.baseRoom')}</p>
                         <p className="text-sm font-medium text-foreground">
                           {cls.home_room.name} ({cls.home_room.code})
                         </p>
@@ -308,7 +310,7 @@ export default function KelasDanRosterPage() {
                   {/* Footer */}
                   <div className="px-6 py-3 bg-muted/50 rounded-b-xl flex items-center justify-center">
                     <span className="text-sm text-blue-600 font-medium group-hover:underline">
-                      Lihat Jadwal & Roster →
+                      {t('admin.roster.viewDetails')}
                     </span>
                   </div>
                 </div>

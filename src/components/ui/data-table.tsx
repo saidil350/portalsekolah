@@ -34,6 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from './table'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -70,6 +71,7 @@ export function DataTable<TData, TValue>({
   onClearFilters,
   addLabel,
 }: DataTableProps<TData, TValue>) {
+  const { t } = useLanguage()
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
@@ -126,7 +128,7 @@ export function DataTable<TData, TValue>({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder={searchPlaceholder || 'Cari...'}
+              placeholder={searchPlaceholder || t('common.search.placeholder')}
               value={(table.getColumn(searchKey)?.getFilterValue() as string) ?? ''}
               onChange={(event) =>
                 table.getColumn(searchKey)?.setFilterValue(event.target.value)
@@ -198,7 +200,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  Tidak ada hasil.
+                  {t('common.state.noResults')}
                 </TableCell>
               </TableRow>
             )}
@@ -209,8 +211,10 @@ export function DataTable<TData, TValue>({
       {/* Pagination */}
       <div className="flex items-center justify-end gap-2 py-4">
         <div className="text-sm text-muted-foreground flex-1">
-          Halaman {table.getState().pagination.pageIndex + 1} dari{' '}
-          {table.getPageCount()} ({table.getFilteredRowModel().rows.length} data)
+          {t('common.pagination.pageInfo')
+            .replace('{page}', String(table.getState().pagination.pageIndex + 1))
+            .replace('{total}', String(table.getPageCount()))
+            .replace('{count}', String(table.getFilteredRowModel().rows.length))}
         </div>
         <div className="flex items-center gap-2">
           <Button
@@ -220,7 +224,7 @@ export function DataTable<TData, TValue>({
             disabled={!table.getCanPreviousPage()}
           >
             <ChevronLeft className="w-4 h-4" />
-            Sebelumnya
+            {t('common.action.previous')}
           </Button>
           <Button
             variant="secondary"
@@ -228,7 +232,7 @@ export function DataTable<TData, TValue>({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Selanjutnya
+            {t('common.action.next')}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </div>

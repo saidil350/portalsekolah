@@ -1,11 +1,14 @@
 'use client'
 
 import React from 'react'
-import { Menu, X } from 'lucide-react'
+import { Menu } from 'lucide-react'
 import { useSidebarContext } from '@/contexts/SidebarContext'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export default function SidebarToggle() {
   const { isSidebarOpen, toggleSidebar } = useSidebarContext()
+  const { t } = useLanguage()
+  const sidebarLabel = isSidebarOpen ? t('common.sidebar.close') : t('common.sidebar.open')
 
   return (
     <button
@@ -24,8 +27,8 @@ export default function SidebarToggle() {
         hover:scale-110 active:scale-95
         ${isSidebarOpen ? 'translate-x-0' : 'translate-x-0'}
       `}
-      title={isSidebarOpen ? 'Tutup Sidebar' : 'Buka Sidebar'}
-      aria-label={isSidebarOpen ? 'Tutup Sidebar' : 'Buka Sidebar'}
+      title={sidebarLabel}
+      aria-label={sidebarLabel}
     >
       <Menu
         className={`w-5 h-5 transition-transform duration-200 ${

@@ -6,7 +6,7 @@ import { Language, TranslationKey, getTranslation } from '@/utils/dictionary';
 interface LanguageContextProps {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: TranslationKey) => string;
+  t: (key: TranslationKey, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextProps | undefined>(undefined);
@@ -28,8 +28,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem('app-language', lang);
   };
 
-  const t = (key: TranslationKey) => {
-    return getTranslation(language, key);
+  const t = (key: TranslationKey, params?: Record<string, string | number>) => {
+    return getTranslation(language, key, params);
   };
 
   return (

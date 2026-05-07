@@ -1,33 +1,40 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ChevronLeft } from 'lucide-react';
+import {
+  ChevronLeft,
+  DatabaseZap,
+  LayoutDashboard,
+  LogOut,
+  MonitorCog,
+  Settings,
+  UsersRound,
+  WalletCards,
+} from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useSidebarContext } from '@/contexts/SidebarContext';
 import { TranslationKey } from '@/utils/dictionary';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { logout } from '@/app/login/actions';
 import ConfirmDialog from '@/components/dashboard/confirm-dialog';
+import { ProfileAvatar } from '@/components/dashboard/profile-avatar';
 import type { User } from '@/types/user';
 
 interface NavItem {
   href: string;
   labelKey: TranslationKey;
-  iconSrc: string;
-  iconW: string;
-  iconH: string;
+  icon: React.ElementType;
 }
 
 const navItems: NavItem[] = [
-  { href: '/dashboard/admin-it', labelKey: 'admin.nav.dashboard', iconSrc: '/f89c311fb2446e3aad6f4c04d8d9ad03e5b4f19a.svg', iconW: '16.5px', iconH: '16.5px' },
-  { href: '/dashboard/admin-it/manajemen-pengguna', labelKey: 'admin.nav.userManagement', iconSrc: '/29535fe9c9821195057bdb4adf25e17d6eb94c95.svg', iconW: '20px', iconH: '14.6px' },
-  { href: '/dashboard/admin-it/data-management', labelKey: 'admin.nav.rolesPermissions', iconSrc: '/35c5014baf8a4dbdd4e2e22a6dc38be72dc2cbad.svg', iconW: '14.6px', iconH: '18.3px' },
-  { href: '/dashboard/admin-it/monitoring-data', labelKey: 'admin.nav.monitoringData', iconSrc: '/4d11301ba0e518812f9197dcc18f1eb16b37d766.svg', iconW: '20.1px', iconH: '16.5px' },
-  { href: '/dashboard/admin-it/keuangan', labelKey: 'admin.nav.finance', iconSrc: '/7d7433302d2473cb297414941d2c9fba21779e91.svg', iconW: '20.1px', iconH: '14.6px' },
-  { href: '/dashboard/admin-it/pengaturan-sistem', labelKey: 'admin.nav.systemSettings', iconSrc: '/f2c53fa4859da524365e8bda2fd717f3946f2e8a.svg', iconW: '18.4px', iconH: '18.3px' },
+  { href: '/dashboard/admin-it', labelKey: 'admin.nav.dashboard', icon: LayoutDashboard },
+  { href: '/dashboard/admin-it/manajemen-pengguna', labelKey: 'admin.nav.userManagement', icon: UsersRound },
+  { href: '/dashboard/admin-it/data-management', labelKey: 'admin.nav.rolesPermissions', icon: DatabaseZap },
+  { href: '/dashboard/admin-it/monitoring-data', labelKey: 'admin.nav.monitoringData', icon: MonitorCog },
+  { href: '/dashboard/admin-it/keuangan', labelKey: 'admin.nav.finance', icon: WalletCards },
+  { href: '/dashboard/admin-it/pengaturan-sistem', labelKey: 'admin.nav.systemSettings', icon: Settings },
 ];
 
 interface AdminSidebarProps {
@@ -59,15 +66,6 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
   const displayName = admin?.full_name || 'Admin IT';
   const roleLabel = admin?.role === 'ADMIN_IT' ? t('admin.superAdmin') : t('admin.administrator');
 
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <aside
       className={`
@@ -85,11 +83,7 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
       >
         {isSidebarOpen ? (
           <div className="flex items-center gap-3 min-w-0">
-            {/* Avatar */}
-            <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0 select-none">
-              {getInitials(displayName)}
-            </div>
-            {/* Name + role */}
+            <ProfileAvatar name={displayName} role={admin?.role ?? 'ADMIN_IT'} />
             <div className="flex flex-col min-w-0">
               <span className="text-foreground text-sm font-semibold leading-tight truncate">
                 {displayName}
@@ -100,25 +94,24 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
             </div>
           </div>
         ) : (
-          <div className="w-10 h-10 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0 select-none">
-            {getInitials(displayName)}
-          </div>
+          <ProfileAvatar name={displayName} role={admin?.role ?? 'ADMIN_IT'} />
         )}
 
         {/* ── Navigation ── */}
         <nav className="flex flex-col gap-1 w-full">
           {navItems.map((item) => {
             const active = isActive(item.href);
+            const Icon = item.icon;
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 title={!isSidebarOpen ? t(item.labelKey) : undefined}
                 className={`
-                  flex items-center rounded-lg transition-all duration-150 cursor-pointer relative overflow-hidden
+                  group flex items-center rounded-lg transition-all duration-150 cursor-pointer relative overflow-hidden
                   ${active
                     ? 'bg-primary text-white shadow-sm'
-                    : 'text-muted-foreground hover:bg-accent hover:text-slate-800'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                   }
                   ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}
                 `}
@@ -128,14 +121,10 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
                   <span className="absolute left-0 inset-y-0 w-[3px] bg-white/60 rounded-r-full" />
                 )}
 
-                {/* Icon */}
-                <div className="flex items-center justify-center shrink-0 w-[22px] h-[22px]">
-                  <Image
-                    src={item.iconSrc}
-                    alt=""
-                    width={parseFloat(item.iconW)}
-                    height={parseFloat(item.iconH)}
-                    className={`object-contain pointer-events-none ${active ? 'brightness-0 invert' : ''}`}
+                <div className="flex size-5 shrink-0 items-center justify-center">
+                  <Icon
+                    className={`size-4.5 ${active ? 'text-white' : 'text-muted-foreground group-hover:text-foreground'}`}
+                    strokeWidth={active ? 2.2 : 1.9}
                   />
                 </div>
 
@@ -168,18 +157,18 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
         <button
           onClick={toggleSidebar}
           className={`
-            flex items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-slate-700
+            flex items-center rounded-lg text-muted-foreground hover:bg-accent hover:text-foreground
             transition-colors duration-150 cursor-pointer
             ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
           `}
-          title={isSidebarOpen ? 'Minimize' : 'Expand'}
+          title={isSidebarOpen ? t('common.action.minimize') : t('common.action.expand')}
         >
           <ChevronLeft
             className={`w-4 h-4 shrink-0 transition-transform duration-300 ${!isSidebarOpen ? 'rotate-180' : ''}`}
             strokeWidth={2}
           />
           {isSidebarOpen && (
-            <span className="text-sm font-medium whitespace-nowrap">Minimize</span>
+            <span className="text-sm font-medium whitespace-nowrap">{t('common.action.minimize')}</span>
           )}
         </button>
 
@@ -188,22 +177,14 @@ export default function AdminSidebar({ admin }: AdminSidebarProps) {
           type="button"
           onClick={() => setShowLogoutConfirm(true)}
           className={`
-            flex items-center rounded-lg text-red-400 hover:bg-red-50 hover:text-red-500
+            flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive
             transition-colors duration-150 cursor-pointer
             ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full' : 'justify-center w-10 h-10 mx-auto'}
           `}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('admin.auth.logout')}
         >
-          <div className="flex items-center justify-center shrink-0 w-[22px] h-[22px]">
-            <Image
-              src="/d37cd33084d326886dd872d5fdcb919c7d930cdd.svg"
-              alt=""
-              width={20}
-              height={18}
-              className="object-contain pointer-events-none"
-            />
-          </div>
+          <LogOut className="size-5 shrink-0" strokeWidth={1.9} />
           {isSidebarOpen && (
             <span className="text-sm font-medium whitespace-nowrap">{t('admin.auth.logout')}</span>
           )}

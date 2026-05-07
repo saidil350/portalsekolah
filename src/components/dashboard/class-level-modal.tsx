@@ -3,14 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { X, Layers } from 'lucide-react'
 import type { ClassLevel, ClassLevelFormData } from '@/types'
-
-interface ClassLevelModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onSubmit: (data: ClassLevelFormData) => Promise<void>
-  classLevel?: ClassLevel | null
-  mode: 'create' | 'edit'
-}
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface ClassLevelModalProps {
   isOpen: boolean
@@ -27,6 +20,7 @@ export default function ClassLevelModal({
   classLevel,
   mode
 }: ClassLevelModalProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState<ClassLevelFormData>({
     name: '',
     code: '',
@@ -66,15 +60,15 @@ export default function ClassLevelModal({
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nama tingkat kelas wajib diisi'
+      newErrors.name = t('admin.dataManagement.modal.classLevel.nameRequired')
     }
 
     if (!formData.code.trim()) {
-      newErrors.code = 'Kode tingkat kelas wajib diisi'
+      newErrors.code = t('admin.dataManagement.modal.classLevel.codeRequired')
     }
 
     if (formData.level_order < 10 || formData.level_order > 12) {
-      newErrors.level = 'Level harus antara 10-12'
+      newErrors.level = t('admin.dataManagement.modal.classLevel.levelRange')
     }
 
     setErrors(newErrors)
@@ -101,9 +95,9 @@ export default function ClassLevelModal({
 
   const handlePresetChange = (level: number) => {
     const presets: Record<number, { name: string; code: string }> = {
-      10: { name: 'Kelas X', code: 'X' },
-      11: { name: 'Kelas XI', code: 'XI' },
-      12: { name: 'Kelas XII', code: 'XII' }
+      10: { name: t('admin.dataManagement.modal.classLevel.preset10'), code: 'X' },
+      11: { name: t('admin.dataManagement.modal.classLevel.preset11'), code: 'XI' },
+      12: { name: t('admin.dataManagement.modal.classLevel.preset12'), code: 'XII' }
     }
 
     const preset = presets[level]
@@ -130,10 +124,14 @@ export default function ClassLevelModal({
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
-                {mode === 'create' ? 'Tambah Tingkat Kelas' : 'Edit Tingkat Kelas'}
+                {mode === 'create'
+                  ? t('admin.dataManagement.modal.classLevel.create')
+                  : t('admin.dataManagement.modal.classLevel.edit')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {mode === 'create' ? 'Buat tingkat kelas baru' : 'Update tingkat kelas'}
+                {mode === 'create'
+                  ? t('admin.dataManagement.modal.classLevel.createDesc')
+                  : t('admin.dataManagement.modal.classLevel.editDesc')}
               </p>
             </div>
           </div>
@@ -151,7 +149,7 @@ export default function ClassLevelModal({
           {/* Preset Buttons */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Pilih Preset
+              {t('admin.dataManagement.modal.classLevel.preset')}
             </label>
             <div className="flex gap-2">
               <button
@@ -164,7 +162,7 @@ export default function ClassLevelModal({
                 }`}
                 disabled={submitting}
               >
-                Kelas X
+                {t('admin.dataManagement.modal.classLevel.preset10')}
               </button>
               <button
                 type="button"
@@ -176,7 +174,7 @@ export default function ClassLevelModal({
                 }`}
                 disabled={submitting}
               >
-                Kelas XI
+                {t('admin.dataManagement.modal.classLevel.preset11')}
               </button>
               <button
                 type="button"
@@ -188,7 +186,7 @@ export default function ClassLevelModal({
                 }`}
                 disabled={submitting}
               >
-                Kelas XII
+                {t('admin.dataManagement.modal.classLevel.preset12')}
               </button>
             </div>
           </div>
@@ -196,13 +194,13 @@ export default function ClassLevelModal({
           {/* Nama Tingkat */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Nama Tingkat Kelas <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.classLevel.name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Contoh: Kelas X"
+              placeholder={t('admin.dataManagement.modal.classLevel.namePlaceholder')}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${
                 errors.name ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
@@ -216,13 +214,13 @@ export default function ClassLevelModal({
           {/* Kode */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Kode <span className="text-red-500">*</span>
+              {t('common.label.code')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.code}
               onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-              placeholder="Contoh: X"
+              placeholder={t('admin.dataManagement.modal.classLevel.codePlaceholder')}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors ${
                 errors.code ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
@@ -236,7 +234,7 @@ export default function ClassLevelModal({
           {/* Level (Numerik) */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Level (Numerik) <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.classLevel.level')} <span className="text-red-500">*</span>
             </label>
             <input
               type="number"
@@ -252,18 +250,20 @@ export default function ClassLevelModal({
             {errors.level && (
               <p className="mt-1 text-xs text-red-600">{errors.level}</p>
             )}
-            <p className="mt-1 text-xs text-muted-foreground">Contoh: 10 untuk Kelas X, 11 untuk Kelas XI</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {t('admin.dataManagement.modal.classLevel.levelHint')}
+            </p>
           </div>
 
           {/* Deskripsi */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Deskripsi
+              {t('admin.dataManagement.modal.room.description')}
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Deskripsi tambahan tentang tingkat kelas..."
+              placeholder={t('admin.dataManagement.modal.classLevel.descriptionPlaceholder')}
               rows={3}
               className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-colors resize-none"
               disabled={submitting}
@@ -281,7 +281,7 @@ export default function ClassLevelModal({
               disabled={submitting}
             />
             <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-              Tingkat Kelas Aktif
+              {t('admin.dataManagement.modal.classLevel.active')}
             </label>
           </div>
 
@@ -293,14 +293,18 @@ export default function ClassLevelModal({
               className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
               disabled={submitting}
             >
-              Batal
+              {t('common.action.cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-lg font-medium hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={submitting}
             >
-              {submitting ? 'Menyimpan...' : mode === 'create' ? 'Tambah' : 'Update'}
+              {submitting
+                ? t('admin.dataManagement.modal.saving')
+                : mode === 'create'
+                  ? t('common.action.add')
+                  : t('common.action.update')}
             </button>
           </div>
         </form>

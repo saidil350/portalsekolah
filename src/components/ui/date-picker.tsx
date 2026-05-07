@@ -5,7 +5,8 @@ import { DayPicker } from 'react-day-picker'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { format, isSameDay } from 'date-fns'
-import { id } from 'date-fns/locale'
+import { enUS, id } from 'date-fns/locale'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 export type CalendarProps = React.ComponentProps<typeof DayPicker>
 
@@ -15,11 +16,14 @@ export function Calendar({
   showOutsideDays = true,
   ...props
 }: CalendarProps) {
+  const { language } = useLanguage()
+  const locale = language === 'id' ? id : enUS
+
   return (
     <DayPicker
       showOutsideDays={showOutsideDays}
       className={cn("p-3", className)}
-      locale={id}
+      locale={locale}
       classNames={{
         months: "flex flex-col sm:flex-row gap-2",
         month: "flex flex-col gap-4",
@@ -77,13 +81,16 @@ export interface DatePickerProps {
 export function DatePicker({
   value,
   onChange,
-  placeholder = "Pilih tanggal",
+  placeholder,
   disabled = false,
   minDate,
   maxDate,
   className,
 }: DatePickerProps) {
+  const { t, language } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
+  const locale = language === 'id' ? id : enUS
+  const displayPlaceholder = placeholder || t('common.date.singlePlaceholder')
 
   return (
     <div className={cn("relative", className)}>
@@ -97,7 +104,7 @@ export function DatePicker({
           disabled && "cursor-not-allowed"
         )}
       >
-        {value ? format(value, 'dd MMMM yyyy', { locale: id }) : placeholder}
+        {value ? format(value, 'dd MMMM yyyy', { locale }) : displayPlaceholder}
       </button>
 
       {isOpen && !disabled && (
@@ -145,14 +152,17 @@ export interface DateRangePickerProps {
 export function DateRangePicker({
   value,
   onChange,
-  placeholder = "Pilih rentang tanggal",
+  placeholder,
   disabled = false,
   minDate,
   maxDate,
   numberOfMonths = 2,
   className,
 }: DateRangePickerProps) {
+  const { t, language } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
+  const locale = language === 'id' ? id : enUS
+  const displayPlaceholder = placeholder || t('common.date.rangePlaceholder')
 
   return (
     <div className={cn("relative", className)}>
@@ -169,14 +179,14 @@ export function DateRangePicker({
         {value?.from ? (
           value.to ? (
             <>
-              {format(value.from, 'dd MMM yyyy', { locale: id })} -{" "}
-              {format(value.to, 'dd MMM yyyy', { locale: id })}
+              {format(value.from, 'dd MMM yyyy', { locale })} -{" "}
+              {format(value.to, 'dd MMM yyyy', { locale })}
             </>
           ) : (
-            format(value.from, 'dd MMM yyyy', { locale: id })
+            format(value.from, 'dd MMM yyyy', { locale })
           )
         ) : (
-          placeholder
+          displayPlaceholder
         )}
       </button>
 
@@ -258,14 +268,27 @@ export interface DateRangePickerWithPresetsProps extends Omit<DateRangePickerPro
 export function DateRangePickerWithPresets({
   value,
   onChange,
-  placeholder = "Pilih rentang tanggal",
+  placeholder,
   disabled = false,
   minDate,
   maxDate,
   presets = presetDateRanges,
   className,
 }: DateRangePickerWithPresetsProps) {
+  const { t, language } = useLanguage()
   const [isOpen, setIsOpen] = React.useState(false)
+  const locale = language === 'id' ? id : enUS
+  const displayPlaceholder = placeholder || t('common.date.rangePlaceholder')
+  const displayPresets = presets === presetDateRanges
+    ? [
+        { ...presetDateRanges[0], label: t('common.date.preset.today') },
+        { ...presetDateRanges[1], label: t('common.date.preset.last7') },
+        { ...presetDateRanges[2], label: t('common.date.preset.last30') },
+        { ...presetDateRanges[3], label: t('common.date.preset.thisMonth') },
+        { ...presetDateRanges[4], label: t('common.date.preset.last3Months') },
+        { ...presetDateRanges[5], label: t('common.date.preset.thisYear') },
+      ]
+    : presets
 
   const handlePresetClick = (preset: PresetDateRange) => {
     onChange(preset.range)
@@ -287,14 +310,14 @@ export function DateRangePickerWithPresets({
         {value?.from ? (
           value.to ? (
             <>
-              {format(value.from, 'dd MMM yyyy', { locale: id })} -{" "}
-              {format(value.to, 'dd MMM yyyy', { locale: id })}
+              {format(value.from, 'dd MMM yyyy', { locale })} -{" "}
+              {format(value.to, 'dd MMM yyyy', { locale })}
             </>
           ) : (
-            format(value.from, 'dd MMM yyyy', { locale: id })
+            format(value.from, 'dd MMM yyyy', { locale })
           )
         ) : (
-          placeholder
+          displayPlaceholder
         )}
       </button>
 
@@ -307,8 +330,8 @@ export function DateRangePickerWithPresets({
           <div className="absolute top-full right-0 z-20 mt-1">
             <div className="bg-card rounded-lg border border-border shadow-lg p-4 flex gap-4">
               <div className="flex flex-col gap-2">
-                <p className="text-sm font-medium text-muted-foreground">Preset</p>
-                {presets.map((preset, index) => (
+                <p className="text-sm font-medium text-muted-foreground">{t('common.date.preset')}</p>
+                {displayPresets.map((preset, index) => (
                   <button
                     key={index}
                     type="button"

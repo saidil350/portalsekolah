@@ -17,6 +17,7 @@ import {
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { logout } from '@/app/login/actions';
 import ConfirmDialog from '@/components/dashboard/confirm-dialog';
+import { ProfileAvatar } from '@/components/dashboard/profile-avatar';
 import type { User } from '@/types/user';
 import { TranslationKey } from '@/utils/dictionary';
 
@@ -73,16 +74,6 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
   const displayName = headmaster?.full_name || 'Pak Budi';
   const roleLabel = headmaster?.role === 'KEPALA_SEKOLAH' ? t('headmaster.role') : t('headmaster.role');
 
-  // Get initials for avatar
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <aside
       className={`
@@ -94,9 +85,7 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
       {/* Profile Header */}
       <div className={`pt-6 pb-5 border-b border-border/60 ${isSidebarOpen ? 'px-6' : 'px-2'}`}>
         <div className={`flex items-center gap-4 ${!isSidebarOpen ? 'justify-center' : ''}`}>
-          <div className="relative w-11 h-11 rounded-full bg-linear-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-base font-bold ring-2 ring-primary ring-offset-2 shrink-0">
-            {getInitials(displayName)}
-          </div>
+          <ProfileAvatar name={displayName} role="KEPALA_SEKOLAH" className="size-11 ring-2 ring-primary/20 ring-offset-2 ring-offset-background" />
           {isSidebarOpen && (
             <div className="flex flex-col">
               <h1 className="text-foreground text-base font-bold leading-tight">{displayName}</h1>
@@ -128,12 +117,12 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
                     className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
                       active
                         ? 'bg-primary/10 text-primary'
-                        : 'text-muted-foreground hover:bg-accent hover:text-slate-900'
+                        : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                     } ${isSidebarOpen ? 'gap-3 px-4 py-3' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
                     title={!isSidebarOpen ? t(item.labelKey) : undefined}
                   >
                     <IconComponent
-                      className={`w-5 h-5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground group-hover:text-slate-600'}`}
+                      className={`size-5 shrink-0 ${active ? 'text-primary' : 'text-muted-foreground group-hover:text-foreground'}`}
                       strokeWidth={active ? 2.2 : 1.8}
                     />
                     {isSidebarOpen && <span className={`text-sm ${active ? 'font-semibold' : 'font-medium'}`}>{t(item.labelKey)}</span>}
@@ -151,18 +140,18 @@ export default function HeadmasterSidebar({ headmaster }: HeadmasterSidebarProps
         <button
           onClick={toggleSidebar}
           className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
-          title={isSidebarOpen ? 'Minimize' : 'Expand'}
+          title={isSidebarOpen ? t('common.action.minimize') : t('common.action.expand')}
         >
           <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />
-          {isSidebarOpen && <span className="text-sm font-medium">Minimize</span>}
+          {isSidebarOpen && <span className="text-sm font-medium">{t('common.action.minimize')}</span>}
         </button>
         <button
           onClick={() => setShowLogoutConfirm(true)}
-          className={`flex items-center rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-4 py-3 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('headmaster.auth.logout')}
         >
-          <LogOut className="w-5 h-5 shrink-0" strokeWidth={1.8} />
+          <LogOut className="size-5 shrink-0" strokeWidth={1.8} />
           {isSidebarOpen && <span className="text-sm font-medium">{t('headmaster.auth.logout')}</span>}
         </button>
       </div>

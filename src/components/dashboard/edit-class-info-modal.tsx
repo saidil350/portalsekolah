@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Loader2, UserPlus, MapPin, Save } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface EditClassInfoModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ export default function EditClassInfoModal({
   onSave,
   classData
 }: EditClassInfoModalProps) {
+  const { t } = useLanguage()
   const [waliKelasId, setWaliKelasId] = useState<string>('')
   const [homeRoomId, setHomeRoomId] = useState<string>('')
   const [teachers, setTeachers] = useState<Array<{ id: string; full_name: string }>>([])
@@ -54,17 +56,17 @@ export default function EditClassInfoModal({
       if (teachersData.success) {
         setTeachers(teachersData.data || [])
       } else {
-        throw new Error(teachersData.error || 'Gagal memuat data guru')
+        throw new Error(teachersData.error || t('admin.roster.modal.editClass.loadTeachersFailed'))
       }
 
       if (roomsData.success) {
         setRooms(roomsData.data || [])
       } else {
-        throw new Error(roomsData.error || 'Gagal memuat data ruangan')
+        throw new Error(roomsData.error || t('admin.roster.modal.editClass.loadRoomsFailed'))
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching data:', err)
-      setError(err.message || 'Gagal memuat data')
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.error.loadData'))
     } finally {
       setLoading(false)
     }
@@ -84,7 +86,7 @@ export default function EditClassInfoModal({
       const homeRoomChanged = homeRoomId !== currentHomeRoomId
 
       if (!waliKelasChanged && !homeRoomChanged) {
-        setError('Tidak ada perubahan untuk disimpan')
+        setError(t('admin.roster.modal.editClass.noChanges'))
         setSaving(false)
         return
       }
@@ -106,8 +108,8 @@ export default function EditClassInfoModal({
 
       await onSave(updateData)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan perubahan')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.roster.modal.editClass.saveFailed'))
     } finally {
       setSaving(false)
     }
@@ -125,8 +127,8 @@ export default function EditClassInfoModal({
               <Save className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-foreground">Edit Info Kelas</h2>
-              <p className="text-sm text-muted-foreground">Ubah wali kelas dan ruang base</p>
+              <h2 className="text-lg font-bold text-foreground">{t('admin.roster.modal.editClass.title')}</h2>
+              <p className="text-sm text-muted-foreground">{t('admin.roster.modal.editClass.subtitle')}</p>
             </div>
           </div>
           <button
@@ -150,7 +152,7 @@ export default function EditClassInfoModal({
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-              <span className="ml-3 text-muted-foreground">Memuat data...</span>
+              <span className="ml-3 text-muted-foreground">{t('common.state.loadingData')}</span>
             </div>
           ) : (
             <>
@@ -159,7 +161,7 @@ export default function EditClassInfoModal({
                 <label className="block text-sm font-medium text-foreground mb-2">
                   <div className="flex items-center gap-2">
                     <UserPlus className="w-4 h-4" />
-                    Wali Kelas
+                    {t('common.label.homeroomTeacher')}
                   </div>
                 </label>
                 <select
@@ -168,7 +170,7 @@ export default function EditClassInfoModal({
                   className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   disabled={saving}
                 >
-                  <option value="">-- Pilih Wali Kelas --</option>
+                  <option value="">{t('admin.roster.modal.editClass.selectHomeroom')}</option>
                   {teachers.map((teacher) => (
                     <option key={teacher.id} value={teacher.id}>
                       {teacher.full_name}
@@ -176,7 +178,7 @@ export default function EditClassInfoModal({
                   ))}
                 </select>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Guru yang bertanggung jawab atas kelas ini
+                  {t('admin.roster.modal.editClass.homeroomHint')}
                 </p>
               </div>
 
@@ -185,7 +187,7 @@ export default function EditClassInfoModal({
                 <label className="block text-sm font-medium text-foreground mb-2">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    Ruang Base
+                    {t('common.label.baseRoom')}
                   </div>
                 </label>
                 <select
@@ -194,7 +196,7 @@ export default function EditClassInfoModal({
                   className="w-full px-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   disabled={saving}
                 >
-                  <option value="">-- Pilih Ruang Base --</option>
+                  <option value="">{t('admin.roster.modal.editClass.selectBaseRoom')}</option>
                   {rooms.map((room) => (
                     <option key={room.id} value={room.id}>
                       {room.name}
@@ -202,7 +204,7 @@ export default function EditClassInfoModal({
                   ))}
                 </select>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Ruangan utama untuk kegiatan kelas
+                  {t('admin.roster.modal.editClass.baseRoomHint')}
                 </p>
               </div>
             </>
@@ -216,7 +218,7 @@ export default function EditClassInfoModal({
             disabled={saving}
             className="px-4 py-2 bg-card border border-slate-300 text-foreground rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50"
           >
-            Batal
+            {t('common.action.cancel')}
           </button>
           <button
             onClick={handleSave}
@@ -226,12 +228,12 @@ export default function EditClassInfoModal({
             {saving ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Menyimpan...
+                {t('admin.dataManagement.modal.saving')}
               </>
             ) : (
               <>
                 <Save className="w-4 h-4" />
-                Simpan Perubahan
+                {t('admin.roster.modal.editClass.saveChanges')}
               </>
             )}
           </button>

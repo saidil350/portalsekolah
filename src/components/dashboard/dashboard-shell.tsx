@@ -6,6 +6,7 @@ import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Loader2 } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface DashboardShellProps {
   children: React.ReactNode
@@ -17,6 +18,7 @@ function isModifiedClick(event: MouseEvent) {
 }
 
 export function DashboardShell({ children, className }: DashboardShellProps) {
+  const { t } = useLanguage()
   const pathname = usePathname()
   const reduceMotion = useReducedMotion()
   const [isNavigating, setIsNavigating] = React.useState(false)
@@ -120,7 +122,7 @@ export function DashboardShell({ children, className }: DashboardShellProps) {
             className="pointer-events-none absolute right-5 top-4 z-40 inline-flex items-center gap-2 rounded-full border bg-card/95 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-sm backdrop-blur"
           >
             <Loader2 className="size-3.5 animate-spin" />
-            Memuat
+            {t('common.state.loadingData')}
           </motion.div>
         )}
       </AnimatePresence>

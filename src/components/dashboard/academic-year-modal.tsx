@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Calendar } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface AcademicYear {
   id: string
@@ -35,6 +36,7 @@ export default function AcademicYearModal({
   academicYear,
   mode
 }: AcademicYearModalProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState<AcademicYearFormData>({
     name: '',
     start_date: '',
@@ -74,26 +76,26 @@ export default function AcademicYearModal({
     const newErrors: Record<string, string> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nama tahun ajaran wajib diisi'
+      newErrors.name = t('admin.dataManagement.modal.academicYear.nameRequired')
     }
 
     if (!formData.start_date) {
-      newErrors.start_date = 'Tanggal mulai wajib diisi'
+      newErrors.start_date = t('admin.dataManagement.modal.academicYear.startDateRequired')
     }
 
     if (!formData.end_date) {
-      newErrors.end_date = 'Tanggal selesai wajib diisi'
+      newErrors.end_date = t('admin.dataManagement.modal.academicYear.endDateRequired')
     }
 
     if (formData.start_date && formData.end_date) {
       if (new Date(formData.end_date) <= new Date(formData.start_date)) {
-        newErrors.end_date = 'Tanggal selesai harus setelah tanggal mulai'
+        newErrors.end_date = t('admin.dataManagement.modal.academicYear.endAfterStart')
       }
     }
 
     // Validate name format (should be like "2024/2025")
     if (formData.name && !/^\d{4}\/\d{4}$/.test(formData.name.trim())) {
-      newErrors.name = 'Format harus "YYYY/YYYY" (contoh: "2024/2025")'
+      newErrors.name = t('admin.dataManagement.modal.academicYear.formatError')
     }
 
     setErrors(newErrors)
@@ -144,10 +146,10 @@ export default function AcademicYearModal({
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
-                {mode === 'create' ? 'Tambah Tahun Ajaran' : 'Edit Tahun Ajaran'}
+                {mode === 'create' ? t('admin.dataManagement.modal.academicYear.create') : t('admin.dataManagement.modal.academicYear.edit')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {mode === 'create' ? 'Buat tahun ajaran baru' : 'Update tahun ajaran'}
+                {mode === 'create' ? t('admin.dataManagement.modal.academicYear.createDesc') : t('admin.dataManagement.modal.academicYear.editDesc')}
               </p>
             </div>
           </div>
@@ -165,13 +167,13 @@ export default function AcademicYearModal({
           {/* Nama Tahun Ajaran */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Nama Tahun Ajaran <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.academicYear.name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Contoh: 2024/2025"
+              placeholder={t('admin.dataManagement.modal.academicYear.namePlaceholder')}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${
                 errors.name ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
@@ -180,13 +182,13 @@ export default function AcademicYearModal({
             {errors.name && (
               <p className="mt-1 text-xs text-red-600">{errors.name}</p>
             )}
-            <p className="mt-1 text-xs text-muted-foreground">Format: YYYY/YYYY (contoh: 2024/2025)</p>
+            <p className="mt-1 text-xs text-muted-foreground">{t('admin.dataManagement.modal.academicYear.formatHint')}</p>
           </div>
 
           {/* Tanggal Mulai */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Tanggal Mulai <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.academicYear.startDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -210,7 +212,7 @@ export default function AcademicYearModal({
           {/* Tanggal Selesai */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Tanggal Selesai <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.academicYear.endDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -229,12 +231,12 @@ export default function AcademicYearModal({
           {/* Deskripsi */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Deskripsi
+              {t('admin.dataManagement.modal.room.description')}
             </label>
             <textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Deskripsi tambahan tentang tahun ajaran..."
+              placeholder={t('admin.dataManagement.modal.academicYear.descriptionPlaceholder')}
               rows={3}
               className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors resize-none"
               disabled={submitting}
@@ -252,7 +254,7 @@ export default function AcademicYearModal({
               disabled={submitting}
             />
             <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-              Tahun Ajaran Aktif
+              {t('admin.dataManagement.modal.academicYear.active')}
             </label>
           </div>
 
@@ -264,14 +266,14 @@ export default function AcademicYearModal({
               className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
               disabled={submitting}
             >
-              Batal
+              {t('common.action.cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2.5 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={submitting}
             >
-              {submitting ? 'Menyimpan...' : mode === 'create' ? 'Tambah' : 'Update'}
+              {submitting ? t('admin.dataManagement.modal.saving') : mode === 'create' ? t('common.action.add') : t('common.action.update')}
             </button>
           </div>
         </form>

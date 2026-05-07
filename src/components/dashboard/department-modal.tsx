@@ -20,6 +20,7 @@ import {
   Input,
   Textarea,
 } from '@/components/ui'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface DepartmentModalProps {
   isOpen: boolean
@@ -36,6 +37,7 @@ export default function DepartmentModal({
   department,
   mode
 }: DepartmentModalProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState<DepartmentFormData>({
     name: '',
     code: '',
@@ -75,17 +77,17 @@ export default function DepartmentModal({
 
     // Basic validation
     if (!formData.name.trim()) {
-      setError('Nama jurusan wajib diisi')
+      setError(t('admin.dataManagement.modal.department.nameRequired'))
       return
     }
 
     if (!formData.code.trim()) {
-      setError('Kode jurusan wajib diisi')
+      setError(t('admin.dataManagement.modal.department.codeRequired'))
       return
     }
 
     if (formData.code.length > 10) {
-      setError('Kode jurusan maksimal 10 karakter')
+      setError(t('admin.dataManagement.modal.department.codeMax'))
       return
     }
 
@@ -93,8 +95,8 @@ export default function DepartmentModal({
     try {
       await onSubmit(formData)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan data')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.saveFailed'))
     } finally {
       setLoading(false)
     }
@@ -115,7 +117,9 @@ export default function DepartmentModal({
       <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-md">
         <DialogHeader className="border-b px-6 py-4">
           <DialogTitle>
-            {mode === 'create' ? 'Tambah Jurusan' : 'Edit Jurusan'}
+            {mode === 'create'
+              ? t('admin.dataManagement.modal.department.create')
+              : t('admin.dataManagement.modal.department.edit')}
           </DialogTitle>
         </DialogHeader>
 
@@ -128,41 +132,41 @@ export default function DepartmentModal({
           )}
 
           <Field>
-            <FieldLabel required>Nama Jurusan</FieldLabel>
+            <FieldLabel required>{t('admin.dataManagement.modal.department.name')}</FieldLabel>
             <Input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
-              placeholder="Contoh: MIPA - Matematika dan Ilmu Pengetahuan Alam"
+              placeholder={t('admin.dataManagement.modal.department.namePlaceholder')}
               required
               disabled={loading}
             />
           </Field>
 
           <Field>
-            <FieldLabel required>Kode</FieldLabel>
+            <FieldLabel required>{t('common.label.code')}</FieldLabel>
             <Input
               type="text"
               name="code"
               value={formData.code}
               onChange={handleChange}
-              placeholder="Contoh: MIPA"
+              placeholder={t('admin.dataManagement.modal.department.codePlaceholder')}
               className="uppercase"
               maxLength={10}
               required
               disabled={loading}
             />
-            <FieldDescription>Maksimal 10 karakter</FieldDescription>
+            <FieldDescription>{t('admin.dataManagement.modal.department.codeHint')}</FieldDescription>
           </Field>
 
           <Field>
-            <FieldLabel>Deskripsi</FieldLabel>
+            <FieldLabel>{t('admin.dataManagement.modal.room.description')}</FieldLabel>
             <Textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Deskripsi jurusan"
+              placeholder={t('admin.dataManagement.modal.department.descriptionPlaceholder')}
               rows={3}
               disabled={loading}
             />
@@ -179,7 +183,7 @@ export default function DepartmentModal({
               disabled={loading}
             />
             <FieldLabel htmlFor="is_active" className="font-normal">
-              Jurusan aktif
+              {t('admin.dataManagement.modal.department.active')}
             </FieldLabel>
           </Field>
           </FieldGroup>
@@ -194,7 +198,7 @@ export default function DepartmentModal({
               }}
               disabled={loading}
             >
-              Batal
+              {t('common.action.cancel')}
             </Button>
             <Button
               type="submit"
@@ -203,10 +207,10 @@ export default function DepartmentModal({
               {loading ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Menyimpan...
+                  {t('admin.dataManagement.modal.saving')}
                 </>
               ) : (
-                mode === 'create' ? 'Tambah' : 'Simpan'
+                mode === 'create' ? t('common.action.add') : t('common.action.save')
               )}
             </Button>
           </DialogFooter>

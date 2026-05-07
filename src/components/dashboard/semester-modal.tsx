@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { X, Calendar } from 'lucide-react'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface Semester {
   id: string
@@ -44,6 +45,7 @@ export default function SemesterModal({
   mode,
   academicYears
 }: SemesterModalProps) {
+  const { t } = useLanguage()
   const [formData, setFormData] = useState<SemesterFormData>({
     academic_year_id: '',
     name: '',
@@ -86,24 +88,24 @@ export default function SemesterModal({
     const newErrors: Record<string, string> = {}
 
     if (!formData.academic_year_id) {
-      newErrors.academic_year_id = 'Tahun ajaran wajib dipilih'
+      newErrors.academic_year_id = t('admin.dataManagement.modal.semester.academicYearRequired')
     }
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Nama semester wajib diisi'
+      newErrors.name = t('admin.dataManagement.modal.semester.nameRequired')
     }
 
     if (!formData.start_date) {
-      newErrors.start_date = 'Tanggal mulai wajib diisi'
+      newErrors.start_date = t('admin.dataManagement.modal.academicYear.startDateRequired')
     }
 
     if (!formData.end_date) {
-      newErrors.end_date = 'Tanggal selesai wajib diisi'
+      newErrors.end_date = t('admin.dataManagement.modal.academicYear.endDateRequired')
     }
 
     if (formData.start_date && formData.end_date) {
       if (new Date(formData.end_date) <= new Date(formData.start_date)) {
-        newErrors.end_date = 'Tanggal selesai harus setelah tanggal mulai'
+        newErrors.end_date = t('admin.dataManagement.modal.academicYear.endAfterStart')
       }
     }
 
@@ -142,10 +144,10 @@ export default function SemesterModal({
             </div>
             <div>
               <h3 className="text-lg font-bold text-foreground">
-                {mode === 'create' ? 'Tambah Semester' : 'Edit Semester'}
+                {mode === 'create' ? t('admin.dataManagement.modal.semester.create') : t('admin.dataManagement.modal.semester.edit')}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {mode === 'create' ? 'Buat semester baru' : 'Update semester'}
+                {mode === 'create' ? t('admin.dataManagement.modal.semester.createDesc') : t('admin.dataManagement.modal.semester.editDesc')}
               </p>
             </div>
           </div>
@@ -163,7 +165,7 @@ export default function SemesterModal({
           {/* Tahun Ajaran */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Tahun Ajaran <span className="text-red-500">*</span>
+              {t('common.label.academicYear')} <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.academic_year_id}
@@ -173,7 +175,7 @@ export default function SemesterModal({
               }`}
               disabled={submitting}
             >
-              <option value="">Pilih Tahun Ajaran</option>
+              <option value="">{t('admin.dataManagement.modal.semester.selectAcademicYear')}</option>
               {academicYears.map((ay) => (
                 <option key={ay.id} value={ay.id}>
                   {ay.name}
@@ -188,7 +190,7 @@ export default function SemesterModal({
           {/* Nomor Semester */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Semester <span className="text-red-500">*</span>
+              {t('common.label.semester')} <span className="text-red-500">*</span>
             </label>
             <select
               value={formData.semester_number}
@@ -196,21 +198,21 @@ export default function SemesterModal({
               className="w-full px-4 py-2.5 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors"
               disabled={submitting}
             >
-              <option value={1}>Semester 1 (Ganjil)</option>
-              <option value={2}>Semester 2 (Genap)</option>
+              <option value={1}>{t('admin.dataManagement.modal.semester.odd')}</option>
+              <option value={2}>{t('admin.dataManagement.modal.semester.even')}</option>
             </select>
           </div>
 
           {/* Nama Semester */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Nama Semester <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.semester.name')} <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Contoh: Ganjil, Genap"
+              placeholder={t('admin.dataManagement.modal.semester.namePlaceholder')}
               className={`w-full px-4 py-2.5 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${
                 errors.name ? 'border-red-300 bg-red-50' : 'border-border'
               }`}
@@ -224,7 +226,7 @@ export default function SemesterModal({
           {/* Tanggal Mulai */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Tanggal Mulai <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.academicYear.startDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -243,7 +245,7 @@ export default function SemesterModal({
           {/* Tanggal Selesai */}
           <div>
             <label className="block text-sm font-semibold text-foreground mb-2">
-              Tanggal Selesai <span className="text-red-500">*</span>
+              {t('admin.dataManagement.modal.academicYear.endDate')} <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
@@ -270,7 +272,7 @@ export default function SemesterModal({
               disabled={submitting}
             />
             <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-              Semester Aktif
+              {t('admin.dataManagement.modal.semester.active')}
             </label>
           </div>
 
@@ -282,14 +284,14 @@ export default function SemesterModal({
               className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg font-medium hover:bg-accent transition-colors"
               disabled={submitting}
             >
-              Batal
+              {t('common.action.cancel')}
             </button>
             <button
               type="submit"
               className="flex-1 px-4 py-2.5 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={submitting}
             >
-              {submitting ? 'Menyimpan...' : mode === 'create' ? 'Tambah' : 'Update'}
+              {submitting ? t('admin.dataManagement.modal.saving') : mode === 'create' ? t('common.action.add') : t('common.action.update')}
             </button>
           </div>
         </form>

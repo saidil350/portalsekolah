@@ -2,14 +2,14 @@
 
 import React from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { Globe } from 'lucide-react';
+import { ChevronsUpDown, Languages } from 'lucide-react';
 
 export default function LanguageSwitcher() {
   const { language, setLanguage, t } = useLanguage();
 
   return (
     <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg border border-border bg-card hover:bg-accent transition-colors w-full cursor-pointer relative">
-      <Globe className="w-[18px] h-[18px] text-muted-foreground shrink-0" strokeWidth={1.8} />
+      <Languages className="size-4.5 shrink-0 text-muted-foreground" strokeWidth={1.9} />
       <select
         title="Select Language"
         value={language}
@@ -22,7 +22,7 @@ export default function LanguageSwitcher() {
       <span className="text-sm font-medium text-foreground pointer-events-none flex-1">
         {language === 'id' ? t('lang.id') : t('lang.en')}
       </span>
-      <div className="pointer-events-none w-0 h-0 border-l-4 border-r-4 border-t-[5px] border-l-transparent border-r-transparent border-t-slate-500 ml-auto shrink-0" />
+      <ChevronsUpDown className="pointer-events-none ml-auto size-4 shrink-0 text-muted-foreground" strokeWidth={1.8} />
     </div>
   );
 }

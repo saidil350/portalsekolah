@@ -48,6 +48,7 @@ export default function SubjectModal({
   const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(false)
   const [error, setError] = useState('')
+  const { t } = useLanguage()
 
   // Fetch departments and academic years when modal opens
   useEffect(() => {
@@ -109,12 +110,12 @@ export default function SubjectModal({
     setError('')
 
     if (!formData.name.trim()) {
-      setError('Nama mata pelajaran wajib diisi')
+      setError(t('admin.dataManagement.modal.subject.nameRequired'))
       return
     }
 
     if (!formData.code.trim()) {
-      setError('Kode mata pelajaran wajib diisi')
+      setError(t('admin.dataManagement.modal.subject.codeRequired'))
       return
     }
 
@@ -122,8 +123,8 @@ export default function SubjectModal({
     try {
       await onSubmit(formData)
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan data')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.dataManagement.modal.saveFailed'))
     } finally {
       setLoading(false)
     }
@@ -149,14 +150,14 @@ export default function SubjectModal({
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-border">
           <h3 className="text-xl font-bold text-foreground">
-            {mode === 'create' ? 'Tambah Mata Pelajaran' : 'Edit Mata Pelajaran'}
+            {mode === 'create' ? t('admin.dataManagement.modal.subject.create') : t('admin.dataManagement.modal.subject.edit')}
           </h3>
           <button
             type="button"
             onClick={onClose}
             className="p-2 hover:bg-accent rounded-lg transition-colors"
             disabled={loading}
-            title="Tutup"
+            title={t('admin.dataManagement.modal.close')}
           >
             <X className="w-5 h-5 text-muted-foreground" />
           </button>
@@ -178,14 +179,14 @@ export default function SubjectModal({
             <>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Nama Mata Pelajaran <span className="text-red-500">*</span>
+                  {t('admin.dataManagement.modal.subject.name')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  placeholder="Contoh: Matematika"
+                  placeholder={t('admin.dataManagement.modal.subject.namePlaceholder')}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm"
                   required
                   disabled={loading}
@@ -194,14 +195,14 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Kode <span className="text-red-500">*</span>
+                  {t('common.label.code')} <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   name="code"
                   value={formData.code}
                   onChange={handleChange}
-                  placeholder="Contoh: MTK-101"
+                  placeholder={t('admin.dataManagement.modal.subject.codePlaceholder')}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm uppercase"
                   required
                   disabled={loading}
@@ -210,21 +211,21 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Tipe Mata Pelajaran <span className="text-red-500">*</span>
+                  {t('admin.dataManagement.modal.subject.type')} <span className="text-red-500">*</span>
                 </label>
                 <select
                   name="subject_type"
                   value={formData.subject_type}
                   onChange={handleChange}
-                  aria-label="Tipe Mata Pelajaran"
-                  title="Tipe Mata Pelajaran"
+                  aria-label={t('admin.dataManagement.modal.subject.type')}
+                  title={t('admin.dataManagement.modal.subject.type')}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   required
                   disabled={loading}
                 >
                   {SUBJECT_TYPE_CONFIGS.map(type => (
                     <option key={type.value} value={type.value}>
-                      {type.label}
+                      {type.value === 'MANDATORY' ? t('admin.dataManagement.subjectType.mandatory') : type.value === 'ELECTIVE' ? t('admin.dataManagement.subjectType.elective') : t('admin.dataManagement.subjectType.extracurricular')}
                     </option>
                   ))}
                 </select>
@@ -232,18 +233,18 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Jurusan
+                  {t('common.label.department')}
                 </label>
                 <select
                   name="department_id"
                   value={formData.department_id}
                   onChange={handleChange}
-                  aria-label="Jurusan"
-                  title="Jurusan"
+                  aria-label={t('common.label.department')}
+                  title={t('common.label.department')}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   disabled={loading}
                 >
-                  <option value="">Tidak ada jurusan</option>
+                  <option value="">{t('admin.dataManagement.modal.subject.noDepartment')}</option>
                   {departments.map(dept => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
@@ -254,18 +255,18 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Tahun Akademik
+                  {t('common.label.academicYear')}
                 </label>
                 <select
                   name="academic_year_id"
                   value={formData.academic_year_id}
                   onChange={handleChange}
-                  aria-label="Tahun Akademik"
-                  title="Tahun Akademik"
+                  aria-label={t('common.label.academicYear')}
+                  title={t('common.label.academicYear')}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm bg-card"
                   disabled={loading}
                 >
-                  <option value="">Tidak ada tahun akademik</option>
+                  <option value="">{t('admin.dataManagement.modal.subject.noAcademicYear')}</option>
                   {academicYears.map(year => (
                     <option key={year.id} value={year.id}>
                       {year.name}
@@ -276,13 +277,13 @@ export default function SubjectModal({
 
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1.5">
-                  Deskripsi
+                  {t('admin.dataManagement.modal.room.description')}
                 </label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleChange}
-                  placeholder="Deskripsi mata pelajaran"
+                  placeholder={t('admin.dataManagement.modal.subject.descriptionPlaceholder')}
                   rows={3}
                   className="w-full px-4 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-sm resize-none"
                   disabled={loading}
@@ -300,7 +301,7 @@ export default function SubjectModal({
                   disabled={loading}
                 />
                 <label htmlFor="is_active" className="text-sm font-medium text-foreground">
-                  Mata pelajaran aktif
+                  {t('admin.dataManagement.modal.subject.active')}
                 </label>
               </div>
 
@@ -311,7 +312,7 @@ export default function SubjectModal({
                   className="flex-1 px-4 py-2.5 border border-border text-foreground rounded-lg hover:bg-accent transition-all font-medium text-sm disabled:opacity-50 disabled:cursor-not-allowed"
                   disabled={loading}
                 >
-                  Batal
+                  {t('common.action.cancel')}
                 </button>
                 <button
                   type="submit"
@@ -321,10 +322,10 @@ export default function SubjectModal({
                   {loading ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Menyimpan...
+                      {t('admin.dataManagement.modal.saving')}
                     </>
                   ) : (
-                    mode === 'create' ? 'Tambah' : 'Simpan'
+                    mode === 'create' ? t('common.action.add') : t('common.action.save')
                   )}
                 </button>
               </div>

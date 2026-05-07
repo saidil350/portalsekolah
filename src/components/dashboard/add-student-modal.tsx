@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { X, Search, Users, Loader2, Check, UserPlus } from 'lucide-react'
 import type { User } from '@/types/class-roster'
+import { useLanguage } from '@/contexts/LanguageContext'
 
 interface AddStudentModalProps {
   isOpen: boolean
@@ -19,6 +20,7 @@ export default function AddStudentModal({
   classId,
   academicYearId
 }: AddStudentModalProps) {
+  const { t } = useLanguage()
   const [search, setSearch] = useState('')
   const [availableStudents, setAvailableStudents] = useState<User[]>([])
   const [loading, setLoading] = useState(false)
@@ -41,7 +43,7 @@ export default function AddStudentModal({
         if (!res.ok) {
           throw new Error(`HTTP error: ${res.status}`)
         }
-        throw new Error('Format response tidak valid')
+        throw new Error(t('admin.roster.modal.addStudent.invalidResponse'))
       }
 
       if (json.success) {
@@ -49,9 +51,9 @@ export default function AddStudentModal({
       } else {
         throw new Error(json.error || `HTTP error: ${res.status}`)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching students:', err)
-      setError(err.message || 'Gagal memuat data siswa')
+      setError(err instanceof Error && err.message ? err.message : t('admin.roster.modal.addStudent.loadFailed'))
     } finally {
       setLoading(false)
     }
@@ -78,8 +80,8 @@ export default function AddStudentModal({
 
       // Auto-close modal after successful enrollment
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menambahkan siswa')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.roster.modal.addStudent.addFailed'))
     } finally {
       setEnrolling(null)
     }
@@ -117,8 +119,8 @@ export default function AddStudentModal({
 
       // Auto-close modal after successful batch enrollment
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menambahkan siswa')
+    } catch (err: unknown) {
+      setError(err instanceof Error && err.message ? err.message : t('admin.roster.modal.addStudent.addFailed'))
     } finally {
       setEnrolling(null)
     }
@@ -136,11 +138,11 @@ export default function AddStudentModal({
               <UserPlus className="w-5 h-5 text-blue-600" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-foreground">Tambah Siswa ke Kelas</h2>
+              <h2 className="text-lg font-bold text-foreground">{t('admin.roster.modal.addStudent.title')}</h2>
               <p className="text-sm text-muted-foreground">
                 {selectedStudents.size > 0
-                  ? `${selectedStudents.size} siswa dipilih`
-                  : 'Pilih siswa untuk ditambahkan'}
+                  ? t('admin.roster.modal.addStudent.selected', { count: selectedStudents.size })
+                  : t('admin.roster.modal.addStudent.selectHint')}
               </p>
             </div>
           </div>
@@ -159,7 +161,7 @@ export default function AddStudentModal({
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Cari berdasarkan nama, NISN, atau email..."
+              placeholder={t('admin.roster.modal.addStudent.searchPlaceholder')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -180,15 +182,15 @@ export default function AddStudentModal({
           {loading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-              <span className="ml-3 text-muted-foreground">Memuat data siswa...</span>
+              <span className="ml-3 text-muted-foreground">{t('admin.roster.modal.addStudent.loading')}</span>
             </div>
           ) : availableStudents.length === 0 ? (
             <div className="text-center py-12">
               <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
               <p className="text-muted-foreground">
                 {search
-                  ? 'Tidak ditemukan siswa dengan pencarian tersebut'
-                  : 'Tidak ada siswa tersedia'}
+                  ? t('admin.roster.modal.addStudent.notFound')
+                  : t('admin.roster.modal.addStudent.empty')}
               </p>
             </div>
           ) : (
@@ -198,7 +200,7 @@ export default function AddStudentModal({
                 <div className="sticky top-0 z-10 p-3 bg-blue-50 border border-blue-200 rounded-lg mb-4">
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-blue-900">
-                      {selectedStudents.size} siswa dipilih
+                      {t('admin.roster.modal.addStudent.selected', { count: selectedStudents.size })}
                     </span>
                     <button
                       onClick={handleEnrollSelected}
@@ -208,12 +210,12 @@ export default function AddStudentModal({
                       {enrolling === 'batch' ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Memproses...
+                          {t('admin.roster.modal.addStudent.process')}
                         </>
                       ) : (
                         <>
                           <UserPlus className="w-4 h-4" />
-                          Tambahkan Semua
+                          {t('admin.roster.modal.addStudent.addAll')}
                         </>
                       )}
                     </button>
@@ -259,7 +261,7 @@ export default function AddStudentModal({
                           {student.full_name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {student.nisn || 'NISN tidak tersedia'}
+                          {student.nisn || t('admin.roster.modal.addStudent.nisnUnavailable')}
                         </p>
                       </div>
                     </div>
@@ -272,12 +274,12 @@ export default function AddStudentModal({
                       {isEnrolling ? (
                         <>
                           <Loader2 className="w-4 h-4 animate-spin" />
-                          Memproses...
+                          {t('admin.roster.modal.addStudent.process')}
                         </>
                       ) : (
                         <>
                           <UserPlus className="w-4 h-4" />
-                          Tambah
+                          {t('common.action.add')}
                         </>
                       )}
                     </button>
@@ -291,14 +293,14 @@ export default function AddStudentModal({
         {/* Footer */}
         <div className="p-6 border-t border-border bg-muted/50 flex items-center justify-between">
           <p className="text-sm text-muted-foreground">
-            {availableStudents.length} siswa tersedia
+            {t('admin.roster.modal.addStudent.available', { count: availableStudents.length })}
           </p>
           <button
             onClick={onClose}
             disabled={enrolling !== null}
             className="px-6 py-2 bg-card border border-slate-300 text-foreground rounded-lg font-medium hover:bg-accent transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Tutup
+            {t('admin.dataManagement.modal.close')}
           </button>
         </div>
       </div>

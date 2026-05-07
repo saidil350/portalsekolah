@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -20,6 +19,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { TranslationKey } from '@/utils/dictionary';
 import { logout } from '@/app/login/actions';
 import ConfirmDialog from '@/components/dashboard/confirm-dialog';
+import { ProfileAvatar } from '@/components/dashboard/profile-avatar';
 import type { User } from '@/types/user';
 
 interface NavItem {
@@ -67,16 +67,6 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
   const displayName = teacher?.full_name || 'Mr. Anderson';
   const roleLabel = teacher?.role === 'GURU' ? t('profile.teacher') : t('profile.teacher');
 
-  // Get initials for avatar
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
     <aside
       className={`
@@ -89,18 +79,14 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
         {/* User Profile */}
         {isSidebarOpen ? (
           <div className="flex items-center gap-3">
-            <div className="bg-linear-to-br from-blue-500 to-purple-600 rounded-full h-11 w-11 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0">
-              {getInitials(displayName)}
-            </div>
+            <ProfileAvatar name={displayName} role="GURU" className="size-11" />
             <div className="flex flex-col">
               <h1 className="text-foreground text-sm font-semibold leading-tight">{displayName}</h1>
               <p className="text-muted-foreground text-[10px] font-bold uppercase tracking-wide mt-0.5">{roleLabel}</p>
             </div>
           </div>
         ) : (
-          <div className="bg-linear-to-br from-blue-500 to-purple-600 rounded-full h-11 w-11 flex items-center justify-center text-white text-sm font-bold border-2 border-primary/20 shrink-0">
-            {getInitials(displayName)}
-          </div>
+          <ProfileAvatar name={displayName} role="GURU" className="size-11" />
         )}
         {/* Navigation */}
         <nav className="flex flex-col gap-1">
@@ -114,11 +100,11 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
                 className={`flex items-center rounded-lg group transition-all duration-200 cursor-pointer ${
                   active
                     ? 'bg-primary text-white shadow-[0px_4px_6px_-1px_rgba(19,127,236,0.2),0px_2px_4px_-2px_rgba(19,127,236,0.2)]'
-                    : 'text-muted-foreground hover:bg-accent hover:text-slate-900'
+                    : 'text-muted-foreground hover:bg-accent hover:text-foreground'
                 } ${isSidebarOpen ? 'gap-3 px-3 py-2.5' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
               >
                 <IconComponent
-                  className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-muted-foreground group-hover:text-slate-600'}`}
+                  className={`size-5 shrink-0 ${active ? 'text-white' : 'text-muted-foreground group-hover:text-foreground'}`}
                   strokeWidth={active ? 2.2 : 1.8}
                 />
                 {isSidebarOpen && <span className="text-sm font-medium">{t(item.labelKey)}</span>}
@@ -132,18 +118,18 @@ export default function TeachingSidebar({ teacher }: TeachingSidebarProps) {
         <button
           onClick={toggleSidebar}
           className={`flex items-center rounded-lg text-muted-foreground hover:bg-accent transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
-          title={isSidebarOpen ? 'Minimize' : 'Expand'}
+          title={isSidebarOpen ? t('common.action.minimize') : t('common.action.expand')}
         >
           <ChevronLeft className={`w-5 h-5 shrink-0 transition-transform duration-200 ${!isSidebarOpen ? 'rotate-180' : ''}`} strokeWidth={1.8} />
-          {isSidebarOpen && <span className="text-sm font-medium">Minimize</span>}
+          {isSidebarOpen && <span className="text-sm font-medium">{t('common.action.minimize')}</span>}
         </button>
         <button
           onClick={() => setShowLogoutConfirm(true)}
-          className={`flex items-center rounded-lg text-red-500 hover:bg-red-50 transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
+          className={`flex items-center rounded-lg text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-colors cursor-pointer ${isSidebarOpen ? 'gap-3 px-3 py-2.5 w-full text-left' : 'justify-center w-10 h-10 mx-auto'}`.trim()}
           disabled={isLoggingOut}
           title={isSidebarOpen ? undefined : t('auth.logout')}
         >
-          <LogOut className="w-5 h-5 shrink-0" strokeWidth={1.8} />
+          <LogOut className="size-5 shrink-0" strokeWidth={1.8} />
           {isSidebarOpen && <span className="text-sm font-medium">{t('auth.logout')}</span>}
         </button>
       </div>
