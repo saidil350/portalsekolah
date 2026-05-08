@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { BadgeCheck, Moon, School, Sparkles, Sun, SunDim, Sunset } from 'lucide-react';
+import { BadgeCheck, Hand, Moon, School, Sparkles, Sun, SunDim, Sunset } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 import { UserRole } from '@/types/user';
@@ -70,7 +70,7 @@ const RoleGreetingCard: React.FC<RoleGreetingCardProps> = ({
       {/* Name and Identity Details */}
       <div className="flex flex-col md:flex-row md:items-end gap-2 md:gap-3 mt-1">
         <h1 className="text-3xl font-extrabold text-foreground tracking-tight leading-tight">
-          {userName} <span className="inline-block animate-bounce-slow">👋</span>
+          {userName} <Hand className="ml-2 inline-block size-7 animate-bounce-slow text-primary" aria-hidden="true" />
         </h1>
         
         <div className="flex flex-wrap items-center gap-2 text-muted-foreground text-xs md:border-l md:border-slate-200 md:pl-3 md:mb-1.5">

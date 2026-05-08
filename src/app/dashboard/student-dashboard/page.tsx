@@ -6,6 +6,9 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useToastHelpers } from '@/components/ui/toaster';
 import { Button } from '@/components/ui';
 import {
+  BarChart3,
+  BookOpen,
+  CalendarDays,
   MapPin,
   ChevronRight,
   MoreHorizontal,
@@ -22,21 +25,21 @@ export default function StudentDashboardPage() {
   const scheduleData = [
     {
       subject: t('student.course.historyOfArt'),
-      time: `08:00 AM - 09:30 AM • ${t('student.room.101')}`,
+      time: `08:00 AM - 09:30 AM - ${t('student.room.101')}`,
       status: 'completed',
       bgColor: 'bg-orange-100',
       iconColor: 'text-orange-500',
     },
     {
       subject: t('student.course.advMath'),
-      time: `10:00 AM - 11:30 AM • ${t('student.room.302')}`,
+      time: `10:00 AM - 11:30 AM - ${t('student.room.302')}`,
       status: 'upnext',
       bgColor: 'bg-blue-100',
       iconColor: 'text-blue-600',
     },
     {
       subject: t('student.course.physicsLab'),
-      time: `01:00 PM - 03:00 PM • ${t('student.room.lab4')}`,
+      time: `01:00 PM - 03:00 PM - ${t('student.room.lab4')}`,
       status: 'upcoming',
       bgColor: 'bg-pink-100',
       iconColor: 'text-pink-500',
@@ -80,7 +83,7 @@ export default function StudentDashboardPage() {
             <div className="bg-card rounded-xl p-4 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start justify-between mb-5">
                 <div className="w-9 h-9 bg-blue-50 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">📊</span>
+                  <BarChart3 className="size-5 text-blue-600" />
                 </div>
                 <div className="bg-green-100 rounded-full px-2 py-0.5 flex items-center gap-1">
                   <TrendingUp className="w-3 h-2 text-green-700" />
@@ -96,7 +99,7 @@ export default function StudentDashboardPage() {
             <div className="bg-card rounded-xl p-4 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start justify-between mb-5">
                 <div className="w-9 h-9 bg-purple-50 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">📅</span>
+                  <CalendarDays className="size-5 text-purple-600" />
                 </div>
                 <div className="bg-muted rounded-full px-2 py-0.5">
                   <span className="text-xs font-medium text-muted-foreground">{t('student.db.overall')}</span>
@@ -116,7 +119,7 @@ export default function StudentDashboardPage() {
             <div className="bg-card rounded-xl p-4 shadow-[0px_0px_0px_1px_rgba(231,237,243,0.5),0px_1px_2px_0px_rgba(0,0,0,0.05)] relative">
               <div className="flex items-start mb-5">
                 <div className="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center">
-                  <span className="text-xl">📚</span>
+                  <BookOpen className="size-5 text-amber-600" />
                 </div>
               </div>
               <p className="text-sm font-medium text-muted-foreground mb-1">{t('student.db.creditsLabel')}</p>
@@ -144,7 +147,7 @@ export default function StudentDashboardPage() {
                     <h3 className="text-xl font-semibold text-white mt-1">{t('student.course.advMath')}</h3>
                     <div className="flex items-center gap-2 mt-0.5">
                       <MapPin className="w-3 h-3 text-blue-200" />
-                      <span className="text-sm text-blue-100">{t('student.room.buildingA302')} • 10:00 AM - 11:30 AM</span>
+                      <span className="text-sm text-blue-100">{t('student.room.buildingA302')} - 10:00 AM - 11:30 AM</span>
                     </div>
                   </div>
                   <Button
@@ -203,7 +206,7 @@ export default function StudentDashboardPage() {
                           }`}>
                             <div className="flex items-start gap-3">
                               <div className={`w-9 h-9 rounded-lg ${item.bgColor} flex items-center justify-center shrink-0`}>
-                                <span className="text-lg">📖</span>
+                                <BookOpen className={`size-5 ${item.iconColor}`} />
                               </div>
                               <div>
                                 <h4 className="text-sm font-semibold text-foreground">{item.subject}</h4>

@@ -135,7 +135,7 @@ export const dictionary = {
     'admin.administrator': 'Administrator',
 
     // Student Dashboard Overview
-    'student.db.welcome': 'Selamat datang kembali, Alex! 👋',
+    'student.db.welcome': 'Selamat datang kembali, Alex!',
     'student.db.subtitle': 'Berikut ringkasan akademik Anda untuk Semester 2, 2024.',
     'student.db.activeStatus': 'Siswa Aktif',
     'student.db.gpa': 'IPK Saat Ini',
@@ -155,7 +155,7 @@ export const dictionary = {
     'student.db.tuitionStatus': 'Status SPP',
     'student.db.fullyPaid': 'Lunas',
     'student.db.noPending': 'Tidak ada tagihan tertunda',
-    'student.db.footer': '© 2026 Sistem SIAKAD Universitas. Hak cipta dilindungi undang-undang.',
+    'student.db.footer': 'Copyright 2026 Sistem SIAKAD Universitas. Hak cipta dilindungi undang-undang.',
     'student.db.help': 'Pusat Bantuan',
     'student.db.privacy': 'Kebijakan Privasi',
     'student.db.status.completed': 'Selesai',
@@ -1529,7 +1529,7 @@ export const dictionary = {
     'admin.administrator': 'Administrator',
 
     // Student Dashboard Overview
-    'student.db.welcome': 'Welcome back, Alex! 👋',
+    'student.db.welcome': 'Welcome back, Alex!',
     'student.db.subtitle': 'Here is your academic overview for Semester 2, 2024.',
     'student.db.activeStatus': 'Active Student',
     'student.db.gpa': 'Current GPA',
@@ -1549,7 +1549,7 @@ export const dictionary = {
     'student.db.tuitionStatus': 'Tuition Status',
     'student.db.fullyPaid': 'Fully Paid',
     'student.db.noPending': 'No pending invoices',
-    'student.db.footer': '© 2026 University SIAKAD System. All rights reserved.',
+    'student.db.footer': 'Copyright 2026 University SIAKAD System. All rights reserved.',
     'student.db.help': 'Help Center',
     'student.db.privacy': 'Privacy Policy',
     'student.db.status.completed': 'Completed',
