@@ -29,7 +29,7 @@ Gunakan prompt ini untuk memerintahkan AI dalam membangun komponen **Hero Greeti
     - Pastikan tampilan rapi di mobile (layout stack) dan desktop (layout side-by-side).
 
 5.  **Role Badge**:
-    - Tampilkan label peran (Admin, Guru, Siswa, Orang Tua) dengan warna aksen yang berbeda (e.g., Admin: Violet, Guru: Emerald, Siswa: Blue)."
+    - Tampilkan label peran aktif (Admin IT, Kepala Sekolah, Guru, Siswa) dengan warna aksen yang berbeda (e.g., Admin IT: Violet, Guru: Emerald, Siswa: Blue)."
 
 ---
 

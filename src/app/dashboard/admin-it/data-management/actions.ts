@@ -48,6 +48,24 @@ async function ensureTenantRecord(
   return !!data
 }
 
+async function ensureTeacherRecord(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  teacherId: string,
+  organizationId: string
+) {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', teacherId)
+    .eq('organization_id', organizationId)
+    .eq('role', 'GURU')
+    .maybeSingle()
+
+  if (error) throw error
+
+  return !!data
+}
+
 // =====================================================
 // ROOMS ACTIONS
 // =====================================================
@@ -980,8 +998,8 @@ export async function assignTeacherToSubject(
       return { success: false, error: 'Mata pelajaran tidak valid untuk sekolah ini' }
     }
 
-    if (!(await ensureTenantRecord(supabase, 'profiles', teacherId, auth.user.organization_id))) {
-      return { success: false, error: 'Guru tidak valid untuk sekolah ini' }
+    if (!(await ensureTeacherRecord(supabase, teacherId, auth.user.organization_id))) {
+      return { success: false, error: 'Guru harus akun guru aktif di sekolah ini' }
     }
 
     if (!(await ensureTenantRecord(supabase, 'teacher_ranks', teacherRankId, auth.user.organization_id))) {

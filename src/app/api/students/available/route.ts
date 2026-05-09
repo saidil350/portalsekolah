@@ -26,7 +26,7 @@ export async function GET(request: Request) {
 
     const { data: classData } = await supabase
       .from('classes')
-      .select('id')
+      .select('id, academic_year_id')
       .eq('id', classId)
       .eq('organization_id', auth.user.organization_id)
       .maybeSingle()
@@ -38,13 +38,21 @@ export async function GET(request: Request) {
       )
     }
 
-    // Get enrolled student IDs
-    const { data: enrollmentsData, error: enrollmentsError } = await supabase
+    // Get student IDs that already have an active class in this academic year.
+    // This keeps roster assignment one-active-class-per-student-per-year.
+    let enrollmentsQuery = supabase
       .from('enrollments')
       .select('student_id')
       .eq('organization_id', auth.user.organization_id)
-      .eq('class_id', classId)
       .eq('status', 'ACTIVE')
+
+    if (classData.academic_year_id) {
+      enrollmentsQuery = enrollmentsQuery.eq('academic_year_id', classData.academic_year_id)
+    } else {
+      enrollmentsQuery = enrollmentsQuery.is('academic_year_id', null)
+    }
+
+    const { data: enrollmentsData, error: enrollmentsError } = await enrollmentsQuery
 
     if (enrollmentsError) throw enrollmentsError
 
@@ -72,7 +80,9 @@ export async function GET(request: Request) {
     }
 
     if (search) {
-      query = query.or(`full_name.ilike.%${search}%,nisn.ilike.%${search}%,email.ilike.%${search}%`)
+      const searchFields = [`full_name.ilike.%${search}%`, `email.ilike.%${search}%`]
+      if (hasNisn) searchFields.splice(1, 0, `nisn.ilike.%${search}%`)
+      query = query.or(searchFields.join(','))
     }
 
     const { data, error } = await query

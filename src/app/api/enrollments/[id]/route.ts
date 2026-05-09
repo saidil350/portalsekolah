@@ -2,7 +2,7 @@ import { createAdminClient } from '@/utils/supabase/server-admin'
 import { authorizeApi } from '@/lib/auth/authorization'
 import { NextRequest } from 'next/server'
 
-const WITHDRAW_STATUS_CANDIDATES = ['WITHDRAWN', 'NONAKTIF', 'PINDAH']
+const WITHDRAW_STATUS_CANDIDATES = ['PINDAH', 'NONAKTIF', 'WITHDRAWN']
 
 const isCheckConstraintError = (error: any) =>
   (error?.message || '').toLowerCase().includes('check constraint')
@@ -31,7 +31,10 @@ export async function DELETE(
     for (const statusValue of WITHDRAW_STATUS_CANDIDATES) {
       const { data, error } = await adminClient
         .from('enrollments')
-        .update({ status: statusValue })
+        .update({
+          status: statusValue,
+          notes: 'Dikeluarkan dari roster oleh Admin IT',
+        })
         .eq('id', enrollmentId)
         .eq('organization_id', organizationId)
         .select()
@@ -49,22 +52,10 @@ export async function DELETE(
       }
     }
 
-    const { data: deletedRow, error: deleteError } = await adminClient
-      .from('enrollments')
-      .delete()
-      .eq('id', enrollmentId)
-      .eq('organization_id', organizationId)
-      .select()
-      .single()
-
-    if (deleteError) {
-      return Response.json(
-        { success: false, error: deleteError.message, details: deleteError.details, hint: deleteError.hint },
-        { status: 500 }
-      )
-    }
-
-    return Response.json({ success: true, data: deletedRow, deleted: true })
+    return Response.json(
+      { success: false, error: 'Status keluar siswa tidak cocok dengan constraint database' },
+      { status: 500 }
+    )
   } catch (error: any) {
     return Response.json(
       { success: false, error: error.message || 'Gagal mengeluarkan siswa' },

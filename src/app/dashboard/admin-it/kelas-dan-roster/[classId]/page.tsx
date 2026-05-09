@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { ArrowLeft, Users, Calendar, BookOpen, GraduationCap, MapPin, Clock, Loader2, Plus, Trash2, Edit } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, BookOpen, GraduationCap, MapPin, Clock, Loader2, Plus, Trash2, Edit, AlertCircle, CheckCircle2 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { fetchClassRosterView } from '../actions'
 import type { ClassSchedule } from '@/types/class-roster'
@@ -145,7 +145,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
       }
 
       if (json.success) {
-        setActionMessage({ type: 'success', text: 'Siswa berhasil dikeluarkan dari kelas' })
+        setActionMessage({ type: 'success', text: 'Siswa berhasil dikeluarkan dari roster aktif. Riwayat enrollment tetap tersimpan.' })
         fetchRoster()
         setWithdrawTarget(null)
       } else {
@@ -211,8 +211,16 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
     return null
   }
 
-  const { class_info, students, schedules, teachers, statistics } = rosterData
+  const { class_info, students, schedules, teachers, subjects, statistics } = rosterData
   const badge = getOccupancyBadge(class_info.current_enrollment, class_info.capacity)
+  const completionItems = [
+    { label: 'Wali kelas', done: !!class_info.wali_kelas },
+    { label: 'Ruang base', done: !!class_info.home_room },
+    { label: 'Roster siswa', done: statistics.total_students > 0 },
+    { label: 'Jadwal aktif', done: schedules.length > 0 },
+    { label: 'Guru mapel', done: teachers.length > 0 && subjects.length > 0 },
+  ]
+  const missingItems = completionItems.filter((item) => !item.done)
 
   // Prepare schedule grid (5 days x 7 time slots)
   const timeSlots = ['07:00', '08:30', '10:15', '12:00', '13:30', '15:00']
@@ -294,6 +302,54 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
         </div>
       )}
 
+      <section className="px-6 pt-4">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-4">
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <div>
+                <h2 className="text-sm font-bold text-foreground">Ringkasan Kendali Kelas</h2>
+                <p className="text-xs text-muted-foreground">Pantau otoritas wali kelas, roster, guru mapel, dan jadwal aktif.</p>
+              </div>
+              <span className="text-xs font-semibold text-primary bg-primary/10 px-2.5 py-1 rounded-full">
+                {completionItems.length - missingItems.length}/{completionItems.length} lengkap
+              </span>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+              {completionItems.map((item) => (
+                <div
+                  key={item.label}
+                  className={`flex items-center gap-2 rounded-md border px-2.5 py-2 text-xs font-medium ${
+                    item.done
+                      ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                      : 'border-amber-200 bg-amber-50 text-amber-700'
+                  }`}
+                >
+                  {item.done ? <CheckCircle2 className="w-4 h-4" /> : <AlertCircle className="w-4 h-4" />}
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="bg-card border border-border rounded-lg p-4 shadow-sm">
+            <h2 className="text-sm font-bold text-foreground mb-2">Langkah Berikutnya</h2>
+            {missingItems.length === 0 ? (
+              <p className="text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2">
+                Struktur kelas sudah siap digunakan untuk presensi, nilai, dan jadwal siswa.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {missingItems.map((item) => (
+                  <p key={item.label} className="text-xs text-muted-foreground flex items-center gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 text-amber-500" />
+                    Lengkapi {item.label.toLowerCase()}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+
       {/* Content */}
       <div className="flex-1 overflow-hidden">
         <div className="flex h-full">
@@ -329,7 +385,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
                   <span className="font-medium text-foreground">{class_info.capacity} siswa</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Terkisi:</span>
+                  <span className="text-muted-foreground">Terisi:</span>
                   <span className="font-medium text-foreground">{class_info.current_enrollment} siswa</span>
                 </div>
               </div>
@@ -518,6 +574,8 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
           onClose={() => setShowEditClassInfoModal(false)}
           onSave={handleUpdateClassInfo}
           classData={{
+            id: class_info.id,
+            academic_year_id: class_info.academic_year_id,
             wali_kelas: class_info.wali_kelas,
             home_room: class_info.home_room
           }}
@@ -544,7 +602,7 @@ export default function ClassDetailPage({ params }: { params: Promise<{ classId:
             <div className="p-5 border-b border-border">
               <h3 className="text-lg font-bold text-foreground">Keluarkan Siswa</h3>
               <p className="text-sm text-muted-foreground mt-1">
-                Apakah Anda yakin ingin mengeluarkan <span className="font-medium text-foreground">{withdrawTarget.name}</span> dari kelas?
+                Apakah Anda yakin ingin mengeluarkan <span className="font-medium text-foreground">{withdrawTarget.name}</span> dari roster aktif kelas ini? Riwayat enrollment tetap disimpan.
               </p>
             </div>
             <div className="p-5 flex items-center justify-end gap-2.5">

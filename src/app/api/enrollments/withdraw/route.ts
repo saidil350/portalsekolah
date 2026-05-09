@@ -8,6 +8,10 @@ type WithdrawRequest = {
 }
 
 const ACTIVE_STATUS_CANDIDATES = ['ACTIVE', 'active']
+const WITHDRAW_STATUS_CANDIDATES = ['PINDAH', 'NONAKTIF', 'WITHDRAWN']
+
+const isCheckConstraintError = (error: any) =>
+  (error?.message || '').toLowerCase().includes('check constraint')
 
 export async function POST(request: Request) {
   try {
@@ -60,24 +64,34 @@ export async function POST(request: Request) {
       targetId = existing.id
     }
 
-    // Always delete the enrollment (instead of updating status)
-    // This allows students to be re-enrolled without UNIQUE constraint issues
-    const { data: deletedRow, error: deleteError } = await adminClient
-      .from('enrollments')
-      .delete()
-      .eq('id', targetId)
-      .eq('organization_id', organizationId)
-      .select()
-      .single()
+    for (const statusValue of WITHDRAW_STATUS_CANDIDATES) {
+      const { data, error } = await adminClient
+        .from('enrollments')
+        .update({
+          status: statusValue,
+          notes: 'Dikeluarkan dari roster oleh Admin IT',
+        })
+        .eq('id', targetId)
+        .eq('organization_id', organizationId)
+        .select()
+        .single()
 
-    if (deleteError) {
-      return Response.json(
-        { success: false, error: deleteError.message, details: deleteError.details, hint: deleteError.hint },
-        { status: 500 }
-      )
+      if (!error) {
+        return Response.json({ success: true, data })
+      }
+
+      if (!isCheckConstraintError(error)) {
+        return Response.json(
+          { success: false, error: error.message, details: error.details, hint: error.hint },
+          { status: 500 }
+        )
+      }
     }
 
-    return Response.json({ success: true, data: deletedRow, deleted: true })
+    return Response.json(
+      { success: false, error: 'Status keluar siswa tidak cocok dengan constraint database' },
+      { status: 500 }
+    )
   } catch (error: any) {
     return Response.json(
       { success: false, error: error.message || 'Gagal mengeluarkan siswa' },

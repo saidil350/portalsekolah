@@ -50,6 +50,13 @@ const TIME_SLOTS = [
   '07:00', '08:30', '10:15', '12:00', '13:30', '15:00'
 ]
 
+function addMinutes(time: string, minutesToAdd: number) {
+  const [hours, minutes] = time.split(':').map(Number)
+  const date = new Date()
+  date.setHours(hours, minutes + minutesToAdd, 0, 0)
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+}
+
 export default function AddScheduleModal({
   isOpen,
   onClose,
@@ -73,10 +80,10 @@ export default function AddScheduleModal({
   const [teachers, setTeachers] = useState<Teacher[]>([])
   const [rooms, setRooms] = useState<Room[]>([])
   const [availabilityStatus, setAvailabilityStatus] = useState<AvailabilityStatus[]>([])
-  const [loading, setLoading] = useState(false)
   const [loadingData, setLoadingData] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState('')
+  const [subjectTeacherNotice, setSubjectTeacherNotice] = useState('')
   const [checkingAvailability, setCheckingAvailability] = useState(false)
 
   // Fetch dropdown data
@@ -149,15 +156,15 @@ export default function AddScheduleModal({
       }
 
       if (subjectTeachersData && subjectTeachersData.length > 0) {
-        // Update teachers list with only those assigned to this subject
         const filteredTeachers = (subjectTeachersData as any[])
           .map(st => Array.isArray(st.teacher) ? st.teacher[0] : st.teacher)
           .filter(Boolean) as unknown as Teacher[]
  
         setTeachers(filteredTeachers)
+        setSubjectTeacherNotice('')
       } else {
-        // If no teachers assigned to this subject, show all teachers
-        await fetchDropdownData()
+        setTeachers([])
+        setSubjectTeacherNotice('Belum ada guru pengampu untuk mata pelajaran ini. Atur otoritas guru mapel di Kelola Data Sekolah terlebih dahulu.')
       }
     } catch (err) {
       console.error('Error fetching subject teachers:', err)
@@ -219,6 +226,11 @@ export default function AddScheduleModal({
       return
     }
 
+    if (formData.subject_id && teachers.length === 0) {
+      setError('Mata pelajaran ini belum memiliki guru pengampu. Atur otoritas guru mapel terlebih dahulu.')
+      return
+    }
+
     if (!formData.room_id) {
       setError('Ruangan wajib dipilih')
       return
@@ -263,6 +275,7 @@ export default function AddScheduleModal({
 
     // When subject changes, fetch teachers for that subject
     if (name === 'subject_id' && value) {
+      setSubjectTeacherNotice('')
       fetchSubjectTeachers(value)
       // Reset teacher selection since teacher list changed
       setFormData(prev => ({
@@ -381,8 +394,7 @@ export default function AddScheduleModal({
                 <div className="grid grid-cols-3 gap-2">
                   {TIME_SLOTS.map(time => {
                     const isSelected = formData.start_time === time
-                    const [hours] = time.split(':').map(Number)
-                    const endTime = `${String((hours + 1) % 24).padStart(2, '0')}:${String(parseInt(time.split(':')[1]) + 30).padStart(2, '0')}`
+                    const endTime = addMinutes(time, 90)
 
                     return (
                       <button
@@ -439,10 +451,16 @@ export default function AddScheduleModal({
                     </span>
                   )}
                 </label>
-                {formData.subject_id && (
+                {formData.subject_id && teachers.length > 0 && (
                   <div className="mb-2 flex items-center gap-2 text-xs text-blue-600 bg-blue-50 px-3 py-2 rounded-lg">
                     <BookOpen className="w-3 h-3" />
                     <span>Menampilkan guru yang mengajar mata pelajaran ini</span>
+                  </div>
+                )}
+                {subjectTeacherNotice && (
+                  <div className="mb-2 flex items-start gap-2 text-xs text-amber-700 bg-amber-50 border border-amber-200 px-3 py-2 rounded-lg">
+                    <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                    <span>{subjectTeacherNotice}</span>
                   </div>
                 )}
                 <div className="space-y-2 max-h-48 overflow-y-auto">

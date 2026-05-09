@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     const body = (await request.json().catch(() => ({}))) as EnrollRequest
     const studentId = body.studentId?.trim()
     const classId = body.classId?.trim()
-    const academicYearId = body.academicYearId?.trim() || null
+    const requestedAcademicYearId = body.academicYearId?.trim() || null
 
     if (!studentId || !classId) {
       return Response.json(
@@ -34,13 +34,21 @@ export async function POST(request: Request) {
     const organizationId = auth.user.organization_id
     const adminClient = await createAdminClient()
 
-    const [{ data: classData }, { data: studentData }, { data: academicYearData }] = await Promise.all([
-      adminClient.from('classes').select('id').eq('id', classId).eq('organization_id', organizationId).maybeSingle(),
+    const [{ data: classData }, { data: studentData }] = await Promise.all([
+      adminClient.from('classes').select('id, academic_year_id').eq('id', classId).eq('organization_id', organizationId).maybeSingle(),
       adminClient.from('profiles').select('id').eq('id', studentId).eq('organization_id', organizationId).eq('role', 'SISWA').maybeSingle(),
-      academicYearId
-        ? adminClient.from('academic_years').select('id').eq('id', academicYearId).eq('organization_id', organizationId).maybeSingle()
-        : Promise.resolve({ data: { id: null } }),
     ])
+
+    const academicYearId = requestedAcademicYearId || classData?.academic_year_id || null
+
+    const { data: academicYearData } = academicYearId
+      ? await adminClient
+        .from('academic_years')
+        .select('id')
+        .eq('id', academicYearId)
+        .eq('organization_id', organizationId)
+        .maybeSingle()
+      : { data: { id: null } }
 
     if (!classData || !studentData || (academicYearId && !academicYearData)) {
       return Response.json(
@@ -49,8 +57,43 @@ export async function POST(request: Request) {
       )
     }
 
-    // Check for ANY existing enrollment (regardless of status)
-    // This handles cases where there's a WITHDRAWN enrollment that would cause UNIQUE constraint violation
+    const activeQuery = adminClient
+      .from('enrollments')
+      .select('id, class_id, class:classes(name, code)')
+      .eq('organization_id', organizationId)
+      .eq('student_id', studentId)
+      .in('status', ACTIVE_STATUS_CANDIDATES)
+
+    if (academicYearId) {
+      activeQuery.eq('academic_year_id', academicYearId)
+    } else {
+      activeQuery.is('academic_year_id', null)
+    }
+
+    const { data: activeEnrollment, error: activeError } = await activeQuery.limit(1).maybeSingle()
+
+    if (activeError) {
+      return Response.json(
+        { success: false, error: activeError.message },
+        { status: 500 }
+      )
+    }
+
+    if (activeEnrollment && activeEnrollment.class_id !== classId) {
+      const className = (activeEnrollment.class as any)?.name || (activeEnrollment.class as any)?.code || 'kelas lain'
+      return Response.json(
+        { success: false, error: `Siswa sudah aktif di ${className} pada tahun ajaran ini. Keluarkan dari kelas lama terlebih dahulu.` },
+        { status: 409 }
+      )
+    }
+
+    if (activeEnrollment?.class_id === classId) {
+      return Response.json(
+        { success: false, error: 'Siswa sudah terdaftar aktif di kelas ini' },
+        { status: 409 }
+      )
+    }
+
     const checkQuery = adminClient
       .from('enrollments')
       .select('id, status')
@@ -74,28 +117,29 @@ export async function POST(request: Request) {
       )
     }
 
-    // If there's an existing ACTIVE enrollment, return error
-    if (existingEnrollment && ACTIVE_STATUS_CANDIDATES.includes(existingEnrollment.status)) {
-      return Response.json(
-        { success: false, error: 'Siswa sudah terdaftar di kelas ini' },
-        { status: 409 }
-      )
-    }
-
-    // If there's an existing enrollment with non-ACTIVE status (e.g., WITHDRAWN), delete it first
+    // If there is an old non-active row in the same class/year, reactivate it
+    // instead of deleting history or creating a duplicate.
     if (existingEnrollment && !ACTIVE_STATUS_CANDIDATES.includes(existingEnrollment.status)) {
-      const { error: deleteError } = await adminClient
+      const { data, error } = await adminClient
         .from('enrollments')
-        .delete()
+        .update({
+          status: 'ACTIVE',
+          enrollment_date: new Date().toISOString().split('T')[0],
+          notes: null,
+        })
         .eq('id', existingEnrollment.id)
         .eq('organization_id', organizationId)
+        .select()
+        .single()
 
-      if (deleteError) {
+      if (error) {
         return Response.json(
-          { success: false, error: deleteError.message },
+          { success: false, error: error.message, details: error.details, hint: error.hint },
           { status: 500 }
         )
       }
+
+      return Response.json({ success: true, data })
     }
 
     const basePayload: any = {

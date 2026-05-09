@@ -26,7 +26,7 @@ export async function PATCH(
 
     const { data: existingClass } = await adminClient
       .from('classes')
-      .select('id')
+      .select('id, academic_year_id')
       .eq('id', classId)
       .eq('organization_id', organizationId)
       .maybeSingle()
@@ -51,6 +51,27 @@ export async function PATCH(
 
         if (!teacher) {
           return Response.json({ success: false, error: 'Wali kelas tidak valid untuk sekolah ini' }, { status: 403 })
+        }
+
+        const { data: conflict } = await adminClient
+          .from('classes')
+          .select('id, name, code')
+          .eq('organization_id', organizationId)
+          .eq('academic_year_id', existingClass.academic_year_id)
+          .eq('wali_kelas_id', body.wali_kelas_id)
+          .eq('is_active', true)
+          .neq('id', classId)
+          .limit(1)
+          .maybeSingle()
+
+        if (conflict) {
+          return Response.json(
+            {
+              success: false,
+              error: `Guru tersebut sudah menjadi wali kelas ${conflict.name || conflict.code || 'lain'} pada tahun ajaran ini`,
+            },
+            { status: 409 }
+          )
         }
       }
 

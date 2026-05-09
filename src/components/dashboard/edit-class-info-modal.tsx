@@ -9,9 +9,19 @@ interface EditClassInfoModalProps {
   onClose: () => void
   onSave: (data: { wali_kelas_id?: string | null; home_room_id?: string | null }) => Promise<void>
   classData: {
+    id: string
+    academic_year_id?: string | null
     wali_kelas?: { id: string; full_name: string } | null
     home_room?: { id: string; name: string } | null
   }
+}
+
+type TeacherOption = {
+  id: string
+  full_name: string
+  homeroom_class_id?: string | null
+  homeroom_class_name?: string | null
+  homeroom_class_code?: string | null
 }
 
 export default function EditClassInfoModal({
@@ -23,7 +33,7 @@ export default function EditClassInfoModal({
   const { t } = useLanguage()
   const [waliKelasId, setWaliKelasId] = useState<string>('')
   const [homeRoomId, setHomeRoomId] = useState<string>('')
-  const [teachers, setTeachers] = useState<Array<{ id: string; full_name: string }>>([])
+  const [teachers, setTeachers] = useState<TeacherOption[]>([])
   const [rooms, setRooms] = useState<Array<{ id: string; name: string }>>([])
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
@@ -45,8 +55,12 @@ export default function EditClassInfoModal({
 
     try {
       // Fetch teachers (GURU role)
+      const teacherParams = new URLSearchParams()
+      if (classData.academic_year_id) teacherParams.set('academicYearId', classData.academic_year_id)
+      if (classData.id) teacherParams.set('currentClassId', classData.id)
+
       const [teachersRes, roomsRes] = await Promise.all([
-        fetch('/api/users/teachers'),
+        fetch(`/api/users/teachers${teacherParams.size ? `?${teacherParams.toString()}` : ''}`),
         fetch('/api/rooms')
       ])
 
@@ -77,6 +91,13 @@ export default function EditClassInfoModal({
     setError('')
 
     try {
+      const selectedTeacher = teachers.find((teacher) => teacher.id === waliKelasId)
+      if (selectedTeacher?.homeroom_class_id) {
+        setError(`Guru ini sudah menjadi wali kelas ${selectedTeacher.homeroom_class_name || selectedTeacher.homeroom_class_code || 'lain'} pada tahun ajaran ini`)
+        setSaving(false)
+        return
+      }
+
       // Get current values
       const currentWaliKelasId = classData.wali_kelas?.id || null
       const currentHomeRoomId = classData.home_room?.id || null
@@ -172,8 +193,15 @@ export default function EditClassInfoModal({
                 >
                   <option value="">{t('admin.roster.modal.editClass.selectHomeroom')}</option>
                   {teachers.map((teacher) => (
-                    <option key={teacher.id} value={teacher.id}>
+                    <option
+                      key={teacher.id}
+                      value={teacher.id}
+                      disabled={!!teacher.homeroom_class_id}
+                    >
                       {teacher.full_name}
+                      {teacher.homeroom_class_id
+                        ? ` - sudah wali ${teacher.homeroom_class_name || teacher.homeroom_class_code || 'kelas lain'}`
+                        : ''}
                     </option>
                   ))}
                 </select>

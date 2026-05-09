@@ -44,6 +44,124 @@ async function ensureTenantRecord(
   return !!data
 }
 
+async function ensureTeacherRecord(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  teacherId: string | null | undefined,
+  organizationId: string
+) {
+  if (!teacherId) return true
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id')
+    .eq('id', teacherId)
+    .eq('organization_id', organizationId)
+    .eq('role', 'GURU')
+    .maybeSingle()
+
+  if (error) throw error
+
+  return !!data
+}
+
+async function getHomeroomConflict(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  teacherId: string | null | undefined,
+  academicYearId: string | null | undefined,
+  organizationId: string,
+  excludeClassId?: string
+) {
+  if (!teacherId || !academicYearId) return null
+
+  let query = supabase
+    .from('classes')
+    .select('id, name, code')
+    .eq('organization_id', organizationId)
+    .eq('academic_year_id', academicYearId)
+    .eq('wali_kelas_id', teacherId)
+    .eq('is_active', true)
+
+  if (excludeClassId) {
+    query = query.neq('id', excludeClassId)
+  }
+
+  const { data, error } = await query.limit(1).maybeSingle()
+
+  if (error) throw error
+
+  return data as { id: string; name?: string | null; code?: string | null } | null
+}
+
+async function ensureSubjectTeacherAuthority(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  subjectId: string | null | undefined,
+  teacherId: string | null | undefined,
+  organizationId: string
+) {
+  if (!subjectId || !teacherId) return false
+
+  const { data, error } = await supabase
+    .from('subject_teachers')
+    .select('id')
+    .eq('organization_id', organizationId)
+    .eq('subject_id', subjectId)
+    .eq('teacher_id', teacherId)
+    .maybeSingle()
+
+  if (error) throw error
+
+  return !!data
+}
+
+async function getScheduleAuthorityConflict(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  params: {
+    organizationId: string
+    dayOfWeek: number
+    startTime: string
+    endTime: string
+    startColumn: string
+    endColumn: string
+    classId?: string | null
+    teacherId?: string | null
+    roomId?: string | null
+    excludeScheduleId?: string
+  }
+) {
+  let query = supabase
+    .from('class_schedules')
+    .select('id, class_id, teacher_id, room_id')
+    .eq('organization_id', params.organizationId)
+    .eq('day_of_week', params.dayOfWeek)
+    .eq('is_active', true)
+    .lt(params.startColumn, params.endTime)
+    .gt(params.endColumn, params.startTime)
+
+  if (params.excludeScheduleId) {
+    query = query.neq('id', params.excludeScheduleId)
+  }
+
+  const { data, error } = await query
+
+  if (error) throw error
+
+  const schedules = data || []
+
+  if (params.classId && schedules.some((schedule: any) => schedule.class_id === params.classId)) {
+    return 'Jadwal bentrok dengan jadwal lain di kelas yang sama'
+  }
+
+  if (params.teacherId && schedules.some((schedule: any) => schedule.teacher_id === params.teacherId)) {
+    return 'Guru sudah memiliki jadwal lain pada jam tersebut'
+  }
+
+  if (params.roomId && schedules.some((schedule: any) => schedule.room_id === params.roomId)) {
+    return 'Ruangan sudah digunakan pada jam tersebut'
+  }
+
+  return null
+}
+
 // =====================================================
 // CLASSES ACTIONS
 // =====================================================
@@ -224,6 +342,26 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
       }
     }
 
+    if (formData.wali_kelas_id) {
+      if (!(await ensureTeacherRecord(supabase, formData.wali_kelas_id, auth.user.organization_id))) {
+        return { success: false, error: 'Wali kelas harus akun guru aktif di sekolah ini' }
+      }
+
+      const conflict = await getHomeroomConflict(
+        supabase,
+        formData.wali_kelas_id,
+        formData.academic_year_id,
+        auth.user.organization_id
+      )
+
+      if (conflict) {
+        return {
+          success: false,
+          error: `Guru tersebut sudah menjadi wali kelas ${conflict.name || conflict.code || 'lain'} pada tahun ajaran ini`,
+        }
+      }
+    }
+
     console.log('Preparing to insert class')
     const insertData = {
       name: formData.name.trim(),
@@ -296,6 +434,19 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
   try {
     const supabase = await createClient()
 
+    const { data: existingClass, error: existingClassError } = await supabase
+      .from('classes')
+      .select('id, academic_year_id, wali_kelas_id')
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
+      .maybeSingle()
+
+    if (existingClassError) throw existingClassError
+
+    if (!existingClass) {
+      return { success: false, error: 'Kelas tidak ditemukan di sekolah ini' }
+    }
+
     // Check if code already exists (excluding current record)
     if (formData.code) {
       const { data: existingCode } = await supabase
@@ -335,6 +486,36 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
     for (const [table, recordId, message] of updateTenantChecks) {
       if (!(await ensureTenantRecord(supabase, table, recordId, auth.user.organization_id))) {
         return { success: false, error: message }
+      }
+    }
+
+    const nextAcademicYearId =
+      formData.academic_year_id !== undefined
+        ? formData.academic_year_id || null
+        : existingClass.academic_year_id
+    const nextHomeroomTeacherId =
+      formData.wali_kelas_id !== undefined
+        ? formData.wali_kelas_id || null
+        : existingClass.wali_kelas_id
+
+    if (nextHomeroomTeacherId) {
+      if (!(await ensureTeacherRecord(supabase, nextHomeroomTeacherId, auth.user.organization_id))) {
+        return { success: false, error: 'Wali kelas harus akun guru aktif di sekolah ini' }
+      }
+
+      const conflict = await getHomeroomConflict(
+        supabase,
+        nextHomeroomTeacherId,
+        nextAcademicYearId,
+        auth.user.organization_id,
+        id
+      )
+
+      if (conflict) {
+        return {
+          success: false,
+          error: `Guru tersebut sudah menjadi wali kelas ${conflict.name || conflict.code || 'lain'} pada tahun ajaran ini`,
+        }
       }
     }
 
@@ -818,6 +999,33 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       }
     }
 
+    if (!(await ensureTeacherRecord(supabase, formData.teacher_id, auth.user.organization_id))) {
+      return { success: false, error: 'Guru harus akun guru aktif di sekolah ini' }
+    }
+
+    if (!(await ensureSubjectTeacherAuthority(supabase, formData.subject_id, formData.teacher_id, auth.user.organization_id))) {
+      return {
+        success: false,
+        error: 'Guru belum memiliki otoritas untuk mata pelajaran ini. Atur guru pengampu di Kelola Data Sekolah terlebih dahulu.',
+      }
+    }
+
+    const scheduleConflict = await getScheduleAuthorityConflict(supabase, {
+      organizationId: auth.user.organization_id,
+      dayOfWeek: formData.day_of_week,
+      startTime: formData.start_time,
+      endTime: formData.end_time,
+      startColumn: scheduleColumns.start,
+      endColumn: scheduleColumns.end,
+      classId: formData.class_id,
+      teacherId: formData.teacher_id,
+      roomId: formData.room_id || null,
+    })
+
+    if (scheduleConflict) {
+      return { success: false, error: scheduleConflict }
+    }
+
     const insertData: any = {
       class_id: formData.class_id,
       subject_id: formData.subject_id,
@@ -882,6 +1090,21 @@ export async function updateClassSchedule(
     const scheduleMode = await detectScheduleColumnMode(supabase)
     const scheduleColumns = getScheduleColumns(scheduleMode)
 
+    const { data: existingScheduleData, error: existingScheduleError } = await supabase
+      .from('class_schedules')
+      .select(getScheduleSelect(scheduleMode, ''))
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
+      .maybeSingle()
+
+    if (existingScheduleError) throw existingScheduleError
+
+    if (!existingScheduleData) {
+      return { success: false, error: 'Jadwal tidak ditemukan di sekolah ini' }
+    }
+
+    const existingSchedule = existingScheduleData as unknown as ClassSchedule
+
     const updateData: any = {}
     if (formData.class_id) updateData.class_id = formData.class_id
     if (formData.subject_id) updateData.subject_id = formData.subject_id
@@ -909,6 +1132,42 @@ export async function updateClassSchedule(
       }
     }
 
+    const nextSubjectId = formData.subject_id || existingSchedule.subject_id
+    const nextTeacherId = formData.teacher_id || existingSchedule.teacher_id
+    const nextClassId = formData.class_id || existingSchedule.class_id
+    const nextRoomId = formData.room_id !== undefined ? formData.room_id || null : existingSchedule.room_id
+    const nextDayOfWeek = formData.day_of_week || existingSchedule.day_of_week
+    const nextStartTime = formData.start_time || existingSchedule.start_time
+    const nextEndTime = formData.end_time || existingSchedule.end_time
+
+    if (!(await ensureTeacherRecord(supabase, nextTeacherId, auth.user.organization_id))) {
+      return { success: false, error: 'Guru harus akun guru aktif di sekolah ini' }
+    }
+
+    if (!(await ensureSubjectTeacherAuthority(supabase, nextSubjectId, nextTeacherId, auth.user.organization_id))) {
+      return {
+        success: false,
+        error: 'Guru belum memiliki otoritas untuk mata pelajaran ini. Atur guru pengampu di Kelola Data Sekolah terlebih dahulu.',
+      }
+    }
+
+    const scheduleConflict = await getScheduleAuthorityConflict(supabase, {
+      organizationId: auth.user.organization_id,
+      dayOfWeek: nextDayOfWeek,
+      startTime: nextStartTime,
+      endTime: nextEndTime,
+      startColumn: scheduleColumns.start,
+      endColumn: scheduleColumns.end,
+      classId: nextClassId,
+      teacherId: nextTeacherId,
+      roomId: nextRoomId,
+      excludeScheduleId: id,
+    })
+
+    if (scheduleConflict) {
+      return { success: false, error: scheduleConflict }
+    }
+
     const { data, error } = await supabase
       .from('class_schedules')
       .update(updateData)
@@ -925,7 +1184,7 @@ export async function updateClassSchedule(
     }
 
     revalidatePath('/dashboard/admin-it/kelas-dan-roster')
-    revalidatePath(`/dashboard/admin-it/kelas-dan-roster/${formData.class_id}`)
+    revalidatePath(`/dashboard/admin-it/kelas-dan-roster/${formData.class_id || existingSchedule.class_id}`)
 
     return {
       success: true,
@@ -1158,12 +1417,20 @@ export async function checkScheduleAvailability(
       .eq('is_active', true)
 
     // Get existing schedules for this day/time (check for overlapping time ranges)
-    const { data: existingSchedules } = await supabase
+    let schedulesQuery = supabase
       .from('class_schedules')
       .select('teacher_id, room_id')
       .eq('organization_id', auth.user.organization_id)
       .eq('day_of_week', dayOfWeek)
-      .or(`and(${scheduleColumns.start}.lte.${endTime},${scheduleColumns.end}.gte.${startTime})`)
+      .eq('is_active', true)
+      .lt(scheduleColumns.start, endTime)
+      .gt(scheduleColumns.end, startTime)
+
+    if (excludeScheduleId) {
+      schedulesQuery = schedulesQuery.neq('id', excludeScheduleId)
+    }
+
+    const { data: existingSchedules } = await schedulesQuery
 
     // Build sets of unavailable teachers and rooms
     const unavailableTeacherIds = new Set(

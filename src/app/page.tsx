@@ -169,7 +169,7 @@ export default function LandingPage() {
             <AnimatedSection delay={0.4} className="mx-auto mt-6 max-w-2xl">
               <p className="text-lg leading-8 text-muted-foreground">
                 Platform manajemen sekolah terpadu dengan akses berbasis peran
-                untuk administrator, guru, siswa, dan orang tua. Tingkatkan
+                untuk administrator, kepala sekolah, guru, dan siswa. Tingkatkan
                 efisiensi dan transparansi pendidikan sekarang.
               </p>
             </AnimatedSection>
