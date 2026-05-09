@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Loader2, ChevronDown, Users, Calendar, BookOpen, UserPlus, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import type { TranslationKey } from '@/utils/dictionary';
 import { useToastHelpers } from '@/components/ui/toaster';
@@ -296,9 +296,13 @@ export default function DataManagementPage() {
     setMasterDataError('');
     try {
       if (masterDataSubTab === 'academic_years') {
-        const result = await fetchAcademicYears({ page: 1, limit: 50 });
+        const [result, semResult] = await Promise.all([
+          fetchAcademicYears({ page: 1, limit: 50 }),
+          fetchSemesters({ page: 1, limit: 50 })
+        ]);
         if (result.success && result.data) setAcademicYears(result.data);
         else setMasterDataError(result.error || t('admin.dataManagement.error.loadAcademicYears'));
+        if (semResult.success && semResult.data) setSemesters(semResult.data);
       } else if (masterDataSubTab === 'semesters') {
         // Fetch semesters AND academic years in parallel (academicYears needed for modal dropdown & table display)
         const [semResult, ayResult] = await Promise.all([
@@ -723,6 +727,12 @@ export default function DataManagementPage() {
     };
     return labels[label] ? t(labels[label]) : label;
   };
+
+  const activeAcademicYear = academicYears.find((year) => year.is_active);
+  const activeSemester = semesters.find((semester) => semester.is_active);
+  const showAcademicPeriodWarning = activeTab === 'master_data'
+    && (masterDataSubTab === 'academic_years' || masterDataSubTab === 'semesters')
+    && (!activeAcademicYear || !activeSemester);
 
   return (
     <main className="flex-1 flex flex-col h-full bg-[#FAFAFA] relative min-w-0 overflow-hidden text-sm [&_th]:!px-4 [&_th]:!py-3 [&_td]:!px-4 [&_td]:!py-3">
@@ -1301,6 +1311,17 @@ export default function DataManagementPage() {
 
                           {/* Content */}
                           <div className="p-5 min-h-[460px] flex flex-col">
+                            {showAcademicPeriodWarning && (
+                              <div className="mb-4 flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+                                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5" />
+                                <div>
+                                  <p className="font-semibold">Periode akademik aktif belum lengkap</p>
+                                  <p className="text-xs mt-0.5">
+                                    Pastikan ada satu tahun ajaran aktif dan satu semester aktif agar kelas, jadwal, presensi, nilai, dan SPP memakai periode yang sama.
+                                  </p>
+                                </div>
+                              </div>
+                            )}
                             {masterDataLoading ? (
                               <div className="flex-1 flex flex-col items-center justify-center py-12">
                                 <Loader2 className="w-8 h-8 animate-spin text-primary" />
@@ -1399,6 +1420,7 @@ export default function DataManagementPage() {
                                           <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.name')}</th>
                                           <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.academicYear')}</th>
                                           <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.period')}</th>
+                                          <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground">{t('common.label.status')}</th>
                                           <th className="px-6 py-4 text-[10px] uppercase tracking-[1.2px] font-bold text-muted-foreground text-center">{t('common.label.actions')}</th>
                                         </tr>
                                       </thead>
@@ -1418,6 +1440,14 @@ export default function DataManagementPage() {
                                               <div className="flex flex-col text-sm">
                                                 <span className="text-muted-foreground">{sem.start_date}</span>
                                                 <span className="text-muted-foreground">{t('common.label.until')} {sem.end_date}</span>
+                                              </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                              <div className="flex items-center gap-2">
+                                                <div className={`w-[6px] h-[6px] rounded-full ${sem.is_active ? 'bg-emerald-500' : 'bg-slate-400'}`} />
+                                                <span className={`text-xs font-bold ${sem.is_active ? 'text-emerald-600' : 'text-muted-foreground'}`}>
+                                                  {getActiveLabel(sem.is_active)}
+                                                </span>
                                               </div>
                                             </td>
                                             <td className="px-6 py-4">

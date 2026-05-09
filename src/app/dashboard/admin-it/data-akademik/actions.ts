@@ -40,6 +40,7 @@ export async function fetchAcademicYears(
     let query = supabase
       .from('academic_years')
       .select('*', { count: 'exact' })
+      .eq('organization_id', auth.user.organization_id)
 
     // Pagination
     const page = filters.page || 1
@@ -94,6 +95,31 @@ export async function createAcademicYear(
       return { success: false, error: 'Tanggal selesai wajib diisi' }
     }
 
+    if (new Date(formData.end_date) <= new Date(formData.start_date)) {
+      return { success: false, error: 'Tanggal selesai harus setelah tanggal mulai' }
+    }
+
+    const { data: existingYear } = await supabase
+      .from('academic_years')
+      .select('id')
+      .eq('organization_id', auth.user.organization_id)
+      .eq('name', formData.name.trim())
+      .maybeSingle()
+
+    if (existingYear) {
+      return { success: false, error: 'Nama tahun ajaran sudah terdaftar' }
+    }
+
+    if (formData.is_active) {
+      const { error: deactivateError } = await supabase
+        .from('academic_years')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .eq('is_active', true)
+
+      if (deactivateError) throw deactivateError
+    }
+
     const { data, error } = await supabase
       .from('academic_years')
       .insert({
@@ -101,12 +127,24 @@ export async function createAcademicYear(
         start_date: formData.start_date,
         end_date: formData.end_date,
         is_active: formData.is_active,
-        description: formData.description || null
+        description: formData.description || null,
+        organization_id: auth.user.organization_id
       })
       .select()
       .single()
 
     if (error) throw error
+
+    if (formData.is_active) {
+      const { error: semesterDeactivateError } = await supabase
+        .from('semesters')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .neq('academic_year_id', data.id)
+        .eq('is_active', true)
+
+      if (semesterDeactivateError) throw semesterDeactivateError
+    }
 
     revalidatePath('/dashboard/admin-it/data-management')
 
@@ -145,14 +183,71 @@ export async function updateAcademicYear(
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
     if (formData.description !== undefined) updateData.description = formData.description || null
 
+    const { data: currentYear, error: currentYearError } = await supabase
+      .from('academic_years')
+      .select('id, start_date, end_date')
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
+      .maybeSingle()
+
+    if (currentYearError) throw currentYearError
+
+    if (!currentYear) {
+      return { success: false, error: 'Tahun ajaran tidak ditemukan di sekolah ini' }
+    }
+
+    const nextStartDate = formData.start_date || currentYear.start_date
+    const nextEndDate = formData.end_date || currentYear.end_date
+
+    if (new Date(nextEndDate) <= new Date(nextStartDate)) {
+      return { success: false, error: 'Tanggal selesai harus setelah tanggal mulai' }
+    }
+
+    if (formData.name) {
+      const { data: existingYear } = await supabase
+        .from('academic_years')
+        .select('id')
+        .eq('organization_id', auth.user.organization_id)
+        .eq('name', formData.name.trim())
+        .neq('id', id)
+        .maybeSingle()
+
+      if (existingYear) {
+        return { success: false, error: 'Nama tahun ajaran sudah terdaftar' }
+      }
+    }
+
+    if (formData.is_active) {
+      const { error: deactivateError } = await supabase
+        .from('academic_years')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .eq('is_active', true)
+        .neq('id', id)
+
+      if (deactivateError) throw deactivateError
+    }
+
     const { data, error } = await supabase
       .from('academic_years')
       .update(updateData)
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
       .select()
       .single()
 
     if (error) throw error
+
+    if (formData.is_active) {
+      const { error: semesterDeactivateError } = await supabase
+        .from('semesters')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .neq('academic_year_id', id)
+        .eq('is_active', true)
+
+      if (semesterDeactivateError) throw semesterDeactivateError
+    }
 
     revalidatePath('/dashboard/admin-it/data-management')
 
@@ -185,6 +280,7 @@ export async function deleteAcademicYear(id: string): Promise<DeleteResponse> {
       .from('academic_years')
       .delete()
       .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
 
     if (error) throw error
 

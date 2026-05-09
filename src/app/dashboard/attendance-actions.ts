@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { authorizeAction } from '@/lib/auth/authorization'
 import { createClient } from '@/utils/supabase/server'
+import { getActiveAcademicPeriod } from '@/lib/academic-period'
 import type {
   AttendanceRecord,
   AttendanceRecordStatus,
@@ -229,6 +230,12 @@ async function getTeacherSchedules(
   date: string
 ): Promise<TeacherAttendanceScheduleOption[]> {
   const dayOfWeek = getDayOfWeek(date)
+  const { academicYear, semester } = await getActiveAcademicPeriod(supabase, organizationId)
+
+  if (!academicYear || !semester) {
+    return []
+  }
+
   const { data, error } = await supabase
     .from('class_schedules')
     .select(`
@@ -244,6 +251,8 @@ async function getTeacherSchedules(
     .eq('organization_id', organizationId)
     .eq('teacher_id', teacherId)
     .eq('is_active', true)
+    .eq('academic_year_id', academicYear.id)
+    .eq('semester', semester.semester_number)
     .order('start_time', { ascending: true })
 
   if (error) throw error
@@ -385,6 +394,11 @@ export async function saveTeacherAttendanceSession(
   try {
     const supabase = await createClient()
     const attendanceDate = normalizeDate(input.date)
+    const { academicYear, semester } = await getActiveAcademicPeriod(supabase, auth.user.organization_id)
+
+    if (!academicYear || !semester) {
+      return { success: false, error: 'Periode akademik aktif belum diatur' }
+    }
 
     const { data: schedule, error: scheduleError } = await supabase
       .from('class_schedules')
@@ -392,6 +406,8 @@ export async function saveTeacherAttendanceSession(
       .eq('id', input.classScheduleId)
       .eq('teacher_id', auth.user.id)
       .eq('organization_id', auth.user.organization_id)
+      .eq('academic_year_id', academicYear.id)
+      .eq('semester', semester.semester_number)
       .single()
 
     if (scheduleError || !schedule) {

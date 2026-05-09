@@ -17,6 +17,20 @@ interface TeacherClass {
   department?: string
 }
 
+interface AcademicYearOption {
+  id: string
+  name: string
+  is_active: boolean
+}
+
+interface SemesterOption {
+  id: string
+  academic_year_id: string
+  name: string
+  semester_number: 1 | 2
+  is_active: boolean
+}
+
 export default function TeacherClassSchedulePage() {
   const router = useRouter()
   const { t } = useLanguage()
@@ -26,10 +40,46 @@ export default function TeacherClassSchedulePage() {
   const [error, setError] = useState('')
   const [academicYear, setAcademicYear] = useState('')
   const [semester, setSemester] = useState('1')
+  const [academicYears, setAcademicYears] = useState<AcademicYearOption[]>([])
+  const [semesters, setSemesters] = useState<SemesterOption[]>([])
+
+  useEffect(() => {
+    fetchAcademicPeriods()
+  }, [])
 
   useEffect(() => {
     fetchTeacherClasses()
   }, [academicYear, semester])
+
+  const fetchAcademicPeriods = async () => {
+    try {
+      const { createClient } = await import('@/utils/supabase/client')
+      const supabase = createClient()
+
+      const [{ data: yearsData }, { data: semestersData }] = await Promise.all([
+        supabase
+          .from('academic_years')
+          .select('id, name, is_active')
+          .order('start_date', { ascending: false }),
+        supabase
+          .from('semesters')
+          .select('id, academic_year_id, name, semester_number, is_active')
+          .order('semester_number', { ascending: true })
+      ])
+
+      const years = (yearsData || []) as AcademicYearOption[]
+      const semesterRows = (semestersData || []) as SemesterOption[]
+      const activeYear = years.find((year) => year.is_active)
+      const activeSemester = semesterRows.find((item) => item.is_active)
+
+      setAcademicYears(years)
+      setSemesters(semesterRows)
+      if (activeYear) setAcademicYear(activeYear.id)
+      if (activeSemester) setSemester(String(activeSemester.semester_number))
+    } catch (err) {
+      console.error('Error fetching academic periods:', err)
+    }
+  }
 
   const fetchTeacherClasses = async () => {
     setLoading(true)
@@ -58,10 +108,11 @@ export default function TeacherClassSchedulePage() {
       }
 
       // Fetch classes taught by this teacher
-      const { data: schedulesData, error: schedulesError } = await supabase
+      let schedulesQuery = supabase
         .from('class_schedules')
         .select(`
           class_id,
+          semester,
           classes (
             id,
             name,
@@ -74,6 +125,16 @@ export default function TeacherClassSchedulePage() {
         `)
         .eq('teacher_id', teacherProfile.id)
         .eq('is_active', true)
+
+      if (academicYear) {
+        schedulesQuery = schedulesQuery.eq('academic_year_id', academicYear)
+      }
+
+      if (semester) {
+        schedulesQuery = schedulesQuery.eq('semester', Number(semester))
+      }
+
+      const { data: schedulesData, error: schedulesError } = await schedulesQuery
 
       if (schedulesError) throw schedulesError
 
@@ -109,11 +170,17 @@ export default function TeacherClassSchedulePage() {
       // Fetch student count for each class
       const classIds = Array.from(classMap.values()).map(c => c.id)
       if (classIds.length > 0) {
-        const { data: enrollmentsData } = await supabase
+        let enrollmentsQuery = supabase
           .from('enrollments')
           .select('class_id')
           .in('class_id', classIds)
           .eq('status', 'ACTIVE')
+
+        if (academicYear) {
+          enrollmentsQuery = enrollmentsQuery.eq('academic_year_id', academicYear)
+        }
+
+        const { data: enrollmentsData } = await enrollmentsQuery
 
         enrollmentsData?.forEach((enrollment: any) => {
           classMap.forEach((classInfo) => {
@@ -163,8 +230,11 @@ export default function TeacherClassSchedulePage() {
               className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm bg-card"
             >
               <option value="">Semua Tahun</option>
-              {/* Academic years would be loaded dynamically */}
-              <option value="2024-2025">2024/2025</option>
+              {academicYears.map((year) => (
+                <option key={year.id} value={year.id}>
+                  {year.name} {year.is_active ? '(Aktif)' : ''}
+                </option>
+              ))}
             </select>
           </div>
 
@@ -175,8 +245,14 @@ export default function TeacherClassSchedulePage() {
               onChange={(e) => setSemester(e.target.value)}
               className="px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm bg-card"
             >
-              <option value="1">Semester Ganjil</option>
-              <option value="2">Semester Genap</option>
+              <option value="">Semua Semester</option>
+              {semesters
+                .filter((item) => !academicYear || item.academic_year_id === academicYear)
+                .map((item) => (
+                  <option key={item.id} value={String(item.semester_number)}>
+                    {item.name} {item.is_active ? '(Aktif)' : ''}
+                  </option>
+                ))}
             </select>
           </div>
         </div>

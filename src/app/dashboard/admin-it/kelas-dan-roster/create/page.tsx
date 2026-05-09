@@ -36,6 +36,14 @@ interface AcademicYear {
   is_active: boolean
 }
 
+interface Semester {
+  id: string
+  academic_year_id: string
+  name: string
+  semester_number: 1 | 2
+  is_active: boolean
+}
+
 export default function CreateClassPage() {
   const router = useRouter()
   const { t } = useLanguage()
@@ -49,6 +57,7 @@ export default function CreateClassPage() {
     class_level_id: '',
     department_id: '',
     academic_year_id: '',
+    semester_id: '',
     home_room_id: '',
     wali_kelas_id: '',
     capacity: 30,
@@ -61,6 +70,7 @@ export default function CreateClassPage() {
   const [rooms, setRooms] = useState<Room[]>([])
   const [teachers, setTeachers] = useState<Teacher[]>([])
   const [academicYears, setAcademicYears] = useState<AcademicYear[]>([])
+  const [semesters, setSemesters] = useState<Semester[]>([])
 
   // Fetch dropdown data
   useEffect(() => {
@@ -77,11 +87,17 @@ export default function CreateClassPage() {
           setRooms(result.rooms || [])
           setTeachers(result.teachers || [])
           setAcademicYears(result.academicYears || [])
+          setSemesters(result.semesters || [])
 
           // Auto-select active academic year
           const activeYear = result.academicYears?.find(y => y.is_active)
+          const activeSemester = result.semesters?.find(s => s.is_active)
           if (activeYear) {
-            setFormData(prev => ({ ...prev, academic_year_id: activeYear.id }))
+            setFormData(prev => ({
+              ...prev,
+              academic_year_id: activeYear.id,
+              semester_id: activeSemester?.academic_year_id === activeYear.id ? activeSemester?.id || '' : prev.semester_id
+            }))
           }
         } else {
           setError(result.error || 'Gagal memuat data dropdown')
@@ -129,10 +145,14 @@ export default function CreateClassPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target
+    const nextValue = type === 'number' ? parseInt(value) || 0 : value
 
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? parseInt(value) || 0 : value
+      [name]: nextValue,
+      ...(name === 'academic_year_id'
+        ? { semester_id: semesters.find(semester => semester.academic_year_id === value && semester.is_active)?.id || '' }
+        : {})
     }))
   }
 
@@ -218,7 +238,7 @@ export default function CreateClassPage() {
                   required
                 />
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Nama kelas tanpa tingkat dan jurusan (contoh: "A", "MIPA-1", "IPS-2")
+                  Nama kelas tanpa tingkat dan jurusan (contoh: &quot;A&quot;, &quot;MIPA-1&quot;, &quot;IPS-2&quot;)
                 </p>
               </div>
 
@@ -303,6 +323,31 @@ export default function CreateClassPage() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              {/* Semester Aktif */}
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">
+                  Semester Aktif
+                </label>
+                <select
+                  name="semester_id"
+                  value={formData.semester_id}
+                  onChange={handleInputChange}
+                  className="w-full px-3 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="">Mengikuti semester aktif</option>
+                  {semesters
+                    .filter(semester => semester.academic_year_id === formData.academic_year_id)
+                    .map(semester => (
+                      <option key={semester.id} value={semester.id}>
+                        {semester.name} {semester.is_active && '(Aktif)'}
+                      </option>
+                    ))}
+                </select>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Jika kosong, sistem memakai semester aktif pada tahun ajaran terpilih.
+                </p>
               </div>
 
               {/* Ruang Base */}

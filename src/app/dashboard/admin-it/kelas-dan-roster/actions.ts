@@ -23,6 +23,7 @@ import type { CreateResponse, UpdateResponse } from '@/types'
 import type { User } from '@/types/user'
 import { detectScheduleColumnMode, getScheduleColumns, getScheduleSelect } from '@/utils/supabase/schedule-columns'
 import { detectProfilesHasIsActive } from '@/utils/supabase/profile-columns'
+import { getActiveAcademicPeriod, resolveSemesterForSchedule } from '@/lib/academic-period'
 
 async function ensureTenantRecord(
   supabase: Awaited<ReturnType<typeof createClient>>,
@@ -162,6 +163,27 @@ async function getScheduleAuthorityConflict(
   return null
 }
 
+async function ensureSemesterInAcademicYear(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  semesterId: string | null | undefined,
+  academicYearId: string | null | undefined,
+  organizationId: string
+) {
+  if (!semesterId) return true
+
+  const { data, error } = await supabase
+    .from('semesters')
+    .select('id')
+    .eq('id', semesterId)
+    .eq('organization_id', organizationId)
+    .eq('academic_year_id', academicYearId)
+    .maybeSingle()
+
+  if (error) throw error
+
+  return !!data
+}
+
 // =====================================================
 // CLASSES ACTIONS
 // =====================================================
@@ -276,6 +298,9 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
 
   try {
     const supabase = await createClient()
+    const activePeriod = await getActiveAcademicPeriod(supabase, auth.user.organization_id)
+    const academicYearId = formData.academic_year_id || activePeriod.academicYear?.id || ''
+    const semesterId = formData.semester_id || activePeriod.semester?.id || ''
 
     // Validation
     if (!formData.name.trim()) {
@@ -289,9 +314,9 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
     }
 
     // Validasi WAJIB untuk struktur baru
-    if (!formData.academic_year_id) {
+    if (!academicYearId) {
       console.log('Validation failed: academic_year_id is required')
-      return { success: false, error: 'Tahun ajaran wajib dipilih' }
+      return { success: false, error: 'Tahun ajaran aktif belum diatur' }
     }
 
     if (!formData.class_level_id) {
@@ -328,9 +353,8 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
     }
 
     const tenantChecks = [
-      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+      ['academic_years', academicYearId, 'Tahun ajaran tidak valid untuk sekolah ini'],
       ['class_levels', formData.class_level_id, 'Tingkat kelas tidak valid untuk sekolah ini'],
-      ['semesters', formData.semester_id, 'Semester tidak valid untuk sekolah ini'],
       ['departments', formData.department_id, 'Jurusan tidak valid untuk sekolah ini'],
       ['rooms', formData.home_room_id, 'Ruangan tidak valid untuk sekolah ini'],
       ['profiles', formData.wali_kelas_id, 'Wali kelas tidak valid untuk sekolah ini'],
@@ -342,6 +366,10 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
       }
     }
 
+    if (!(await ensureSemesterInAcademicYear(supabase, semesterId, academicYearId, auth.user.organization_id))) {
+      return { success: false, error: 'Semester tidak valid untuk tahun ajaran kelas ini' }
+    }
+
     if (formData.wali_kelas_id) {
       if (!(await ensureTeacherRecord(supabase, formData.wali_kelas_id, auth.user.organization_id))) {
         return { success: false, error: 'Wali kelas harus akun guru aktif di sekolah ini' }
@@ -350,7 +378,7 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
       const conflict = await getHomeroomConflict(
         supabase,
         formData.wali_kelas_id,
-        formData.academic_year_id,
+        academicYearId,
         auth.user.organization_id
       )
 
@@ -366,9 +394,9 @@ export async function createClass(formData: ClassFormData): Promise<CreateRespon
     const insertData = {
       name: formData.name.trim(),
       code: formData.code.trim(),
-      academic_year_id: formData.academic_year_id, // WAJIB
+      academic_year_id: academicYearId, // WAJIB
       class_level_id: formData.class_level_id, // WAJIB
-      semester_id: formData.semester_id || null, // Opsional
+      semester_id: semesterId || null, // Default semester aktif
       department_id: formData.department_id || null, // Opsional
       home_room_id: formData.home_room_id || null,
       capacity: formData.capacity,
@@ -436,7 +464,7 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
 
     const { data: existingClass, error: existingClassError } = await supabase
       .from('classes')
-      .select('id, academic_year_id, wali_kelas_id')
+      .select('id, academic_year_id, semester_id, wali_kelas_id')
       .eq('id', id)
       .eq('organization_id', auth.user.organization_id)
       .maybeSingle()
@@ -468,6 +496,7 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
     if (formData.class_level_id !== undefined) updateData.class_level_id = formData.class_level_id || null
     if (formData.department_id !== undefined) updateData.department_id = formData.department_id || null
     if (formData.academic_year_id !== undefined) updateData.academic_year_id = formData.academic_year_id || null
+    if (formData.semester_id !== undefined) updateData.semester_id = formData.semester_id || null
     if (formData.home_room_id !== undefined) updateData.home_room_id = formData.home_room_id || null
     if (formData.capacity !== undefined) updateData.capacity = formData.capacity
     if (formData.wali_kelas_id !== undefined) updateData.wali_kelas_id = formData.wali_kelas_id || null
@@ -477,7 +506,6 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
     const updateTenantChecks = [
       ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
       ['class_levels', formData.class_level_id, 'Tingkat kelas tidak valid untuk sekolah ini'],
-      ['semesters', formData.semester_id, 'Semester tidak valid untuk sekolah ini'],
       ['departments', formData.department_id, 'Jurusan tidak valid untuk sekolah ini'],
       ['rooms', formData.home_room_id, 'Ruangan tidak valid untuk sekolah ini'],
       ['profiles', formData.wali_kelas_id, 'Wali kelas tidak valid untuk sekolah ini'],
@@ -493,10 +521,18 @@ export async function updateClass(id: string, formData: Partial<ClassFormData>):
       formData.academic_year_id !== undefined
         ? formData.academic_year_id || null
         : existingClass.academic_year_id
+    const nextSemesterId =
+      formData.semester_id !== undefined
+        ? formData.semester_id || null
+        : existingClass.semester_id
     const nextHomeroomTeacherId =
       formData.wali_kelas_id !== undefined
         ? formData.wali_kelas_id || null
         : existingClass.wali_kelas_id
+
+    if (!(await ensureSemesterInAcademicYear(supabase, nextSemesterId, nextAcademicYearId, auth.user.organization_id))) {
+      return { success: false, error: 'Semester tidak valid untuk tahun ajaran kelas ini' }
+    }
 
     if (nextHomeroomTeacherId) {
       if (!(await ensureTeacherRecord(supabase, nextHomeroomTeacherId, auth.user.organization_id))) {
@@ -985,12 +1021,26 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       return { success: false, error: 'Waktu mulai dan selesai wajib diisi' }
     }
 
+    const resolvedPeriod = await resolveSemesterForSchedule(supabase, auth.user.organization_id, {
+      classId: formData.class_id,
+      fallbackAcademicYearId: formData.academic_year_id,
+      fallbackSemester: formData.semester || null,
+    })
+
+    if (!resolvedPeriod.academicYearId) {
+      return { success: false, error: 'Tahun ajaran aktif belum diatur' }
+    }
+
+    if (!resolvedPeriod.semesterNumber) {
+      return { success: false, error: 'Semester aktif belum diatur' }
+    }
+
     const scheduleTenantChecks = [
       ['classes', formData.class_id, 'Kelas tidak valid untuk sekolah ini'],
       ['subjects', formData.subject_id, 'Mata pelajaran tidak valid untuk sekolah ini'],
       ['profiles', formData.teacher_id, 'Guru tidak valid untuk sekolah ini'],
       ['rooms', formData.room_id, 'Ruangan tidak valid untuk sekolah ini'],
-      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
+      ['academic_years', resolvedPeriod.academicYearId, 'Tahun ajaran tidak valid untuk sekolah ini'],
     ] as const
 
     for (const [table, recordId, message] of scheduleTenantChecks) {
@@ -1032,8 +1082,8 @@ export async function createClassSchedule(formData: ClassScheduleFormData): Prom
       teacher_id: formData.teacher_id,
       room_id: formData.room_id || null,
       day_of_week: formData.day_of_week,
-      academic_year_id: formData.academic_year_id || null,
-      semester: formData.semester || null,
+      academic_year_id: resolvedPeriod.academicYearId,
+      semester: resolvedPeriod.semesterNumber,
       is_active: formData.is_active !== undefined ? formData.is_active : true,
       notes: formData.notes || null,
       organization_id: auth.user.organization_id,
@@ -1113,8 +1163,6 @@ export async function updateClassSchedule(
     if (formData.day_of_week) updateData.day_of_week = formData.day_of_week
     if (formData.start_time) updateData[scheduleColumns.start] = formData.start_time
     if (formData.end_time) updateData[scheduleColumns.end] = formData.end_time
-    if (formData.academic_year_id !== undefined) updateData.academic_year_id = formData.academic_year_id || null
-    if (formData.semester !== undefined) updateData.semester = formData.semester || null
     if (formData.is_active !== undefined) updateData.is_active = formData.is_active
     if (formData.notes !== undefined) updateData.notes = formData.notes || null
 
@@ -1123,7 +1171,6 @@ export async function updateClassSchedule(
       ['subjects', formData.subject_id, 'Mata pelajaran tidak valid untuk sekolah ini'],
       ['profiles', formData.teacher_id, 'Guru tidak valid untuk sekolah ini'],
       ['rooms', formData.room_id, 'Ruangan tidak valid untuk sekolah ini'],
-      ['academic_years', formData.academic_year_id, 'Tahun ajaran tidak valid untuk sekolah ini'],
     ] as const
 
     for (const [table, recordId, message] of updateScheduleTenantChecks) {
@@ -1139,6 +1186,22 @@ export async function updateClassSchedule(
     const nextDayOfWeek = formData.day_of_week || existingSchedule.day_of_week
     const nextStartTime = formData.start_time || existingSchedule.start_time
     const nextEndTime = formData.end_time || existingSchedule.end_time
+    const resolvedPeriod = await resolveSemesterForSchedule(supabase, auth.user.organization_id, {
+      classId: nextClassId,
+      fallbackAcademicYearId: formData.academic_year_id || existingSchedule.academic_year_id,
+      fallbackSemester: formData.semester || existingSchedule.semester || null,
+    })
+
+    if (!resolvedPeriod.academicYearId) {
+      return { success: false, error: 'Tahun ajaran aktif belum diatur' }
+    }
+
+    if (!resolvedPeriod.semesterNumber) {
+      return { success: false, error: 'Semester aktif belum diatur' }
+    }
+
+    updateData.academic_year_id = resolvedPeriod.academicYearId
+    updateData.semester = resolvedPeriod.semesterNumber
 
     if (!(await ensureTeacherRecord(supabase, nextTeacherId, auth.user.organization_id))) {
       return { success: false, error: 'Guru harus akun guru aktif di sekolah ini' }
@@ -1401,6 +1464,7 @@ export async function checkScheduleAvailability(
     const supabase = await createClient()
     const scheduleMode = await detectScheduleColumnMode(supabase)
     const scheduleColumns = getScheduleColumns(scheduleMode)
+    const { academicYear, semester } = await getActiveAcademicPeriod(supabase, auth.user.organization_id)
 
     // Get all teachers
     const { data: teachers } = await supabase
@@ -1425,6 +1489,14 @@ export async function checkScheduleAvailability(
       .eq('is_active', true)
       .lt(scheduleColumns.start, endTime)
       .gt(scheduleColumns.end, startTime)
+
+    if (academicYear) {
+      schedulesQuery = schedulesQuery.eq('academic_year_id', academicYear.id)
+    }
+
+    if (semester) {
+      schedulesQuery = schedulesQuery.eq('semester', semester.semester_number)
+    }
 
     if (excludeScheduleId) {
       schedulesQuery = schedulesQuery.neq('id', excludeScheduleId)
@@ -1487,7 +1559,8 @@ export async function fetchClassDropdownData() {
       departments: [],
       rooms: [],
       teachers: [],
-      academicYears: []
+      academicYears: [],
+      semesters: [],
     }
   }
 
@@ -1543,13 +1616,22 @@ export async function fetchClassDropdownData() {
 
     if (yearsError) throw yearsError
 
+    const { data: semestersData, error: semestersError } = await supabase
+      .from('semesters')
+      .select('id, academic_year_id, name, semester_number, is_active')
+      .eq('organization_id', auth.user.organization_id)
+      .order('semester_number', { ascending: true })
+
+    if (semestersError) throw semestersError
+
     return {
       success: true,
       classLevels: levelsData || [],
       departments: deptData || [],
       rooms: roomsData || [],
       teachers: teachersData || [],
-      academicYears: yearsData || []
+      academicYears: yearsData || [],
+      semesters: semestersData || [],
     }
   } catch (error: any) {
     console.error('Error fetching dropdown data:', error)
@@ -1560,7 +1642,8 @@ export async function fetchClassDropdownData() {
       departments: [],
       rooms: [],
       teachers: [],
-      academicYears: []
+      academicYears: [],
+      semesters: [],
     }
   }
 }

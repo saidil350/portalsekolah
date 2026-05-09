@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { authorizeAction } from '@/lib/auth/authorization'
+import { getActiveAcademicPeriod } from '@/lib/academic-period'
 import type {
   Room,
   RoomFormData,
@@ -726,8 +727,28 @@ export async function createSemester(formData: SemesterFormData): Promise<Create
       return { success: false, error: 'Tanggal mulai dan selesai wajib diisi' }
     }
 
+    if (new Date(formData.end_date) <= new Date(formData.start_date)) {
+      return { success: false, error: 'Tanggal selesai harus setelah tanggal mulai' }
+    }
+
     if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
       return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
+    if (formData.is_active) {
+      const { academicYear } = await getActiveAcademicPeriod(supabase, auth.user.organization_id)
+
+      if (academicYear?.id !== formData.academic_year_id) {
+        return { success: false, error: 'Semester aktif harus berada di tahun ajaran aktif' }
+      }
+
+      const { error: deactivateError } = await supabase
+        .from('semesters')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .eq('is_active', true)
+
+      if (deactivateError) throw deactivateError
     }
 
     const { data, error } = await supabase
@@ -773,6 +794,7 @@ export async function updateSemester(id: string, formData: Partial<SemesterFormD
 
     const updateData: any = {}
     if (formData.name) updateData.name = formData.name.trim()
+    if (formData.academic_year_id !== undefined) updateData.academic_year_id = formData.academic_year_id
     if (formData.semester_number) updateData.semester_number = formData.semester_number
     if (formData.start_date) updateData.start_date = formData.start_date
     if (formData.end_date) updateData.end_date = formData.end_date
@@ -780,6 +802,44 @@ export async function updateSemester(id: string, formData: Partial<SemesterFormD
 
     if (!(await ensureTenantRecord(supabase, 'academic_years', formData.academic_year_id, auth.user.organization_id))) {
       return { success: false, error: 'Tahun ajaran tidak valid untuk sekolah ini' }
+    }
+
+    const { data: currentSemester, error: currentSemesterError } = await supabase
+      .from('semesters')
+      .select('id, academic_year_id, start_date, end_date')
+      .eq('id', id)
+      .eq('organization_id', auth.user.organization_id)
+      .maybeSingle()
+
+    if (currentSemesterError) throw currentSemesterError
+
+    if (!currentSemester) {
+      return { success: false, error: 'Semester tidak ditemukan di sekolah ini' }
+    }
+
+    const nextAcademicYearId = formData.academic_year_id || currentSemester.academic_year_id
+    const nextStartDate = formData.start_date || currentSemester.start_date
+    const nextEndDate = formData.end_date || currentSemester.end_date
+
+    if (new Date(nextEndDate) <= new Date(nextStartDate)) {
+      return { success: false, error: 'Tanggal selesai harus setelah tanggal mulai' }
+    }
+
+    if (formData.is_active) {
+      const { academicYear } = await getActiveAcademicPeriod(supabase, auth.user.organization_id)
+
+      if (academicYear?.id !== nextAcademicYearId) {
+        return { success: false, error: 'Semester aktif harus berada di tahun ajaran aktif' }
+      }
+
+      const { error: deactivateError } = await supabase
+        .from('semesters')
+        .update({ is_active: false })
+        .eq('organization_id', auth.user.organization_id)
+        .eq('is_active', true)
+        .neq('id', id)
+
+      if (deactivateError) throw deactivateError
     }
 
     const { data, error } = await supabase
