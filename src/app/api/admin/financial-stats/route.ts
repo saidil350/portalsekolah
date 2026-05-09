@@ -53,7 +53,7 @@ export async function GET(request: Request) {
           id,
           full_name,
           role,
-          registration_number
+          nisn
         )
       `)
       .eq('organization_id', auth.user.organization_id)
@@ -98,7 +98,7 @@ export async function GET(request: Request) {
     const invoices = rawInvoices?.map(inv => ({
       id: inv.id,
       studentName: (inv.student as any)?.full_name || 'Unknown',
-      nisn: (inv.student as any)?.registration_number || '-',
+      nisn: (inv.student as any)?.nisn || '-',
       className: enrollmentsMap[(inv.student as any)?.id] || '-',
       month: inv.title,
       amount: inv.amount,
