@@ -8,10 +8,14 @@ import { format } from 'date-fns'
 import { enUS, id } from 'date-fns/locale'
 
 type TabType = 'student-data' | 'teacher-data'
+type DocStatus = 'verified' | 'pending' | 'missing'
+type CalendarStatus = 'none' | 'H' | 'A' | 'S' | 'I' | 'today'
+
+const MOCK_REFERENCE_DATE = new Date(2024, 4, 20)
 
 type DocItem = {
   type: string;
-  status: 'Verified' | 'Pending' | 'Missing';
+  status: DocStatus;
 }
 
 type Person = {
@@ -20,7 +24,7 @@ type Person = {
   name: string;
   idNumber: string; // NISN or NIP
   subInfo: string; // Class or Subject
-  status: string; // For today
+  status: string; // Latest attendance
   attendancePercentage: number;
   docs: DocItem[];
 }
@@ -70,17 +74,20 @@ const generateMonthData = (year: number, month: number, personId: number, baseAt
   
   // Padding for starting days
   for (let i = 0; i < startingDay; i++) {
-    days.push({ empty: true, date: 0, status: 'none', isToday: false });
+    days.push({ empty: true, date: 0, status: 'none' as CalendarStatus });
   }
 
   const summary = { H: 0, A: 0, S: 0, I: 0 }
   
   for (let i = 1; i <= daysInMonth; i++) {
-     let status = 'none';
+     let status: CalendarStatus = 'none';
      
-     // Mock "Today" as May 20, 2024
-     const isTodayMock = (i === 20 && month === 4 && year === 2024);
-     const isPast = (year < 2024) || (year === 2024 && month < 4) || (year === 2024 && month === 4 && i <= 20);
+     const isMockReferenceDate = (
+       i === MOCK_REFERENCE_DATE.getDate() &&
+       month === MOCK_REFERENCE_DATE.getMonth() &&
+       year === MOCK_REFERENCE_DATE.getFullYear()
+     );
+     const isPast = new Date(year, month, i) <= MOCK_REFERENCE_DATE;
 
      // Only assign real status to Past Weekdays
      if (new Date(year, month, i).getDay() !== 0 && new Date(year, month, i).getDay() !== 6 && isPast) {
@@ -93,16 +100,16 @@ const generateMonthData = (year: number, month: number, personId: number, baseAt
        else { status = 'A'; }
      }
 
-     if (isTodayMock) status = 'TODAY'; 
+     if (isMockReferenceDate) status = 'today'; 
 
      // Summaries
      if (status === 'H') summary.H++;
      else if (status === 'A') summary.A++;
      else if (status === 'I') summary.I++;
      else if (status === 'S') summary.S++;
-     else if (status === 'TODAY') summary.H++; // count today as present for simplicity
+     else if (status === 'today') summary.H++; // count current mock date as present for simplicity
      
-     days.push({ date: i, empty: false, status, isToday: isTodayMock });
+     days.push({ date: i, empty: false, status });
   }
   
   return { days, summary };
@@ -113,41 +120,41 @@ const MOCK_STUDENTS: Person[] = [
   { 
     id: 1, type: 'student', name: 'Ahmad Santoso', idNumber: '0051234567', subInfo: 'X A (MIPA)', status: 'Hadir', attendancePercentage: 95,
     docs: [
-      { type: 'Kartu Keluarga (KK)', status: 'Verified' },
-      { type: 'Akte Kelahiran', status: 'Verified' },
-      { type: 'Ijazah SMP', status: 'Pending' }
+      { type: 'Kartu Keluarga (KK)', status: 'verified' },
+      { type: 'Akte Kelahiran', status: 'verified' },
+      { type: 'Ijazah SMP', status: 'pending' }
     ]
   },
   { 
     id: 2, type: 'student', name: 'Siti Putri', idNumber: '0051234568', subInfo: 'X A (MIPA)', status: 'Sakit', attendancePercentage: 80,
     docs: [
-      { type: 'Kartu Keluarga (KK)', status: 'Verified' },
-      { type: 'Akte Kelahiran', status: 'Missing' },
-      { type: 'Ijazah SMP', status: 'Verified' }
+      { type: 'Kartu Keluarga (KK)', status: 'verified' },
+      { type: 'Akte Kelahiran', status: 'missing' },
+      { type: 'Ijazah SMP', status: 'verified' }
     ]
   },
   {
     id: 3, type: 'student', name: 'Budi Raharjo', idNumber: '0051234569', subInfo: 'XI B (IPS)', status: 'Izin', attendancePercentage: 85,
     docs: [
-      { type: 'Kartu Keluarga (KK)', status: 'Verified' },
-      { type: 'Akte Kelahiran', status: 'Verified' },
-      { type: 'Ijazah SMP', status: 'Verified' }
+      { type: 'Kartu Keluarga (KK)', status: 'verified' },
+      { type: 'Akte Kelahiran', status: 'verified' },
+      { type: 'Ijazah SMP', status: 'verified' }
     ]
   },
   {
     id: 4, type: 'student', name: 'Andi Wijaya', idNumber: '0051234570', subInfo: 'XII C (Kejuruan)', status: 'Alpha', attendancePercentage: 60,
     docs: [
-      { type: 'Kartu Keluarga (KK)', status: 'Pending' },
-      { type: 'Akte Kelahiran', status: 'Pending' },
-      { type: 'Ijazah Lulus', status: 'Missing' }
+      { type: 'Kartu Keluarga (KK)', status: 'pending' },
+      { type: 'Akte Kelahiran', status: 'pending' },
+      { type: 'Ijazah Lulus', status: 'missing' }
     ]
   },
   { 
     id: 5, type: 'student', name: 'Rina Melati', idNumber: '0051234571', subInfo: 'X A (MIPA)', status: 'Hadir', attendancePercentage: 100,
     docs: [
-      { type: 'Kartu Keluarga (KK)', status: 'Verified' },
-      { type: 'Akte Kelahiran', status: 'Verified' },
-      { type: 'Ijazah Lulus', status: 'Verified' }
+      { type: 'Kartu Keluarga (KK)', status: 'verified' },
+      { type: 'Akte Kelahiran', status: 'verified' },
+      { type: 'Ijazah Lulus', status: 'verified' }
     ]
   }
 ]
@@ -156,26 +163,26 @@ const MOCK_TEACHERS: Person[] = [
   { 
     id: 11, type: 'teacher', name: 'Drs. Supriyanto, M.Pd.', idNumber: '197001011995121001', subInfo: 'Matematika', status: 'Hadir', attendancePercentage: 98,
     docs: [
-      { type: 'KTP', status: 'Verified' },
-      { type: 'Ijazah S1', status: 'Verified' },
-      { type: 'Ijazah S2', status: 'Verified' },
-      { type: 'Sertifikasi Guru', status: 'Pending' }
+      { type: 'KTP', status: 'verified' },
+      { type: 'Ijazah S1', status: 'verified' },
+      { type: 'Ijazah S2', status: 'verified' },
+      { type: 'Sertifikasi Guru', status: 'pending' }
     ]
   },
   { 
     id: 12, type: 'teacher', name: 'Dra. Endang Lestari', idNumber: '197203041998012002', subInfo: 'Bahasa Indonesia', status: 'Hadir', attendancePercentage: 100,
     docs: [
-      { type: 'KTP', status: 'Verified' },
-      { type: 'Ijazah S1', status: 'Verified' },
-      { type: 'Sertifikasi Guru', status: 'Verified' }
+      { type: 'KTP', status: 'verified' },
+      { type: 'Ijazah S1', status: 'verified' },
+      { type: 'Sertifikasi Guru', status: 'verified' }
     ]
   },
   { 
     id: 13, type: 'teacher', name: 'Budi Gunawan, S.Pd.', idNumber: '198505122010011003', subInfo: 'Fisika', status: 'Izin', attendancePercentage: 88,
     docs: [
-      { type: 'KTP', status: 'Verified' },
-      { type: 'Ijazah S1', status: 'Missing' },
-      { type: 'Sertifikasi Guru', status: 'Pending' }
+      { type: 'KTP', status: 'verified' },
+      { type: 'Ijazah S1', status: 'missing' },
+      { type: 'Sertifikasi Guru', status: 'pending' }
     ]
   },
 ]
@@ -187,7 +194,7 @@ export default function MonitoringDataPage() {
   const [filterSubInfo, setFilterSubInfo] = useState<string>('')
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null)
 
-  // Calendar State (Start on May 2024 for mockup matching)
+  // Calendar state starts from the same month as the stable mock reference date.
   const [currentDate, setCurrentDate] = useState(new Date(2024, 4, 1))
 
   const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))
@@ -227,7 +234,7 @@ export default function MonitoringDataPage() {
   const handleApproveDoc = (docIndex: number) => {
     if (!selectedPerson) return;
     const newDocs = [...selectedPerson.docs];
-    newDocs[docIndex].status = 'Verified';
+    newDocs[docIndex].status = 'verified';
     setSelectedPerson({ ...selectedPerson, docs: newDocs });
     
     // Mutate source so it persists during tab switches 
@@ -240,7 +247,7 @@ export default function MonitoringDataPage() {
 
   const handleAddRequest = () => {
     if (!selectedPerson || !newDocName.trim()) return;
-    const newDocs = [...selectedPerson.docs, { type: newDocName.trim(), status: 'Missing' as const }];
+    const newDocs = [...selectedPerson.docs, { type: newDocName.trim(), status: 'missing' as const }];
     setSelectedPerson({ ...selectedPerson, docs: newDocs });
     
     const currentList = selectedPerson.type === 'student' ? MOCK_STUDENTS : MOCK_TEACHERS;
@@ -275,8 +282,8 @@ export default function MonitoringDataPage() {
     }
   }
 
-  const renderDocStatus = (status: string) => {
-    switch (status.toLowerCase()) {
+  const renderDocStatus = (status: DocStatus) => {
+    switch (status) {
       case 'verified':
         return <span className="flex items-center gap-1.5 text-emerald-600 text-[11px] font-bold tracking-wide"><FileCheck className="w-3.5 h-3.5" /> {t('admin.monitoring.docStatus.verified')}</span>
       case 'pending':
@@ -389,7 +396,7 @@ export default function MonitoringDataPage() {
                         badge = <span className="mt-1.5 bg-blue-100 border border-blue-200 text-blue-700 px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">SK</span>
                       } else if (item.status === 'I') {
                         badge = <span className="mt-1.5 bg-amber-100 border border-amber-200 text-amber-700 px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">IZ</span>
-                      } else if (item.status === 'TODAY') {
+                      } else if (item.status === 'today') {
                         boxStyle = "bg-primary text-white shadow-md border border-primary/80"
                         badge = <span className="mt-1.5 bg-white/20 text-white px-2 py-0.5 rounded-[6px] text-[10px] font-extrabold tracking-widest">{t('admin.monitoring.calendar.today')}</span>
                       } else {
@@ -399,7 +406,7 @@ export default function MonitoringDataPage() {
 
                       return (
                         <div key={idx} className={`h-[80px] sm:h-[92px] rounded-2xl flex flex-col items-center justify-center transition-all hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${boxStyle}`}>
-                          <span className={`text-[20px] sm:text-[24px] font-black leading-none ${item.status === 'TODAY' ? 'text-white' : (item.status === 'none' ? 'text-muted-foreground' : 'text-foreground')}`}>{item.date}</span>
+                          <span className={`text-[20px] sm:text-[24px] font-black leading-none ${item.status === 'today' ? 'text-white' : (item.status === 'none' ? 'text-muted-foreground' : 'text-foreground')}`}>{item.date}</span>
                           {badge}
                         </div>
                       )
@@ -462,7 +469,7 @@ export default function MonitoringDataPage() {
                     {selectedPerson.docs.map((doc, idx) => (
                        <div key={idx} className="flex flex-col gap-2 bg-card p-3 rounded-xl border border-border shadow-[0_2px_10px_-4px_rgba(0,0,0,0.05)] hover:border-primary/30 hover:shadow-md transition-all">
                          <div className="flex items-start gap-3">
-                           <div className={`p-2 rounded-lg shrink-0 ${doc.status === 'Verified' ? 'bg-emerald-50 text-emerald-600' : doc.status === 'Pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'}`}>
+                           <div className={`p-2 rounded-lg shrink-0 ${doc.status === 'verified' ? 'bg-emerald-50 text-emerald-600' : doc.status === 'pending' ? 'bg-amber-50 text-amber-600' : 'bg-red-50 text-red-600'}`}>
                               <FileText className="w-5 h-5" />
                            </div>
                            <div className="flex-1 min-w-0 flex flex-col gap-1 pt-0.5">
@@ -470,9 +477,9 @@ export default function MonitoringDataPage() {
                              <div>{renderDocStatus(doc.status)}</div>
                            </div>
                          </div>
-                         {doc.status !== 'Missing' && (
-                           <div className={`grid ${doc.status === 'Pending' ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 mt-1.5 pt-2 border-t border-border/60`}>
-                             {doc.status === 'Pending' && (
+                         {doc.status !== 'missing' && (
+                           <div className={`grid ${doc.status === 'pending' ? 'grid-cols-3' : 'grid-cols-2'} gap-1.5 mt-1.5 pt-2 border-t border-border/60`}>
+                             {doc.status === 'pending' && (
                                <button onClick={() => handleApproveDoc(idx)} className="h-7 bg-emerald-50 hover:bg-emerald-500 hover:border-emerald-600 hover:text-white border border-emerald-200 text-emerald-600 text-[10px] font-extrabold tracking-wide px-2 rounded-md flex items-center justify-center gap-1 transition-colors">
                                   {t('admin.monitoring.documents.approve')}
                                </button>
@@ -485,7 +492,7 @@ export default function MonitoringDataPage() {
                              </button>
                            </div>
                          )}
-                         {doc.status === 'Missing' && (
+                         {doc.status === 'missing' && (
                            <div className="mt-1.5 pt-2 border-t border-border/60 grid grid-cols-1">
                              <button className="h-7 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-100 text-[10px] font-extrabold tracking-wide px-2 rounded-md transition-colors">
                                 {t('admin.monitoring.documents.remind')}
